@@ -100,7 +100,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return;
 
             SerializedProperty progressSP = serializedObject.FindProperty("progress");
-            if (progressSP == null || Mathf.Approximately(progressSP.floatValue, -1))
+            if (Mathf.Approximately(progressSP.floatValue, -1))
                 return;
             
             SetProgress(progressSP.floatValue);
