@@ -20,38 +20,38 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
-        private RectTransform rectTransform;
-        private Vector2 previousAnchorPosition;
+        private RectTransform targetRectTransform;
+        private Vector2 originalAnchorPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            if (rectTransform == null)
+            if (targetRectTransform == null)
             {
-                rectTransform = target.transform as RectTransform;
+                targetRectTransform = target.transform as RectTransform;
 
-                if (rectTransform == null)
+                if (targetRectTransform == null)
                 {
                     Debug.LogError($"{target} does not have {TargetComponentType} component");
                     return null;
                 }
             }
 
-            previousAnchorPosition = rectTransform.anchoredPosition;
-            TweenerCore<Vector2, Vector2, VectorOptions> anchorPosTween = rectTransform.DOAnchorPos(GetPosition(), duration);
+            originalAnchorPosition = targetRectTransform.anchoredPosition;
 
-            anchorPosTween.SetOptions(axisConstraint);
+            TweenerCore<Vector2, Vector2, VectorOptions> tween = targetRectTransform.DOAnchorPos(GetPosition(), duration);
+            tween.SetOptions(axisConstraint);
 
-            return anchorPosTween;
+            return tween;
         }
 
         protected abstract Vector2 GetPosition();
 
         public override void ResetToInitialState()
         {
-            if (rectTransform == null)
+            if (targetRectTransform == null)
                 return;
 
-            rectTransform.anchoredPosition = previousAnchorPosition;
+            targetRectTransform.anchoredPosition = originalAnchorPosition;
         }
     }
 }
