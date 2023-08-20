@@ -24,11 +24,12 @@ namespace BrunoMikoski.AnimationSequencer
             sequence.SetDelay(Delay);
 
             sequence.AppendInterval(interval);
-            
+
             if (FlowType == FlowType.Join)
                 animationSequence.Join(sequence);
             else
-                animationSequence.Append(sequence);        }
+                animationSequence.Append(sequence);
+        }
 
         public override void ResetToInitialState()
         {
