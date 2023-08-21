@@ -29,26 +29,26 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
-        private Vector3? previousState;
-        private GameObject previousTarget;
+        private Transform targetTransform;
+        private Vector3? originalScale;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousState = target.transform.localScale;
-            previousTarget = target;
-            
-            TweenerCore<Vector3, Vector3, VectorOptions> scaleTween = target.transform.DOScale(scale, duration).SetEase(ease);
-            scaleTween.SetOptions(axisConstraint);
+            targetTransform = target.transform;
+            originalScale = targetTransform.localScale;
 
-            return scaleTween;
+            TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(scale, duration).SetEase(ease);
+            tween.SetOptions(axisConstraint);
+
+            return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (!previousState.HasValue)
+            if (!originalScale.HasValue)
                 return;
 
-            previousTarget.transform.localScale = previousState.Value;
+            targetTransform.localScale = originalScale.Value;
         }
     }
 }

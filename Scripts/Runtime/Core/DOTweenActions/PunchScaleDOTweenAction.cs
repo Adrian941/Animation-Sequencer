@@ -8,8 +8,8 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public sealed class PunchScaleDOTweenAction : DOTweenActionBase
     {
-        public override string DisplayName => "Punch Scale";
         public override Type TargetComponentType => typeof(Transform);
+        public override string DisplayName => "Punch Scale";
 
         [SerializeField]
         private Vector3 punch;
@@ -35,25 +35,25 @@ namespace BrunoMikoski.AnimationSequencer
             set => elasticity = value;
         }
 
-        private Transform previousTarget;
-        private Vector3 previousScale;
+        private Transform targetTransform;
+        private Vector3 originalScale;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform;
-            previousScale = previousTarget.localScale;
-            
-            Tweener tween = target.transform.DOPunchScale(punch, duration, vibrato, elasticity);
+            targetTransform = target.transform;
+            originalScale = targetTransform.localScale;
+
+            Tweener tween = targetTransform.DOPunchScale(punch, duration, vibrato, elasticity);
 
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
-            previousTarget.localScale = previousScale;
+
+            targetTransform.localScale = originalScale;
         }
     }
 }

@@ -43,24 +43,25 @@ namespace BrunoMikoski.AnimationSequencer
             set => snapping = value;
         }
 
-        private Transform previousTarget;
-        private Vector3 previousPosition;
+        private Transform targetTransform;
+        private Vector3 originalPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform;
-            previousPosition = target.transform.position;
-            Tweener tween = target.transform.DOPunchPosition(punch, duration, vibrato, elasticity, snapping);
+            targetTransform = target.transform;
+            originalPosition = targetTransform.position;
+
+            Tweener tween = targetTransform.DOPunchPosition(punch, duration, vibrato, elasticity, snapping);
 
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
             
-            previousTarget.position = previousPosition;
+            targetTransform.position = originalPosition;
         }
     }
 }

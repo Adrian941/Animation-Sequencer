@@ -15,12 +15,12 @@ namespace BrunoMikoski.AnimationSequencer
             set => target = value;
         }
 
-        [SerializeField]
+        [SerializeField, Min(0)]
         protected float duration = 1;
         public float Duration
         {
             get => duration;
-            set => duration = value;
+            set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
         public void SetTarget(GameObject newTarget)

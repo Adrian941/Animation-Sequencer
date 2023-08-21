@@ -8,6 +8,7 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class MoveToPositionDOTweenActionBase : MoveDOTweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
+        public override string DisplayName => "Move To Position";
 
         [SerializeField]
         private Vector3 position;
@@ -16,8 +17,6 @@ namespace BrunoMikoski.AnimationSequencer
             get => position;
             set => position = value;
         }
-
-        public override string DisplayName => "Move To Position";
 
         protected override Vector3 GetPosition()
         {

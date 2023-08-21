@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Update: "Code formatting" applied to steps and actions.
 - Fixed warning about "Move to RectTransform Anchored position" action. Warning: "The same field name is serialized multiple times in the class or its parent class. This is not supported: Base(AnchoredPositionMoveToRectTransformPositionDOTweenActionBase) rectTransform".
 
 ## [0.5.1]

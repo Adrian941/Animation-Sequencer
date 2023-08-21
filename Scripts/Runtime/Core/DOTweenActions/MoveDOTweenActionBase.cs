@@ -11,6 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
     public abstract class MoveDOTweenActionBase : DOTweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
+        public override string DisplayName => "Move to Position";
 
         [SerializeField]
         private bool localMove;
@@ -28,42 +29,40 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
-        private Vector3 previousPosition;
-        private GameObject previousTarget;
-
-        public override string DisplayName => "Move to Position";
+        private Transform targetTransform;
+        private Vector3 originalPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            TweenerCore<Vector3, Vector3, VectorOptions> moveTween;
-            previousTarget = target;
+            targetTransform = target.transform;
+
+            TweenerCore<Vector3, Vector3, VectorOptions> tween;
             if (localMove)
             {
-                previousPosition = target.transform.localPosition;
-                moveTween = target.transform.DOLocalMove(GetPosition(), duration);
-                
+                originalPosition = targetTransform.localPosition;
+                tween = targetTransform.DOLocalMove(GetPosition(), duration);
             }
             else
             {
-                previousPosition = target.transform.position;
-                moveTween = target.transform.DOMove(GetPosition(), duration);
+                originalPosition = targetTransform.position;
+                tween = targetTransform.DOMove(GetPosition(), duration);
             }
+            tween.SetOptions(axisConstraint);
 
-            moveTween.SetOptions(axisConstraint);
-            return moveTween;
+            return tween;
         }
 
         protected abstract Vector3 GetPosition();
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
+
             if (localMove)
-                previousTarget.transform.localPosition = previousPosition;
+                targetTransform.localPosition = originalPosition;
             else
-                previousTarget.transform.position = previousPosition;
+                targetTransform.position = originalPosition;
         }
     }
 }

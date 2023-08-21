@@ -24,11 +24,12 @@ namespace BrunoMikoski.AnimationSequencer
             get => useLocalEulerAngles;
             set => useLocalEulerAngles = value;
         }
-        
+
         protected override Vector3 GetRotation()
         {
             if (!useLocalEulerAngles)
                 return target.eulerAngles;
+
             return target.localEulerAngles;
         }
     }

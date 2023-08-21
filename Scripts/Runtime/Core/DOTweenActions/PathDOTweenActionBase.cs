@@ -53,45 +53,40 @@ namespace BrunoMikoski.AnimationSequencer
             set => pathType = value;
         }
 
-        private Transform previousTarget;
-        private Vector3 previousPosition;
+        private Transform targetTransform;
+        private Vector3 originalPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            TweenerCore<Vector3, Path, PathOptions> tween;
+            targetTransform = target.transform;
 
-            previousTarget = target.transform;
+            TweenerCore<Vector3, Path, PathOptions> tween;
             if (!isLocal)
             {
-                tween = target.transform.DOPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
-                previousPosition = target.transform.position;
+                tween = targetTransform.DOPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
+                originalPosition = targetTransform.position;
             }
             else
             {
-                tween = target.transform.DOLocalPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
-                previousPosition = target.transform.localPosition;
+                tween = targetTransform.DOLocalPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
+                originalPosition = targetTransform.localPosition;
             }
 
             return tween;
         }
 
-
         protected abstract Vector3[] GetPathPositions();
+
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
+
             if (isLocal)
-            {
-                previousTarget.transform.localPosition = previousPosition;
-            }
+                targetTransform.localPosition = originalPosition;
             else
-            {
-                previousTarget.transform.position = previousPosition;
-            }
+                targetTransform.position = originalPosition;
         }
-        
     }
 }
 #endif

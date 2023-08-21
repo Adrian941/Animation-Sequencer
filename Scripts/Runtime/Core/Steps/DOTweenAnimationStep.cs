@@ -10,6 +10,7 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class DOTweenAnimationStep : GameObjectAnimationStep
     {
         public override string DisplayName => "Tween Target";
+
         [SerializeField]
         private int loopCount;
         public int LoopCount

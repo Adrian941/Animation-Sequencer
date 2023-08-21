@@ -16,9 +16,14 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         private Color color;
+        public Color Color
+        {
+            get => color;
+            set => color = value;
+        }
 
         private Graphic targetGraphic;
-        private Color previousColor;
+        private Color originalColor;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
@@ -32,15 +37,15 @@ namespace BrunoMikoski.AnimationSequencer
                 }
             }
 
-            previousColor = targetGraphic.color;
-            TweenerCore<Color, Color, ColorOptions> graphicTween = targetGraphic.DOColor(color, duration);
+            originalColor = targetGraphic.color;
 
+            TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOColor(color, duration);
 #if UNITY_EDITOR 
             if (!Application.isPlaying)
             {
                 // Work around a Unity bug where updating the colour does not cause any visual change outside of PlayMode.
                 // https://forum.unity.com/threads/editor-scripting-force-color-update.798663/
-                graphicTween.OnUpdate(() =>
+                tween.OnUpdate(() =>
                 {
                     targetGraphic.transform.localScale = new Vector3(1.001f, 1.001f, 1.001f);
                     targetGraphic.transform.localScale = new Vector3(1, 1, 1);
@@ -48,7 +53,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 #endif
             
-            return graphicTween;
+            return tween;
         }
         
         public override void ResetToInitialState()
@@ -56,9 +61,8 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetGraphic == null)
                 return;
 
-            targetGraphic.color = previousColor;
+            targetGraphic.color = originalColor;
         }
     }
 }
-
 #endif

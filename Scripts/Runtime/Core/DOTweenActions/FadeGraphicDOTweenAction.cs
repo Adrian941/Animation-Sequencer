@@ -14,16 +14,16 @@ namespace BrunoMikoski.AnimationSequencer
         public override Type TargetComponentType => typeof(Graphic);
         public override string DisplayName => "Fade Graphic";
 
-        [SerializeField]
+        [SerializeField, Range(0, 1)]
         private float alpha;
         public float Alpha
         {
             get => alpha;
-            set => alpha = value;
+            set => alpha = Mathf.Clamp01(value);
         }
 
         private Graphic targetGraphic;
-        private float previousAlpha;
+        private float originalAlpha;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
@@ -37,23 +37,23 @@ namespace BrunoMikoski.AnimationSequencer
                 }
             }
 
-            previousAlpha = targetGraphic.color.a;
-            TweenerCore<Color, Color, ColorOptions> graphicTween = targetGraphic.DOFade(alpha, duration);
-            
-#if UNITY_EDITOR 
+            originalAlpha = targetGraphic.color.a;
+
+            TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOFade(alpha, duration);
+#if UNITY_EDITOR
             if (!Application.isPlaying)
             {
                 // Work around a Unity bug where updating the colour does not cause any visual change outside of PlayMode.
                 // https://forum.unity.com/threads/editor-scripting-force-color-update.798663/
-                graphicTween.OnUpdate(() =>
+                tween.OnUpdate(() =>
                 {
                     targetGraphic.transform.localScale = new Vector3(1.001f, 1.001f, 1.001f);
                     targetGraphic.transform.localScale = new Vector3(1, 1, 1);
                 });
             }
 #endif
-                
-            return graphicTween;
+
+            return tween;
         }
 
         public override void ResetToInitialState()
@@ -62,7 +62,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return;
 
             Color color = targetGraphic.color;
-            color.a = previousAlpha;
+            color.a = originalAlpha;
             targetGraphic.color = color;
         }
     }

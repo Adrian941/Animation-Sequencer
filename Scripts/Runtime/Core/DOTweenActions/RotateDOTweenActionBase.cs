@@ -11,7 +11,6 @@ namespace BrunoMikoski.AnimationSequencer
     public abstract class RotateDOTweenActionBase : DOTweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
-
         public override string DisplayName => "Punch Scale";
 
         [SerializeField]
@@ -30,40 +29,40 @@ namespace BrunoMikoski.AnimationSequencer
             set => rotationMode = value;
         }
 
-
-        private Transform previousTarget;
-        private Quaternion previousRotation;
+        private Transform targetTransform;
+        private Quaternion originalRotation;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform;
-            TweenerCore<Quaternion, Vector3, QuaternionOptions> localTween;
+            targetTransform = target.transform;
+
+            TweenerCore<Quaternion, Vector3, QuaternionOptions> tween;
             if (local)
             {
-                previousRotation = target.transform.localRotation;
-                localTween = target.transform.DOLocalRotate(GetRotation(), duration, rotationMode);
+                originalRotation = targetTransform.localRotation;
+                tween = targetTransform.DOLocalRotate(GetRotation(), duration, rotationMode);
             }
             else
             {
-                previousRotation = target.transform.rotation;
-                localTween = target.transform.DORotate(GetRotation(), duration, rotationMode);
+                originalRotation = targetTransform.rotation;
+                tween = targetTransform.DORotate(GetRotation(), duration, rotationMode);
             }
 
-            return localTween;
+            return tween;
         }
 
-        
+
         protected abstract Vector3 GetRotation();
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
+
             if (!local)
-                previousTarget.rotation = previousRotation;
+                targetTransform.rotation = originalRotation;
             else
-                previousTarget.localRotation = previousRotation;
+                targetTransform.localRotation = originalRotation;
         }
     }
 }

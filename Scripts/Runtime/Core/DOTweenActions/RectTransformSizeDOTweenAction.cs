@@ -1,6 +1,5 @@
 ﻿#if DOTWEEN_ENABLED
 using System;
-using BrunoMikoski.AnimationSequencer;
 using DG.Tweening;
 using UnityEngine;
 
@@ -28,15 +27,25 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
-
-        private RectTransform previousTarget;
-        private Vector2 previousSize;
+        private RectTransform targetRectTransform;
+        private Vector2 originalSize;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform as RectTransform;
-            previousSize = previousTarget.sizeDelta;
-            var tween = previousTarget.DOSizeDelta(sizeDelta, duration);
+            if (targetRectTransform == null)
+            {
+                targetRectTransform = target.transform as RectTransform;
+
+                if (targetRectTransform == null)
+                {
+                    Debug.LogError($"{target} does not have {TargetComponentType} component");
+                    return null;
+                }
+            }
+
+            originalSize = targetRectTransform.sizeDelta;
+
+            var tween = targetRectTransform.DOSizeDelta(sizeDelta, duration);
             tween.SetOptions(axisConstraint);
 
             return tween;
@@ -44,10 +53,10 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetRectTransform == null)
                 return;
 
-            previousTarget.sizeDelta = previousSize;
+            targetRectTransform.sizeDelta = originalSize;
         }
     }
 }

@@ -10,12 +10,12 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override string DisplayName => "Wait for Interval";
 
-        [SerializeField]
+        [SerializeField, Min(0)]
         private float interval;
         public float Interval
         {
             get => interval;
-            set => interval = value;
+            set => interval = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
         public override void AddTweenToSequence(Sequence animationSequence)

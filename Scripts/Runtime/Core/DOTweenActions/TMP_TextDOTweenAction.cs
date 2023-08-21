@@ -1,6 +1,5 @@
 #if DOTWEEN_ENABLED
 #if TMP_ENABLED
-
 using System;
 using DG.Tweening;
 using DG.Tweening.Core;
@@ -40,39 +39,38 @@ namespace BrunoMikoski.AnimationSequencer
             get => scrambleMode;
             set => scrambleMode = value;
         }
-        
-        private TMP_Text tmpTextComponent;
-        
-        private string previousText;
-        private TMP_Text previousTarget;
+
+        private TMP_Text targetTmpText;
+        private string originalText;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            if (tmpTextComponent == null)
+            if (targetTmpText == null)
             {
-                tmpTextComponent = target.GetComponent<TMP_Text>();
-                if (tmpTextComponent == null)
+                targetTmpText = target.GetComponent<TMP_Text>();
+                if (targetTmpText == null)
                 {
                     Debug.LogError($"{target} does not have {TargetComponentType} component");
                     return null;
                 }
             }
 
-            previousText = tmpTextComponent.text;
-            previousTarget = tmpTextComponent;
-            TweenerCore<string, string, StringOptions> tween = tmpTextComponent.DOText(text, duration, richText, scrambleMode);
+            originalText = targetTmpText.text;
+
+            TweenerCore<string, string, StringOptions> tween = targetTmpText.DOText(text, duration, richText, scrambleMode);
+
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
-                return;
-            
-            if (string.IsNullOrEmpty(previousText))
+            if (targetTmpText == null)
                 return;
 
-            previousTarget.text = previousText;
+            if (string.IsNullOrEmpty(originalText))
+                return;
+
+            targetTmpText.text = originalText;
         }
     }
 }

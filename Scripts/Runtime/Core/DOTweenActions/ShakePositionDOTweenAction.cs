@@ -51,24 +51,25 @@ namespace BrunoMikoski.AnimationSequencer
             set => fadeout = value;
         }
 
-        private Transform previousTarget;
-        private Vector3 previousPosition;
+        private Transform targetTransform;
+        private Vector3 originalPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform;
-            previousPosition = previousTarget.position;
-            Tweener tween = target.transform.DOShakePosition(duration, strength, vibrato, randomness, snapping, fadeout);
+            targetTransform = target.transform;
+            originalPosition = targetTransform.position;
+
+            Tweener tween = targetTransform.DOShakePosition(duration, strength, vibrato, randomness, snapping, fadeout);
 
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
-            previousTarget.position = previousPosition;
+
+            targetTransform.position = originalPosition;
         }
     }
 }
