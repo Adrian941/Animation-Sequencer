@@ -7,6 +7,8 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public sealed class PathTransformPositionsDOTweenActionBase : PathDOTweenActionBase
     {
+        public override string DisplayName => "Move to Path Transform Positions";
+
         [SerializeField]
         private Transform[] pointPositions;
         public Transform[] PointPositions
@@ -15,8 +17,6 @@ namespace BrunoMikoski.AnimationSequencer
             set => pointPositions = value;
         }
 
-        public override string DisplayName => "Move to Path Transform Positions";
-        
         protected override Vector3[] GetPathPositions()
         {
             Vector3[] result = new Vector3[pointPositions.Length];

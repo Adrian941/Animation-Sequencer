@@ -9,6 +9,8 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public sealed class InvokeCallbackAnimationStep : AnimationStepBase
     {
+        public override string DisplayName => "Invoke Callback";
+
         [SerializeField]
         private UnityEvent callback = new UnityEvent();
         public UnityEvent Callback
@@ -16,9 +18,6 @@ namespace BrunoMikoski.AnimationSequencer
             get => callback;
             set => callback = value;
         }
-
-        public override string DisplayName => "Invoke Callback";
-        
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {

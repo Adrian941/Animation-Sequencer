@@ -8,7 +8,7 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public abstract class AnimationStepBase
     {
-        [SerializeField]
+        [SerializeField, Min(0)]
         private float delay;
         public float Delay => delay;
 

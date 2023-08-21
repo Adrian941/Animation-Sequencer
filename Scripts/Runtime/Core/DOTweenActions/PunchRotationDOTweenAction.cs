@@ -35,24 +35,25 @@ namespace BrunoMikoski.AnimationSequencer
             set => elasticity = value;
         }
 
-        private Transform previousTarget;
-        private Quaternion previousRotation;
+        private Transform targetTransform;
+        private Quaternion originalRotation;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform;
-            previousRotation = target.transform.rotation;
-            Tweener tween = target.transform.DOPunchRotation(punch, duration, vibrato, elasticity);
+            targetTransform = target.transform;
+            originalRotation = targetTransform.rotation;
+
+            Tweener tween = targetTransform.DOPunchRotation(punch, duration, vibrato, elasticity);
 
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
-            previousTarget.rotation = previousRotation;
+
+            targetTransform.rotation = originalRotation;
         }
     }
 }

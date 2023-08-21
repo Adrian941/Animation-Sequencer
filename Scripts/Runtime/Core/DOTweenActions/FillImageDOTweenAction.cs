@@ -22,32 +22,37 @@ namespace BrunoMikoski.AnimationSequencer
             set => fillAmount = Mathf.Clamp01(value);
         }
 
-        private Image image;
-        private float previousFillAmount;
+        private Image targetImage;
+        private float originalFillAmount;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            if (image == null)
+            if (targetImage == null)
             {
-                image = target.GetComponent<Image>();
-                if (image == null)
+                targetImage = target.GetComponent<Image>();
+                if (targetImage == null)
                 {
                     Debug.LogError($"{target} does not have {TargetComponentType} component");
                     return null;
                 }
             }
 
-            previousFillAmount = image.fillAmount;
-            TweenerCore<float, float, FloatOptions> tween = image.DOFillAmount(fillAmount, duration);
+            if (targetImage.type != Image.Type.Filled)
+                Debug.Log($"{target} with {TargetComponentType} component must be of type 'Filled' to work with 'Fill amount' tween");
+
+            originalFillAmount = targetImage.fillAmount;
+
+            TweenerCore<float, float, FloatOptions> tween = targetImage.DOFillAmount(fillAmount, duration);
+
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (image == null)
+            if (targetImage == null)
                 return;
 
-            image.fillAmount = previousFillAmount;
+            targetImage.fillAmount = originalFillAmount;
         }
     }
 }

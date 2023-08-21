@@ -43,26 +43,25 @@ namespace BrunoMikoski.AnimationSequencer
             set => fadeout = value;
         }
 
-
-        private Transform previousTarget;
-        private Quaternion previousRotation;
+        private Transform targetTransform;
+        private Quaternion originalRotation;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            previousTarget = target.transform;
-            previousRotation = previousTarget.rotation;
-            
-            Tweener tween = previousTarget.DOShakeRotation(duration, strength, vibrato, randomness, fadeout);
+            targetTransform = target.transform;
+            originalRotation = targetTransform.rotation;
+
+            Tweener tween = targetTransform.DOShakeRotation(duration, strength, vibrato, randomness, fadeout);
 
             return tween;
         }
 
         public override void ResetToInitialState()
         {
-            if (previousTarget == null)
+            if (targetTransform == null)
                 return;
-            
-            previousTarget.rotation = previousRotation;
+
+            targetTransform.rotation = originalRotation;
         }
     }
 }

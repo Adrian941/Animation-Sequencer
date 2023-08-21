@@ -8,6 +8,8 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public sealed class PlayParticleSystemAnimationStep : AnimationStepBase
     {
+        public override string DisplayName => "Play Particle System";
+
         [SerializeField]
         private ParticleSystem particleSystem;
         public ParticleSystem ParticleSystem
@@ -16,12 +18,12 @@ namespace BrunoMikoski.AnimationSequencer
             set => particleSystem = value;
         }
 
-        [SerializeField]
+        [SerializeField, Min(0)]
         private float duration = 1;
         public float Duration
         {
             get => duration;
-            set => duration = value;
+            set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
         [SerializeField]
@@ -32,8 +34,6 @@ namespace BrunoMikoski.AnimationSequencer
             set => stopEmittingWhenOver = value;
         }
 
-        public override string DisplayName => "Play Particle System";
-
         public override void AddTweenToSequence(Sequence animationSequence)
         {
             animationSequence.SetDelay(Delay);
@@ -41,7 +41,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 particleSystem.Play();
             });
-            
+
             animationSequence.AppendInterval(duration);
             animationSequence.AppendCallback(FinishParticles);
         }
@@ -68,9 +68,9 @@ namespace BrunoMikoski.AnimationSequencer
             string display = "NULL";
             if (particleSystem != null)
                 display = particleSystem.name;
+
             return $"{index}. Play {display} particle system";
         }
-
     }
 }
 #endif

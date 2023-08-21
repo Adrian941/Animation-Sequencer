@@ -8,7 +8,6 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class RotateToEulerAnglesRotateDOTweenAction : RotateDOTweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
-
         public override string DisplayName => "Rotate to Euler Angles";
 
         [SerializeField]
