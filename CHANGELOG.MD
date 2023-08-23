@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 - Update: "Code formatting" applied to steps and actions.
 - Fixed warning about "Move to RectTransform Anchored position" action. Warning: "The same field name is serialized multiple times in the class or its parent class. This is not supported: Base(AnchoredPositionMoveToRectTransformPositionDOTweenActionBase) rectTransform".
+- Fixed bug: AutoplayType changed from Awake to Start. Sometimes in a "move tween" action the target values are taken wrong because the AnimationSequencerController runs before the UI controls.
 
 ## [0.5.1]
 ### Changed

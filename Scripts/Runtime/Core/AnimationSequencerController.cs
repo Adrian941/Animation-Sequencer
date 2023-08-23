@@ -21,7 +21,7 @@ namespace BrunoMikoski.AnimationSequencer
         
         public enum AutoplayType
         {
-            Awake,
+            Start,
             OnEnable,
             Nothing
         }
@@ -33,7 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private bool timeScaleIndependent = false;
         [SerializeField]
-        private AutoplayType autoplayMode = AutoplayType.Awake;
+        private AutoplayType autoplayMode = AutoplayType.Start;
         [SerializeField]
         protected bool startPaused;
         [SerializeField]
@@ -72,9 +72,9 @@ namespace BrunoMikoski.AnimationSequencer
         private float progress = -1;
         
 
-        protected virtual void Awake()
+        protected virtual void Start()
         {
-            if (autoplayMode != AutoplayType.Awake)
+            if (autoplayMode != AutoplayType.Start)
                 return;
 
             Autoplay();
