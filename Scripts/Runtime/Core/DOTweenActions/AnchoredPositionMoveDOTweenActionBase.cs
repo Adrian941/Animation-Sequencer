@@ -20,7 +20,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
-        private RectTransform targetRectTransform;
+        protected RectTransform targetRectTransform;
         private Vector2 originalAnchorPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
