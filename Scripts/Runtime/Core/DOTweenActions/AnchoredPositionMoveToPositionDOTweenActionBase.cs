@@ -17,9 +17,28 @@ namespace BrunoMikoski.AnimationSequencer
             set => position = value;
         }
 
+        [SerializeField]
+        private bool local = true;
+        public bool Local
+        {
+            get => local;
+            set => local = value;
+        }
+
+        private Canvas parentCanvas;
+
         protected override Vector2 GetPosition()
         {
-            return position;
+            if (local)
+                return position;
+
+            if (parentCanvas == null)
+                parentCanvas = targetRectTransform.GetComponentInParent<Canvas>().rootCanvas;
+
+            Vector3 targetWorldPosition = ((RectTransform)parentCanvas.transform).TransformPoint(position);
+            Vector2 targetCanvasLocalPosition = targetRectTransform.InverseTransformPoint(targetWorldPosition);
+
+            return targetRectTransform.anchoredPosition + targetCanvasLocalPosition;
         }
     }
 }

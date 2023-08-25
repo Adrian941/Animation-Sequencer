@@ -32,7 +32,7 @@ namespace BrunoMikoski.AnimationSequencer
         public bool PreferUsingPreviousRelativeValue => preferUsingPreviousRelativeValue;
         
         [SerializeField]
-        private AnimationSequencerController.AutoplayType autoplayMode = AnimationSequencerController.AutoplayType.Awake;
+        private AnimationSequencerController.AutoplayType autoplayMode = AnimationSequencerController.AutoplayType.Start;
         public AnimationSequencerController.AutoplayType AutoplayMode => autoplayMode;
         
         [SerializeField]

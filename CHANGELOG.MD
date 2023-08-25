@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Improved "Move To Anchored Position" tween with "local" paramenter to move the object to local or global position in Canvas.
+- Fixed issue with "Move to RectTransform Anchored Position" tween. The destination target is now calculated based on the global position instead of local position based on the canvas.
 - Update: "Code formatting" applied to steps and actions.
 - Fixed warning about "Move to RectTransform Anchored position" action. Warning: "The same field name is serialized multiple times in the class or its parent class. This is not supported: Base(AnchoredPositionMoveToRectTransformPositionDOTweenActionBase) rectTransform".
+- Fixed bug: AutoplayType changed from Awake to Start. Sometimes in a "move tween" action the target values are taken wrong because the AnimationSequencerController runs before the UI controls.
 
 ## [0.5.1]
 ### Changed
