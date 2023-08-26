@@ -11,14 +11,13 @@ namespace BrunoMikoski.AnimationSequencer
     public abstract class MoveDOTweenActionBase : DOTweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
-        public override string DisplayName => "Move to Position";
 
         [SerializeField]
-        private bool localMove;
-        public bool LocalMove
+        private bool local;
+        public bool Local
         {
-            get => localMove;
-            set => localMove = value;
+            get => local;
+            set => local = value;
         }
 
         [SerializeField]
@@ -37,7 +36,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
 
             TweenerCore<Vector3, Vector3, VectorOptions> tween;
-            if (localMove)
+            if (local)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalMove(GetPosition(), duration);
@@ -59,7 +58,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (localMove)
+            if (local)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;

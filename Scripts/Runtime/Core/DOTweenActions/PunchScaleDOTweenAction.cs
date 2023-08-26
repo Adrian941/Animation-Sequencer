@@ -12,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Punch Scale";
 
         [SerializeField]
-        private Vector3 punch;
+        private Vector3 punch = Vector3.one;
         public Vector3 Punch
         {
             get => punch;

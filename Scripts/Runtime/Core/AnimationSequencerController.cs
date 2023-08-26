@@ -338,11 +338,11 @@ namespace BrunoMikoski.AnimationSequencer
             autoplayMode = autoplayType;
         }
         
-        public void SetPlayOnAwake(bool targetPlayOnAwake)
+        public void SetPlayOnStart(bool targetPlayOnAwake)
         {
         }
         
-        public void SetPauseOnAwake(bool targetPauseOnAwake)
+        public void SetPauseOnStart(bool targetPauseOnAwake)
         {
             startPaused = targetPauseOnAwake;
         }

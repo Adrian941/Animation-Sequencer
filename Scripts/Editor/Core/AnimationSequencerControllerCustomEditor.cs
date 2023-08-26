@@ -654,8 +654,8 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencerController != null)
             {
                 sequencerController.SetAutoplayMode(AnimationControllerDefaults.Instance.AutoplayMode);
-                sequencerController.SetPlayOnAwake(AnimationControllerDefaults.Instance.PlayOnAwake);
-                sequencerController.SetPauseOnAwake(AnimationControllerDefaults.Instance.PauseOnAwake);
+                sequencerController.SetPlayOnStart(AnimationControllerDefaults.Instance.PlayOnStart);
+                sequencerController.SetPauseOnStart(AnimationControllerDefaults.Instance.PauseOnStart);
                 sequencerController.SetTimeScaleIndependent(AnimationControllerDefaults.Instance.TimeScaleIndependent);
                 sequencerController.SetPlayType(AnimationControllerDefaults.Instance.PlayType);
                 sequencerController.SetUpdateType(AnimationControllerDefaults.Instance.UpdateType);

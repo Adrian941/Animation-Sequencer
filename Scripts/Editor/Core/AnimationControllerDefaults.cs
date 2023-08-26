@@ -36,12 +36,12 @@ namespace BrunoMikoski.AnimationSequencer
         public AnimationSequencerController.AutoplayType AutoplayMode => autoplayMode;
         
         [SerializeField]
-        private bool playOnAwake = false;
-        public bool PlayOnAwake => playOnAwake;
+        private bool playOnStart = false;
+        public bool PlayOnStart => playOnStart;
         
         [SerializeField]
-        private bool pauseOnAwake = false;
-        public bool PauseOnAwake => pauseOnAwake;
+        private bool pauseOnStart = false;
+        public bool PauseOnStart => pauseOnStart;
         
         [SerializeField]
         private bool timeScaleIndependent = false;

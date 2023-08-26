@@ -12,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Shake Position";
 
         [SerializeField]
-        private Vector3 strength;
+        private Vector3 strength = Vector3.one;
         public Vector3 Strength
         {
             get => strength;

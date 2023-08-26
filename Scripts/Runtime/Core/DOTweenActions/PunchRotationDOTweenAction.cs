@@ -12,7 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Punch Rotation";
 
         [SerializeField]
-        private Vector3 punch;
+        private Vector3 punch = new Vector3(45, 45, 45);
         public Vector3 Punch
         {
             get => punch;
