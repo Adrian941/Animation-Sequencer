@@ -32,11 +32,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        protected bool isRelative;
-        public bool IsRelative
+        protected bool relative;
+        public bool Relative
         {
-            get => isRelative;
-            set => isRelative = value;
+            get => relative;
+            set => relative = value;
         }
 
         public virtual Type TargetComponentType { get; }
@@ -50,10 +50,10 @@ namespace BrunoMikoski.AnimationSequencer
             if (direction == AnimationDirection.From)
                 // tween.SetRelative() does not work for From variant of "Move To Anchored Position", it must be set
                 // here instead. Not sure if this is a bug in DOTween or expected behaviour...
-                tween.From(isRelative: isRelative);
+                tween.From(isRelative: relative);
 
             tween.SetEase(ease);
-            tween.SetRelative(isRelative);
+            tween.SetRelative(relative);
             return tween;
         }
 

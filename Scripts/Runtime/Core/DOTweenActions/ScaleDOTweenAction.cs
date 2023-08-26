@@ -11,7 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class ScaleDOTweenAction : DOTweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
-        public override string DisplayName => "Scale to Size";
+        public override string DisplayName => "Scale To Size";
 
         [SerializeField]
         private Vector3 scale;

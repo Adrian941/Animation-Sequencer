@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public sealed class PathPositionDOTweenActionBase : PathDOTweenActionBase
     {
-        public override string DisplayName => "Move to Path Positions";
+        public override string DisplayName => "Move To Path Positions";
 
         [SerializeField]
         private Vector3[] positions;

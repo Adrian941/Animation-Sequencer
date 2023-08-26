@@ -14,11 +14,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override Type TargetComponentType => typeof(Transform);
 
         [SerializeField]
-        protected bool isLocal;
-        public bool IsLocal
+        protected bool local;
+        public bool Local
         {
-            get => isLocal;
-            set => isLocal = value;
+            get => local;
+            set => local = value;
         }
 
         [SerializeField]
@@ -61,7 +61,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
 
             TweenerCore<Vector3, Path, PathOptions> tween;
-            if (!isLocal)
+            if (!local)
             {
                 tween = targetTransform.DOPath(GetPathPositions(), duration, pathType, pathMode, resolution, gizmoColor);
                 originalPosition = targetTransform.position;
@@ -82,7 +82,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (isLocal)
+            if (local)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;
