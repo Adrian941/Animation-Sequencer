@@ -64,13 +64,18 @@ namespace BrunoMikoski.AnimationSequencer
 #if UNITY_EDITOR
         private bool requiresReset = false;
 #endif
-
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
         public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
 
         [SerializeField, Range(0, 1)] 
         private float progress = -1;
-        
+        private bool isSequenceGenerated;
+
+
+        protected virtual void Awake()
+        {
+            playTypeInternal = playType;
+        }
 
         protected virtual void Start()
         {
@@ -113,73 +118,68 @@ namespace BrunoMikoski.AnimationSequencer
         {
             ClearPlayingSequence();
         }
-        
-        public virtual void Play()
-        {
-            Play(null);
-        }
 
-        public virtual void Play(Action onCompleteCallback)
+        public virtual void Play(bool resetFirst = false, Action onCompleteCallback = null)
         {
-            playTypeInternal = playType;
-            
-            ClearPlayingSequence();
-            
+            //In editor mode, always take the "PlayType" assigned in the inspector.
+            if (!Application.isPlaying)
+                playTypeInternal = playType;
+
+            //"Backwards" does not work with "Loops", so play the "Forward" sequence.
+            if (playTypeInternal == PlayType.Backward && loops != 0)
+                playTypeInternal = PlayType.Forward;
+
+            //Clean and assign the "OnFinished" event.
             onFinishedEvent.RemoveAllListeners();
-            
             if (onCompleteCallback != null)
                 onFinishedEvent.AddListener(onCompleteCallback.Invoke);
 
-            playingSequence = GenerateSequence();
+            //Create the sequence if it does not exist.
+            if (playingSequence == null)
+            {
+                if (autoKill)
+                    ResetToInitialState();
+
+                playingSequence = GenerateSequence();
+                isSequenceGenerated = true;
+            }
 
             switch (playTypeInternal)
             {
                 case PlayType.Backward:
+                    //Reset the animation if "resetFirst" = true, the sequence has just been generated or the sequence is complete.
+                    if (resetFirst || isSequenceGenerated || (!playingSequence.IsComplete() && !IsPlaying))
+                        playingSequence.Goto(playingSequence.Duration());
+
                     playingSequence.PlayBackwards();
                     break;
-
                 case PlayType.Forward:
+                    //Reset the animation if "resetFirst" = true or the sequence is complete.
+                    if (resetFirst || (!autoKill && playingSequence.IsComplete()))
+                        playingSequence.Goto(0);
+
                     playingSequence.PlayForward();
                     break;
-
                 default:
                     playingSequence.Play();
                     break;
             }
+
+            isSequenceGenerated = false;
         }
 
-        public virtual void PlayForward(bool resetFirst = true, Action onCompleteCallback = null)
+        public virtual void PlayForward(bool resetFirst = false, Action onCompleteCallback = null)
         {
-            if (playingSequence == null)
-                Play();
-            
             playTypeInternal = PlayType.Forward;
-            onFinishedEvent.RemoveAllListeners();
 
-            if (onCompleteCallback != null)
-                onFinishedEvent.AddListener(onCompleteCallback.Invoke);
-            
-            if (resetFirst)
-                SetProgress(0);
-            
-            playingSequence.PlayForward();
+            Play(resetFirst, onCompleteCallback);
         }
 
-        public virtual void PlayBackwards(bool completeFirst = true, Action onCompleteCallback = null)
+        public virtual void PlayBackwards(bool completeFirst = false, Action onCompleteCallback = null)
         {
-            if (playingSequence == null)
-                Play();
-            
             playTypeInternal = PlayType.Backward;
-            onFinishedEvent.RemoveAllListeners();
 
-            if (onCompleteCallback != null)
-                onFinishedEvent.AddListener(onCompleteCallback.Invoke);
-            
-            if (completeFirst)
-                SetProgress(1);
-            
-            playingSequence.PlayBackwards();
+            Play(completeFirst, onCompleteCallback);
         }
 
         public virtual void SetTime(float seconds, bool andPlay = true)
@@ -199,7 +199,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (playingSequence == null)
                 Play();
 
-            playingSequence.Goto(progress, andPlay);
+            playingSequence.Goto(progress * playingSequence.Duration(), andPlay);
         }
 
         public virtual void TogglePause()
@@ -225,7 +225,6 @@ namespace BrunoMikoski.AnimationSequencer
 
             playingSequence.Play();
         }
-
 
         public virtual void Complete(bool withCallbacks = true)
         {
@@ -274,6 +273,11 @@ namespace BrunoMikoski.AnimationSequencer
                 else
                 {
                     onFinishedEvent.Invoke();
+
+                    //Kill the sequence manually if autokill = true when "Backwards" sequence is completed.
+                    //The reason: DoTween does not kill the sequence even though kill = true only in the case of "Backwards".
+                    if (Application.isPlaying && autoKill)
+                        ClearPlayingSequence();
                 }
             });
             
@@ -285,25 +289,18 @@ namespace BrunoMikoski.AnimationSequencer
             sequence.SetTarget(this);
             sequence.SetAutoKill(autoKill);
             sequence.SetUpdate(updateType, timeScaleIndependent);
-            sequence.OnUpdate(() =>
-            {
-                onProgressEvent.Invoke();
-            });
+            sequence.OnUpdate(() => onProgressEvent.Invoke());
+            sequence.OnKill(() => playingSequence = null);
             // See comment above regarding bookending via AppendCallback.
             sequence.AppendCallback(() =>
             {
                 if (playTypeInternal == PlayType.Forward)
-                {
                     onFinishedEvent.Invoke();
-                }
                 else
-                {
                     onStartEvent.Invoke();
-                }
             });
 
             int targetLoops = loops;
-
             if (!Application.isPlaying)
             {
                 if (loops == -1)
@@ -312,9 +309,9 @@ namespace BrunoMikoski.AnimationSequencer
                     Debug.LogWarning("Infinity sequences on editor can cause issues, using 10 loops while on editor.");
                 }
             }
-
             sequence.SetLoops(targetLoops, loopType);
             sequence.timeScale = playbackSpeed;
+
             return sequence;
         }
 

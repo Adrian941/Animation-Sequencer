@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Update: When the "PlayForward" or "PlayBackwards" functions are executed one after the other they interrupt each other to give priority to the last function called, however if these functions are called themselves multiple times nothing happens unless the animation has been completed, in this last case the animation restarts and runs.
+- Fixed issue where "PlayForward" function didn´t work when called from code.
+- Fixed issue where "Backwards" animation didn´t work in both editor or play mode.
+- Fixed issue where "PlayBackwards" function didn´t work when called from code.
+- Fixed issue with "SetProgress" function: The progress value was not being calculated correctly.
 - Improved "Move To Anchored Position" tween with "local" paramenter to move the object to local or global position in Canvas.
 - Fixed issue with "Move to RectTransform Anchored Position" tween. The destination target is now calculated based on the global position instead of local position based on the canvas.
 - Update: "Code formatting" applied to steps and actions.
