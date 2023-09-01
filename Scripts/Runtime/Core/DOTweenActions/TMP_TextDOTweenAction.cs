@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
-
     [Serializable]
     public sealed class TMP_TextDOTweenAction : DOTweenActionBase
     {

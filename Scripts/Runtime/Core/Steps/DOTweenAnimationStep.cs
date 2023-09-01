@@ -55,6 +55,7 @@ namespace BrunoMikoski.AnimationSequencer
             else
                 animationSequence.Append(sequence);
 
+            RefreshEditorOnSequenceUpdate(sequence, target.transform);
         }
 
         public override void ResetToInitialState()
@@ -63,6 +64,8 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 actions[i].ResetToInitialState();
             }
+
+            RefreshEditor(target.transform);
         }
 
         public override string GetDisplayNameForEditor(int index)
@@ -84,6 +87,44 @@ namespace BrunoMikoski.AnimationSequencer
 
             result = actions[index] as T;
             return result != null;
+        }
+
+        private void RefreshEditorOnSequenceUpdate(Sequence sequence, Transform targetTransform)
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                sequence.OnUpdate(() =>
+                {
+                    RefreshEditor(targetTransform);
+                });
+            }
+#endif
+        }
+
+        private VersionComparator.VersionComparisonResult versionComparison = VersionComparator.VersionComparisonResult.IncorrectFormat;
+
+        // Work around a Unity bug where updating some UI properties like the colour does not cause any visual change outside of PlayMode.
+        // https://forum.unity.com/threads/editor-scripting-force-color-update.798663/
+        // The bug was fixed from DoTween version "1.2.735". I keep this patch because I don't like DoTween marking the scene as dirty.
+        // https://github.com/Demigiant/dotween/commit/89607add6d8fc275cb000d0f67769df55adffc5b
+        private void RefreshEditor(Transform targetTransform)
+        {
+#if UNITY_EDITOR
+            if (versionComparison == VersionComparator.VersionComparisonResult.IncorrectFormat)
+                versionComparison = VersionComparator.Compare(DOTween.Version, "1.2.705");
+
+            if (!Application.isPlaying && targetTransform != null && versionComparison <= VersionComparator.VersionComparisonResult.Equal)
+            {
+                if (targetTransform.hasChanged)
+                {
+                    targetTransform.hasChanged = false;
+                    return;
+                }
+
+                UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+            }
+#endif
         }
     }
 }
