@@ -27,7 +27,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            if (targetGraphic == null)
+            if (targetGraphic == null || targetGraphic.gameObject != target)
             {
                 targetGraphic = target.GetComponent<Graphic>();
                 if (targetGraphic == null)
@@ -40,18 +40,6 @@ namespace BrunoMikoski.AnimationSequencer
             originalAlpha = targetGraphic.color.a;
 
             TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOFade(alpha, duration);
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                // Work around a Unity bug where updating the colour does not cause any visual change outside of PlayMode.
-                // https://forum.unity.com/threads/editor-scripting-force-color-update.798663/
-                tween.OnUpdate(() =>
-                {
-                    targetGraphic.transform.localScale = new Vector3(1.001f, 1.001f, 1.001f);
-                    targetGraphic.transform.localScale = new Vector3(1, 1, 1);
-                });
-            }
-#endif
 
             return tween;
         }

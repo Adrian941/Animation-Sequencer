@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
-
     [Serializable]
     public sealed class TMP_TextDOTweenAction : DOTweenActionBase
     {
@@ -45,7 +44,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            if (targetTmpText == null)
+            if (targetTmpText == null || targetTmpText.gameObject != target)
             {
                 targetTmpText = target.GetComponent<TMP_Text>();
                 if (targetTmpText == null)

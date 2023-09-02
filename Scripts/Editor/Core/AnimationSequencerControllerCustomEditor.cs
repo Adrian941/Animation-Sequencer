@@ -86,7 +86,8 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 if (DOTweenEditorPreview.isPreviewing)
                 {
-                    sequencerController.ResetToInitialState();
+                    sequencerController.Rewind();
+                    sequencerController.ClearPlayingSequence();
                     DOTweenEditorPreview.Stop();            
                 }
             }
@@ -112,7 +113,8 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 if (DOTweenEditorPreview.isPreviewing)
                 {
-                    sequencerController.ResetToInitialState();
+                    sequencerController.Rewind();
+                    sequencerController.ClearPlayingSequence();
                     DOTweenEditorPreview.Stop();            
                 }
             }
@@ -122,7 +124,8 @@ namespace BrunoMikoski.AnimationSequencer
         {
             if (DOTweenEditorPreview.isPreviewing)
             {
-                sequencerController.ResetToInitialState();
+                sequencerController.Rewind();
+                sequencerController.ClearPlayingSequence();
                 DOTweenEditorPreview.Stop();            
             }
         }
@@ -367,10 +370,8 @@ namespace BrunoMikoski.AnimationSequencer
                 if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StopButtonGUIContent, previewButtonStyle))
                 {
                     sequencerController.Rewind();
-                    DOTween.Kill(sequencerController.PlayingSequence);
-                    DOTweenEditorPreview.Stop();
-                    sequencerController.ResetToInitialState();
                     sequencerController.ClearPlayingSequence();
+                    DOTweenEditorPreview.Stop();
                     if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
                         showStepsPanel = wasShowingStepsPanel;
                 }
