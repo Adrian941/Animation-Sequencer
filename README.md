@@ -12,15 +12,15 @@
         <img src="https://img.shields.io/npm/v/com.brunomikoski.animationsequencer?label=openupm&amp;registry_uri=https://package.openupm.com" />
     </a>
 
-  <a href="https://github.com/brunomikoski/Animation-Sequencer/issues">
-     <img alt="GitHub issues" src ="https://img.shields.io/github/issues/brunomikoski/Animation-Sequencer" />
+  <a href="https://github.com/Adrian941/Animation-Sequencer/issues">
+     <img alt="GitHub issues" src ="https://img.shields.io/github/issues/Adrian941/Animation-Sequencer" />
   </a>
 
-  <a href="https://github.com/brunomikoski/Animation-Sequencer/pulls">
-   <img alt="GitHub pull requests" src ="https://img.shields.io/github/issues-pr/brunomikoski/Animation-Sequencer" />
+  <a href="https://github.com/Adrian941/Animation-Sequencer/pulls">
+   <img alt="GitHub pull requests" src ="https://img.shields.io/github/issues-pr/Adrian941/Animation-Sequencer" />
   </a>
   
-  <img alt="GitHub last commit" src ="https://img.shields.io/github/last-commit/brunomikoski/Animation-Sequencer" />
+  <img alt="GitHub last commit" src ="https://img.shields.io/github/last-commit/Adrian941/Animation-Sequencer" />
 </p>
 
 <p align="center">
@@ -208,7 +208,7 @@ You can also add it directly from GitHub on Unity 2019.4+. Note that you won't b
 - open Package Manager
 - click <kbd>+</kbd>
 - select <kbd>Add from Git URL</kbd>
-- paste `https://github.com/brunomikoski/Animation-Sequencer.git`
+- paste `https://github.com/Adrian941/Animation-Sequencer.git`
 - click <kbd>Add</kbd>
 </details>
 
