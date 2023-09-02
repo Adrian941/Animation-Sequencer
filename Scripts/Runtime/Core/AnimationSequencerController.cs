@@ -127,6 +127,11 @@ namespace BrunoMikoski.AnimationSequencer
             ClearPlayingSequence();
         }
 
+        public virtual void Play()
+        {
+            Play(false, null);
+        }
+
         public virtual void Play(bool resetFirst = false, Action onCompleteCallback = null)
         {
             //In editor mode, always take the "PlayType" assigned in the inspector.
@@ -177,11 +182,21 @@ namespace BrunoMikoski.AnimationSequencer
             isSequenceGenerated = false;
         }
 
+        public virtual void PlayForward()
+        {
+            PlayForward(false, null);
+        }
+
         public virtual void PlayForward(bool resetFirst = false, Action onCompleteCallback = null)
         {
             playTypeInternal = PlayType.Forward;
 
             Play(resetFirst, onCompleteCallback);
+        }
+
+        public virtual void PlayBackwards()
+        {
+            PlayBackwards(false, null);
         }
 
         public virtual void PlayBackwards(bool completeFirst = false, Action onCompleteCallback = null)

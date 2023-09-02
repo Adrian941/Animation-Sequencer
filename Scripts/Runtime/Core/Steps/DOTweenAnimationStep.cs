@@ -102,7 +102,9 @@ namespace BrunoMikoski.AnimationSequencer
 #endif
         }
 
+#if UNITY_EDITOR
         private VersionComparator.VersionComparisonResult versionComparison = VersionComparator.VersionComparisonResult.IncorrectFormat;
+#endif
 
         // Work around a Unity bug where updating some UI properties like the colour does not cause any visual change outside of PlayMode.
         // https://forum.unity.com/threads/editor-scripting-force-color-update.798663/
