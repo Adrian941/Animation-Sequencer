@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Fixed issue when using "EditorPreview" and exiting "EditingPrefab". Bug: "MissingReferenceException: The object of type 'GameObject' has been destroyed but you are still trying to access it".
+- Fixed issue where the "AnimationSequencerController" loses focus: Now when this happens, target values and EditorPreview settings are reset.
 - Fixed issue when tween target was changed and not taken into account.
 - Fixed issue with UI objects tweens; in EditorPreview, UI elements were not updating correctly.
 - Fixed issue when using color tween and scale tween at the same time in editor mode.
