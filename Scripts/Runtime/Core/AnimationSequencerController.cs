@@ -26,6 +26,13 @@ namespace BrunoMikoski.AnimationSequencer
             Nothing
         }
 
+        public enum KillType
+        {
+            None,
+            Reset,
+            Complete
+        }
+
         [SerializeReference]
         private AnimationStepBase[] animationSteps = Array.Empty<AnimationStepBase>();
         [SerializeField]
@@ -70,6 +77,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField, Range(0, 1)] 
         private float progress = -1;
         private bool isSequenceGenerated;
+        private bool resetWhenCreateSequence;
 
 
         protected virtual void Awake()
@@ -137,11 +145,12 @@ namespace BrunoMikoski.AnimationSequencer
             //Create the sequence if it does not exist.
             if (playingSequence == null)
             {
-                if (autoKill)
+                if (Application.isPlaying && autoKill && resetWhenCreateSequence)
                     ResetToInitialState();
 
                 playingSequence = GenerateSequence();
                 isSequenceGenerated = true;
+                resetWhenCreateSequence = true;
             }
 
             switch (playTypeInternal)
@@ -242,12 +251,16 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Rewind(includeDelay);
         }
 
-        public virtual void Kill(bool complete = false)
+        public virtual void Kill(KillType killType = KillType.Reset)
         {
-            if (!IsPlaying)
-                return;
+            DOTween.Kill(this, killType == KillType.Complete);
+            DOTween.Kill(playingSequence, killType == KillType.Complete);
 
-            playingSequence.Kill(complete);
+            if (killType == KillType.Reset)
+                ResetToInitialState();
+
+            playingSequence = null;
+            resetWhenCreateSequence = false;
         }
 
         public virtual IEnumerator PlayEnumerator()

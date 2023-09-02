@@ -25,7 +25,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
-            if (targetRectTransform == null)
+            if (targetRectTransform == null || targetRectTransform.gameObject != target)
             {
                 targetRectTransform = target.transform as RectTransform;
 

@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Fixed issue when tween target was changed and not taken into account.
 - Fixed issue with UI objects tweens; in EditorPreview, UI elements were not updating correctly.
 - Fixed issue when using color tween and scale tween at the same time in editor mode.
 - Update: When the "PlayForward" or "PlayBackwards" functions are executed one after the other they interrupt each other to give priority to the last function called, however if these functions are called themselves multiple times nothing happens unless the animation has been completed, in this last case the animation restarts and runs.
