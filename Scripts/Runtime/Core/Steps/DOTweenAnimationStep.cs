@@ -65,7 +65,8 @@ namespace BrunoMikoski.AnimationSequencer
                 actions[i].ResetToInitialState();
             }
 
-            RefreshEditor(target.transform);
+            if (target != null)
+                RefreshEditor(target.transform);
         }
 
         public override string GetDisplayNameForEditor(int index)
