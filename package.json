@@ -1,7 +1,7 @@
 {
   "name": "com.brunomikoski.animationsequencer",
   "displayName": "Animation Sequencer",
-  "version": "0.5.1",
+  "version": "0.5.4",
   "unity": "2018.4",
   "description": "Animation sequencer is a way to create complex animations of sequence of events by a friendly user interface. Requires DOTween v1.2.632",
   "keywords": [
@@ -10,12 +10,12 @@
     "sequence"
   ],
   "category": "editor extensions",
-  "homepage": "https://github.com/brunomikoski/Animation-Sequencer",
+  "homepage": "https://github.com/Adrian941/Animation-Sequencer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/brunomikoski/Animation-Sequencer.git"
+    "url": "https://github.com/Adrian941/Animation-Sequencer.git"
   },
-  "bugs": "https://github.com/brunomikoski/Animation-Sequencer/issues",
+  "bugs": "https://github.com/Adrian941/Animation-Sequencer/issues",
   "author": {
     "name": "Bruno Mikoski",
     "url": "https://www.brunomikoski.com"
