@@ -216,7 +216,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
-[0.5.4]: https://github.com/Adrian941/Animation-Sequencer/releases/tag/v0.5.4
+[0.5.4]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.4
 [0.5.1]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.5.1
 [0.5.0]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.5.0
 [0.4.0]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.4.0
