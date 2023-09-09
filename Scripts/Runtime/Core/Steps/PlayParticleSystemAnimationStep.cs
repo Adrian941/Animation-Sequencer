@@ -36,26 +36,44 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            animationSequence.SetDelay(Delay);
-            animationSequence.AppendCallback(() =>
+            Sequence sequence = DOTween.Sequence();
+            sequence.SetDelay(Delay);
+            sequence.AppendCallback(()=>
             {
-                particleSystem.Play();
+                if (!animationSequence.IsBackwards())
+                    StartParticles();
+                else
+                    FinishParticles();
+
+            });
+            sequence.AppendInterval(duration);
+            sequence.AppendCallback(()=>
+            {
+                if (!animationSequence.IsBackwards())
+                    FinishParticles();
+                else
+                    StartParticles();
             });
 
-            animationSequence.AppendInterval(duration);
-            animationSequence.AppendCallback(FinishParticles);
+            if (FlowType == FlowType.Join)
+                animationSequence.Join(sequence);
+            else
+                animationSequence.Append(sequence);
         }
 
         public override void ResetToInitialState()
         {
         }
 
+        private void StartParticles()
+        {
+            particleSystem.Play();
+        }
+
         private void FinishParticles()
         {
             if (stopEmittingWhenOver)
-            {
                 particleSystem.Stop();
-            }
         }
 
         public void SetTarget(ParticleSystem newTarget)

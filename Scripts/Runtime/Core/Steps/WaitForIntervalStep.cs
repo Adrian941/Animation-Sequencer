@@ -22,7 +22,6 @@ namespace BrunoMikoski.AnimationSequencer
         {
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
-
             sequence.AppendInterval(interval);
 
             if (FlowType == FlowType.Join)

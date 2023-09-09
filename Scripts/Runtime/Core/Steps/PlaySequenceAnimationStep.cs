@@ -22,6 +22,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             Sequence sequence = sequencer.GenerateSequence();
             sequence.SetDelay(Delay);
+
             if (FlowType == FlowType.Join)
                 animationSequence.Join(sequence);
             else
@@ -38,6 +39,7 @@ namespace BrunoMikoski.AnimationSequencer
             string display = "NULL";
             if (sequencer != null)
                 display = sequencer.name;
+
             return $"{index}. Play {display} Sequence";
         }
 
