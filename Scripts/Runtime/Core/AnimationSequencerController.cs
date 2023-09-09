@@ -74,8 +74,6 @@ namespace BrunoMikoski.AnimationSequencer
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
         public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
 
-        [SerializeField, Range(0, 1)] 
-        private float progress = -1;
         private bool isSequenceGenerated;
         private bool resetWhenCreateSequence;
 
@@ -395,14 +393,6 @@ namespace BrunoMikoski.AnimationSequencer
         public void SetLoops(int targetLoops)
         {
             loops = targetLoops;
-        }
-
-        private void Update()
-        {
-            if (progress == -1.0f)
-                return;
-            
-            SetProgress(progress);
         }
 
 #if UNITY_EDITOR

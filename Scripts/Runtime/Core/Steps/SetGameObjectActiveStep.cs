@@ -11,11 +11,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Set Game Object Active";
 
         [SerializeField]
-        private GameObject targetGameObject;
-        public GameObject TargetGameObject
+        private GameObject target;
+        public GameObject Target
         {
-            get => targetGameObject;
-            set => targetGameObject = value;
+            get => target;
+            set => target = value;
         }
 
         [SerializeField]
@@ -26,37 +26,37 @@ namespace BrunoMikoski.AnimationSequencer
             set => active = value;
         }
 
-        private bool wasActive;
+        private bool? originalActive;
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
-            wasActive = targetGameObject.activeSelf;
-            if (wasActive == active)
-                return;
+            if (!originalActive.HasValue)
+                originalActive = target.activeSelf;
 
-            Sequence behaviourSequence = DOTween.Sequence();
-            behaviourSequence.SetDelay(Delay);
+            Sequence sequence = DOTween.Sequence();
+            sequence.SetDelay(Delay);
+            sequence.AppendInterval(0.001f);    //Interval added for a bug when this tween runs in "Backwards" direction.
+            sequence.AppendCallback(() => target.SetActive(active));
 
-            behaviourSequence.AppendCallback(() =>
-            {
-                targetGameObject.SetActive(active);
-            });
             if (FlowType == FlowType.Join)
-                animationSequence.Join(behaviourSequence);
+                animationSequence.Join(sequence);
             else
-                animationSequence.Append(behaviourSequence);
+                animationSequence.Append(sequence);
         }
 
         public override void ResetToInitialState()
         {
-            targetGameObject.SetActive(wasActive);
+            if (!originalActive.HasValue)
+                return;
+
+            target.SetActive(originalActive.Value);
         }
 
         public override string GetDisplayNameForEditor(int index)
         {
             string display = "NULL";
-            if (targetGameObject != null)
-                display = targetGameObject.name;
+            if (target != null)
+                display = target.name;
             
             return $"{index}. Set {display} Active: {active}";
         }    

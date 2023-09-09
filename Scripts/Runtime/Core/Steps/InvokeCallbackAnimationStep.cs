@@ -23,7 +23,8 @@ namespace BrunoMikoski.AnimationSequencer
         {
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
-            sequence.AppendCallback(() => callback.Invoke());
+            sequence.AppendInterval(0.001f);    //Interval added for a bug when this tween runs in "Backwards" direction.
+            sequence.AppendCallback(callback.Invoke);
             
             if (FlowType == FlowType.Append)
                 animationSequence.Append(sequence);

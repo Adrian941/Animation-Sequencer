@@ -46,7 +46,6 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.onRemoveCallback += OnClickToRemove;
             reorderableList.onReorderCallback += OnListOrderChanged;
             reorderableList.drawHeaderCallback += OnDrawerHeader;
-            EditorApplication.update += EditorUpdate;
             EditorApplication.playModeStateChanged += OnEditorPlayModeChanged;
             
 #if UNITY_2021_1_OR_NEWER
@@ -57,8 +56,6 @@ namespace BrunoMikoski.AnimationSequencer
             
             Repaint();
         }
-
-       
 
         public override bool RequiresConstantRepaint()
         {
@@ -74,7 +71,6 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.onReorderCallback -= OnListOrderChanged;
             reorderableList.drawHeaderCallback -= OnDrawerHeader;
             EditorApplication.playModeStateChanged -= OnEditorPlayModeChanged;
-            EditorApplication.update -= EditorUpdate;
 
 #if UNITY_2021_1_OR_NEWER
             UnityEditor.SceneManagement.PrefabStage.prefabSaving -= PrefabSaving;
@@ -93,18 +89,6 @@ namespace BrunoMikoski.AnimationSequencer
             }
             
             tweenTimeScale = 1f;
-        }
-
-        private void EditorUpdate()
-        {
-            if (Application.isPlaying)
-                return;
-
-            SerializedProperty progressSP = serializedObject.FindProperty("progress");
-            if (Mathf.Approximately(progressSP.floatValue, -1))
-                return;
-            
-            SetProgress(progressSP.floatValue);
         }
 
         private void OnEditorPlayModeChanged(PlayModeStateChange playModeState)
@@ -463,9 +447,7 @@ namespace BrunoMikoski.AnimationSequencer
             GUILayout.FlexibleSpace();
 
             EditorGUI.BeginChangeCheck();
-            float tweenProgress = 0;
-
-            tweenProgress = GetCurrentSequencerProgress();
+            float tweenProgress = GetCurrentSequencerProgress();
 
             EditorGUILayout.LabelField("Progress");
             tweenProgress = EditorGUILayout.Slider(tweenProgress, 0, 1);

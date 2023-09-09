@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Fixed isseu with some animation steps when running in "Backward" direction.
+- Code Cleanup: Removed extra methods from the "Progress" slider. This also fixed an issue in the editor when exiting "EditingPrefab" in unity 2021.
 
 ## [0.5.4]
 ### Changed
