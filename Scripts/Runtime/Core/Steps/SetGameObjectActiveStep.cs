@@ -59,7 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
                 display = target.name;
             
             return $"{index}. Set {display} Active: {active}";
-        }    
+        }
     }
 }
 #endif

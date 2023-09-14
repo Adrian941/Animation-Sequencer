@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Added a progress bar in the inspector. This bar contains data about the animation of each step.
 - Added information in editor preview about the duration of the sequence.
 - Fixed isseu with some animation steps when running in "Backward" direction.
 - Code Cleanup: Removed extra methods from the "Progress" slider. This also fixed an issue in the editor when exiting "EditingPrefab" in unity 2021.

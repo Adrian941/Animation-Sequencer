@@ -38,6 +38,11 @@ namespace BrunoMikoski.AnimationSequencer
         {
             return $"{index}. Wait {interval} seconds";
         }
+
+        public override float GetDuration()
+        {
+            return base.GetDuration() + interval;
+        }
     }
 }
 #endif

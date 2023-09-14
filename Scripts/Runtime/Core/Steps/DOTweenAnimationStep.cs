@@ -78,6 +78,15 @@ namespace BrunoMikoski.AnimationSequencer
             return $"{index}. {targetName}: {String.Join(", ", actions.Select(action => action.DisplayName)).Truncate(45)}";
         }
 
+        public override float GetDuration()
+        {
+            if (loopCount > 1)
+                return base.GetDuration() + duration * loopCount;
+
+            else
+                return base.GetDuration() + duration;
+        }
+
         public bool TryGetActionAtIndex<T>(int index, out T result) where T: DOTweenActionBase
         {
             if (index < 0 || index > actions.Length - 2)

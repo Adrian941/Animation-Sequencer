@@ -13,7 +13,7 @@ namespace BrunoMikoski.AnimationSequencer
             float originY = position.y;
 
             position.height = EditorGUIUtility.singleLineHeight;
-            
+
             property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label, EditorStyles.foldout);
 
             if (property.isExpanded)
@@ -23,9 +23,28 @@ namespace BrunoMikoski.AnimationSequencer
                 EditorGUI.indentLevel++;
                 position = EditorGUI.IndentedRect(position);
                 EditorGUI.indentLevel--;
-                
+
                 position.height = EditorGUIUtility.singleLineHeight;
-                position.y +=  EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+                if (property.TryGetTargetObjectOfProperty(out AnimationStepBase animationStepBase))
+                {
+                    StepAnimationData animationData = animationStepBase.GetAnimationData();
+                    float percentageDuration = animationData.percentageDuration * 100;
+
+                    EditorGUIExtra.ProgressBar(new Rect(position.x, position.y, position.width, 54),
+                        animationData.startTime / animationData.mainSequenceDuration,
+                        animationData.endTime / animationData.mainSequenceDuration,
+                        $"Duration: {percentageDuration.ToString(percentageDuration % 1 == 0 ? "F0" : "F2")}%",
+                        "0s",
+                        $"{animationData.mainSequenceDuration.ToString(animationData.mainSequenceDuration % 1 == 0 ? "F0" : "F2")}s",
+                        $"{animationData.startTime.ToString(animationData.startTime % 1 == 0 ? "F0" : "F2")}s",
+                        $"{animationData.endTime.ToString(animationData.endTime % 1 == 0 ? "F0" : "F2")}s");
+                }
+                position.y += 54 + EditorGUIUtility.standardVerticalSpacing;
+
+                DrawHorizontalLine(position);
+                position.y += EditorGUIUtility.standardVerticalSpacing * 3;
 
                 foreach (SerializedProperty serializedProperty in property.GetChildren())
                 {
@@ -45,13 +64,12 @@ namespace BrunoMikoski.AnimationSequencer
 
                     EditorGUI.PropertyField(position, serializedProperty);
                     position.y += EditorGUI.GetPropertyHeight(serializedProperty) + EditorGUIUtility.standardVerticalSpacing;
-
                 }
-                
+
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();
             }
-            
+
             property.SetPropertyDrawerHeight(position.y - originY + EditorGUIUtility.singleLineHeight);
         }
         
@@ -63,6 +81,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return property.GetPropertyDrawerHeight();
+        }
+
+        private void DrawHorizontalLine(Rect position)
+        {
+            EditorGUI.DrawRect(new Rect(position.x, position.y, position.width, 1), Color.gray);
         }
     }
 }
