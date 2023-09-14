@@ -89,6 +89,11 @@ namespace BrunoMikoski.AnimationSequencer
 
             return $"{index}. Play {display} particle system";
         }
+
+        public override float GetDuration()
+        {
+            return base.GetDuration() + duration;
+        }
     }
 }
 #endif

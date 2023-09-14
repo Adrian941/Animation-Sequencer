@@ -292,14 +292,21 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void DrawPreviewControls()
         {
-            EditorGUILayout.BeginHorizontal();
+            DrawMediaPlayerControlButtons();
+            DrawTimeScaleSlider();
+            DrawProgressSlider();
+            DrawDurationInfo();
+        }
 
+        private void DrawMediaPlayerControlButtons()
+        {
+            EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            
             bool guiEnabled = GUI.enabled;
 
             GUIStyle previewButtonStyle = new GUIStyle(GUI.skin.button);
             previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 40;
+            
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.BackButtonGUIContent, previewButtonStyle))
             {
                 if (!sequencerController.IsPlaying)
@@ -310,7 +317,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StepBackGUIContent, previewButtonStyle))
             {
-                if(!sequencerController.IsPlaying)
+                if (!sequencerController.IsPlaying)
                     PlaySequence();
 
                 StepBack();
@@ -319,27 +326,23 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencerController.IsPlaying)
             {
                 if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
-                {
                     sequencerController.Pause();
-                }
             }
             else
             {
                 if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PlayButtonGUIContent, previewButtonStyle))
-                {
                     PlaySequence();
-                }
             }
 
-            
+
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StepNextGUIContent, previewButtonStyle))
             {
-                if(!sequencerController.IsPlaying)
+                if (!sequencerController.IsPlaying)
                     PlaySequence();
 
                 StepNext();
             }
-            
+
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.ForwardButtonGUIContent, previewButtonStyle))
             {
                 if (!sequencerController.IsPlaying)
@@ -356,6 +359,7 @@ namespace BrunoMikoski.AnimationSequencer
                     sequencerController.ResetToInitialState();
                     sequencerController.ClearPlayingSequence();
                     DOTweenEditorPreview.Stop();
+                    
                     if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
                         showStepsPanel = wasShowingStepsPanel;
                 }
@@ -364,8 +368,6 @@ namespace BrunoMikoski.AnimationSequencer
             GUI.enabled = guiEnabled;
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
-            DrawTimeScaleSlider();
-            DrawProgressSlider();
         }
 
         private void StepBack()
@@ -442,6 +444,19 @@ namespace BrunoMikoski.AnimationSequencer
             showStepsPanel = !AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing;
         }
 
+        private void DrawTimeScaleSlider()
+        {
+            GUILayout.FlexibleSpace();
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUILayout.LabelField("TimeScale");
+            tweenTimeScale = EditorGUILayout.Slider(tweenTimeScale, 0, 2);
+
+            UpdateSequenceTimeScale();
+
+            GUILayout.FlexibleSpace();
+        }
+
         private void DrawProgressSlider()
         {
             GUILayout.FlexibleSpace();
@@ -485,17 +500,10 @@ namespace BrunoMikoski.AnimationSequencer
                                                      sequencerController.PlayingSequence.Duration());
         }
 
-        private void DrawTimeScaleSlider()
+        private void DrawDurationInfo()
         {
-            GUILayout.FlexibleSpace();
-            EditorGUI.BeginChangeCheck();
-            
-            EditorGUILayout.LabelField("TimeScale");
-            tweenTimeScale = EditorGUILayout.Slider(tweenTimeScale, 0, 2);
-			
-            UpdateSequenceTimeScale();
-
-            GUILayout.FlexibleSpace();
+            if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
+                EditorGUILayout.HelpBox($"Sequence duration: {sequencerController.PlayingSequence.Duration()} seconds.", MessageType.Info);
         }
 
         private void DrawFoldoutArea(string title,ref bool foldout, Action additionalInspectorGUI)

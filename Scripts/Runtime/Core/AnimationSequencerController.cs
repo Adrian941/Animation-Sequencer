@@ -413,6 +413,12 @@ namespace BrunoMikoski.AnimationSequencer
         {
             requiresReset = false;
         }
+
+        // Unity Event Function called when component is added or modified.
+        private void OnValidate()
+        {
+            CalculateStepsDuration();
+        }
 #endif
         public bool TryGetStepAtIndex<T>(int index, out T result) where T : AnimationStepBase
         {
@@ -424,6 +430,40 @@ namespace BrunoMikoski.AnimationSequencer
 
             result = animationSteps[index] as T;
             return result != null;
+        }
+
+        /// <summary>
+        /// Called by the Editor to calculate the main sequence duration and "StartTime" of each step relative to the main sequence.
+        /// </summary>
+        private void CalculateStepsDuration()
+        {
+            //Calculate the main sequence duration and "StartTime" of each step.
+            float mainSequenceDuration = 0;
+            float[] startTimeSteps = new float[animationSteps.Length];
+            AnimationStepBase longestDurationStep = null;
+
+            for (int i = 0; i < animationSteps.Length; i++)
+            {
+                AnimationStepBase step = animationSteps[i];
+                startTimeSteps[i] = mainSequenceDuration;
+
+                if (i == 0 || step.FlowType == FlowType.Append || step.GetDuration() > longestDurationStep.GetDuration())
+                    longestDurationStep = step;
+
+                int nextStepIndex = i + 1;
+                if (nextStepIndex >= animationSteps.Length || animationSteps[nextStepIndex].FlowType == FlowType.Append)
+                    mainSequenceDuration += longestDurationStep.GetDuration();
+            }
+
+            if (loops > 1)
+                mainSequenceDuration *= loops;
+
+            //Assign the main sequence duration and "StartTime" to each step. 
+            for (int i = 0; i < animationSteps.Length; i++)
+            {
+                AnimationStepBase step = animationSteps[i];
+                step.SetAnimationData(mainSequenceDuration, startTimeSteps[i]);
+            }
         }
     }
 }
