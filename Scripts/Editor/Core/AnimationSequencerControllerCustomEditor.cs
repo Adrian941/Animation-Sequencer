@@ -13,9 +13,7 @@ namespace BrunoMikoski.AnimationSequencer
     public class AnimationSequencerControllerCustomEditor : Editor
     {
         private ReorderableList reorderableList;
-        
         private AnimationSequencerController sequencerController;
-
         private static AnimationStepAdvancedDropdown cachedAnimationStepsDropdown;
         private static AnimationStepAdvancedDropdown AnimationStepAdvancedDropdown
         {
@@ -23,6 +21,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 if (cachedAnimationStepsDropdown == null)
                     cachedAnimationStepsDropdown = new AnimationStepAdvancedDropdown(new AdvancedDropdownState());
+
                 return cachedAnimationStepsDropdown;
             }
         }
@@ -30,30 +29,30 @@ namespace BrunoMikoski.AnimationSequencer
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
-        private bool showSequenceSettingsPanel;
         private bool showStepsPanel = true;
         private float tweenTimeScale = 1f;
         private bool wasShowingStepsPanel;
         private bool justStartPreviewing;
 
+
         private void OnEnable()
         {
             sequencerController = target as AnimationSequencerController;
             reorderableList = new ReorderableList(serializedObject, serializedObject.FindProperty("animationSteps"), true, false, true, true);
+            reorderableList.drawHeaderCallback += OnDrawerHeader;
             reorderableList.drawElementCallback += OnDrawAnimationStep;
             reorderableList.elementHeightCallback += GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback += OnClickToAddNew;
             reorderableList.onRemoveCallback += OnClickToRemove;
             reorderableList.onReorderCallback += OnListOrderChanged;
-            reorderableList.drawHeaderCallback += OnDrawerHeader;
             EditorApplication.playModeStateChanged += OnEditorPlayModeChanged;
-            
+
 #if UNITY_2021_1_OR_NEWER
             UnityEditor.SceneManagement.PrefabStage.prefabSaving += PrefabSaving;
 #else
             UnityEditor.Experimental.SceneManagement.PrefabStage.prefabSaving += PrefabSaving;
 #endif
-            
+
             Repaint();
         }
 
@@ -64,12 +63,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void OnDisable()
         {
+            reorderableList.drawHeaderCallback -= OnDrawerHeader;
             reorderableList.drawElementCallback -= OnDrawAnimationStep;
             reorderableList.elementHeightCallback -= GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback -= OnClickToAddNew;
             reorderableList.onRemoveCallback -= OnClickToRemove;
             reorderableList.onReorderCallback -= OnListOrderChanged;
-            reorderableList.drawHeaderCallback -= OnDrawerHeader;
             EditorApplication.playModeStateChanged -= OnEditorPlayModeChanged;
 
 #if UNITY_2021_1_OR_NEWER
@@ -84,210 +83,40 @@ namespace BrunoMikoski.AnimationSequencer
                 {
                     sequencerController.ResetToInitialState();
                     sequencerController.ClearPlayingSequence();
-                    DOTweenEditorPreview.Stop();            
+                    DOTweenEditorPreview.Stop();
                 }
             }
-            
+
             tweenTimeScale = 1f;
-        }
-
-        private void OnEditorPlayModeChanged(PlayModeStateChange playModeState)
-        {
-            if (playModeState == PlayModeStateChange.ExitingEditMode)
-            {
-                if (DOTweenEditorPreview.isPreviewing)
-                {
-                    sequencerController.ResetToInitialState();
-                    sequencerController.ClearPlayingSequence();
-                    DOTweenEditorPreview.Stop();            
-                }
-            }
-        }
-        
-        private void PrefabSaving(GameObject gameObject)
-        {
-            if (DOTweenEditorPreview.isPreviewing)
-            {
-                sequencerController.ResetToInitialState();
-                sequencerController.ClearPlayingSequence();
-                DOTweenEditorPreview.Stop();            
-            }
-        }
-        
-        private void OnDrawerHeader(Rect rect)
-        {
-            EditorGUI.LabelField(rect, "Animation Steps");
-        }
-        
-        private void AddNewAnimationStepOfType(Type targetAnimationType)
-        {
-            SerializedProperty animationStepsProperty = reorderableList.serializedProperty;
-            int targetIndex = animationStepsProperty.arraySize;
-            animationStepsProperty.InsertArrayElementAtIndex(targetIndex);
-            SerializedProperty arrayElementAtIndex = animationStepsProperty.GetArrayElementAtIndex(targetIndex);
-            object managedReferenceValue = Activator.CreateInstance(targetAnimationType);
-            arrayElementAtIndex.managedReferenceValue = managedReferenceValue;
-        
-            //TODO copy from last step would be better here.
-            SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
-            if (targetSerializedProperty != null)
-                targetSerializedProperty.objectReferenceValue = (serializedObject.targetObject as AnimationSequencerController)?.gameObject;
-            
-            serializedObject.ApplyModifiedProperties();
-        }
-        
-        private void OnClickToRemove(ReorderableList list)
-        {
-            SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(list.index);
-            SerializedPropertyExtensions.ClearPropertyCache(element.propertyPath);
-            reorderableList.serializedProperty.DeleteArrayElementAtIndex(list.index);
-            reorderableList.serializedProperty.serializedObject.ApplyModifiedProperties();
-        }
-        
-        private void OnListOrderChanged(ReorderableList list)
-        {
-            SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
-            list.serializedProperty.serializedObject.ApplyModifiedProperties();
-        }
-        
-        private void OnClickToAddNew(Rect buttonRect, ReorderableList list)
-        {
-            AnimationStepAdvancedDropdown.Show(buttonRect, OnNewAnimationStepTypeSelected);
-        }
-
-        private void OnNewAnimationStepTypeSelected(AnimationStepAdvancedDropdownItem animationStepAdvancedDropdownItem)
-        {
-            AddNewAnimationStepOfType(animationStepAdvancedDropdownItem.AnimationStepType);
         }
 
         public override void OnInspectorGUI()
         {
             if (sequencerController.IsResetRequired())
-            {
                 SetDefaults();
-            }
 
-            DrawFoldoutArea("Animation Sequence Settings", ref showSettingsPanel, DrawSettings);
-            DrawFoldoutArea("Callback", ref showCallbacksPanel, DrawCallbacks);
             DrawFoldoutArea("Preview", ref showPreviewPanel, DrawPreviewControls);
-            DrawFoldoutArea("Sequence Settings", ref showSequenceSettingsPanel, DrawSequenceSettings);
+            DrawFoldoutArea("Settings", ref showSettingsPanel, DrawSettings);
+            DrawFoldoutArea("Callbacks", ref showCallbacksPanel, DrawCallbacks);
             DrawFoldoutArea("Steps", ref showStepsPanel, DrawAnimationSteps);
         }
 
-        private void DrawAnimationSteps()
+        private void SetDefaults()
         {
-            bool wasGUIEnabled = GUI.enabled;
-            if (DOTweenEditorPreview.isPreviewing)
-                GUI.enabled = false;
+            sequencerController = target as AnimationSequencerController;
 
-            reorderableList.DoLayoutList();
-                        
-            GUI.enabled = wasGUIEnabled;
-        }
-
-        protected virtual void DrawCallbacks()
-        {
-            bool wasGUIEnabled = GUI.enabled;
-            if (DOTweenEditorPreview.isPreviewing)
-                GUI.enabled = false;
-            SerializedProperty onStartEventSerializedProperty = serializedObject.FindProperty("onStartEvent");
-            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
-            SerializedProperty onProgressEventSerializedProperty = serializedObject.FindProperty("onProgressEvent");
-
-            
-            using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
+            if (sequencerController != null)
             {
-                EditorGUILayout.PropertyField(onStartEventSerializedProperty);
-                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
-                EditorGUILayout.PropertyField(onProgressEventSerializedProperty);
-                
-                if (changedCheck.changed)
-                    serializedObject.ApplyModifiedProperties();
+                sequencerController.SetAutoplayMode(AnimationControllerDefaults.Instance.AutoplayMode);
+                sequencerController.SetPlayOnStart(AnimationControllerDefaults.Instance.PlayOnStart);
+                sequencerController.SetPauseOnStart(AnimationControllerDefaults.Instance.PauseOnStart);
+                sequencerController.SetTimeScaleIndependent(AnimationControllerDefaults.Instance.TimeScaleIndependent);
+                sequencerController.SetPlayType(AnimationControllerDefaults.Instance.PlayType);
+                sequencerController.SetUpdateType(AnimationControllerDefaults.Instance.UpdateType);
+                sequencerController.SetAutoKill(AnimationControllerDefaults.Instance.AutoKill);
+                sequencerController.SetLoops(AnimationControllerDefaults.Instance.Loops);
+                sequencerController.ResetComplete();
             }
-            
-            GUI.enabled = wasGUIEnabled;
-        }
-
-        private void DrawSettings()
-        {
-            SerializedProperty autoPlayModeSerializedProperty = serializedObject.FindProperty("autoplayMode");
-            SerializedProperty pauseOnAwakeSerializedProperty = serializedObject.FindProperty("startPaused");
-
-            using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
-            {
-                AnimationSequencerController.AutoplayType autoplayMode = (AnimationSequencerController.AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
-                EditorGUILayout.PropertyField(autoPlayModeSerializedProperty);
-
-                if (autoplayMode != AnimationSequencerController.AutoplayType.Nothing)
-                    EditorGUILayout.PropertyField(pauseOnAwakeSerializedProperty);
-				
-                DrawPlaybackSpeedSlider();
-                
-                if (changedCheck.changed)
-                    serializedObject.ApplyModifiedProperties();
-            }
-        }
-		
-        private void DrawPlaybackSpeedSlider()
-        {
-            GUILayout.FlexibleSpace();
-            EditorGUI.BeginChangeCheck();
-            
-            var playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
-            playbackSpeedProperty.floatValue = EditorGUILayout.Slider("Playback Speed", playbackSpeedProperty.floatValue, 0, 2);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-                UpdateSequenceTimeScale();
-            }
-
-            GUILayout.FlexibleSpace();
-        }
-        
-        private void UpdateSequenceTimeScale()
-        {
-            if (sequencerController.PlayingSequence == null)
-                return;
-            
-            sequencerController.PlayingSequence.timeScale = sequencerController.PlaybackSpeed * tweenTimeScale;
-        }
-        
-        private void DrawSequenceSettings()
-        {
-            bool wasEnabled = GUI.enabled; 
-            if (DOTweenEditorPreview.isPreviewing)
-                GUI.enabled = false;
-            
-            SerializedProperty updateTypeSerializedProperty = serializedObject.FindProperty("updateType");
-            SerializedProperty timeScaleIndependentSerializedProperty = serializedObject.FindProperty("timeScaleIndependent");
-            SerializedProperty sequenceDirectionSerializedProperty = serializedObject.FindProperty("playType");
-            SerializedProperty loopsSerializedProperty = serializedObject.FindProperty("loops");
-            SerializedProperty loopTypeSerializedProperty = serializedObject.FindProperty("loopType");
-            SerializedProperty autoKillSerializedProperty = serializedObject.FindProperty("autoKill");
-
-            using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
-            {
-                EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
-                EditorGUILayout.PropertyField(sequenceDirectionSerializedProperty);
-                EditorGUILayout.PropertyField(updateTypeSerializedProperty);
-                EditorGUILayout.PropertyField(autoKillSerializedProperty);
-
-                EditorGUILayout.PropertyField(loopsSerializedProperty);
-
-                if (loopsSerializedProperty.intValue != 0)
-                {
-                    EditorGUILayout.PropertyField(loopTypeSerializedProperty);
-                }
- 
-                if (changedCheck.changed)
-                {
-                    loopsSerializedProperty.intValue = Mathf.Clamp(loopsSerializedProperty.intValue, -1, int.MaxValue);
-                    serializedObject.ApplyModifiedProperties();
-                }
-            }
-
-            GUI.enabled = wasEnabled;
         }
 
         private void DrawPreviewControls()
@@ -306,7 +135,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             GUIStyle previewButtonStyle = new GUIStyle(GUI.skin.button);
             previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 40;
-            
+
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.BackButtonGUIContent, previewButtonStyle))
             {
                 if (!sequencerController.IsPlaying)
@@ -359,7 +188,7 @@ namespace BrunoMikoski.AnimationSequencer
                     sequencerController.ResetToInitialState();
                     sequencerController.ClearPlayingSequence();
                     DOTweenEditorPreview.Stop();
-                    
+
                     if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
                         showStepsPanel = wasShowingStepsPanel;
                 }
@@ -374,7 +203,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             if (!sequencerController.IsPlaying)
                 PlaySequence();
-            
+
             sequencerController.PlayingSequence.Goto((sequencerController.PlayingSequence.ElapsedPercentage() -
                                                       0.01f) * sequencerController.PlayingSequence.Duration());
         }
@@ -391,6 +220,7 @@ namespace BrunoMikoski.AnimationSequencer
         private void PlaySequence()
         {
             justStartPreviewing = false;
+
             if (!Application.isPlaying)
             {
                 if (!DOTweenEditorPreview.isPreviewing)
@@ -399,7 +229,7 @@ namespace BrunoMikoski.AnimationSequencer
                     DOTweenEditorPreview.Start();
 
                     sequencerController.Play();
-                    
+
                     DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
                 }
                 else
@@ -428,7 +258,9 @@ namespace BrunoMikoski.AnimationSequencer
             else
             {
                 if (sequencerController.PlayingSequence == null)
+                {
                     sequencerController.Play();
+                }
                 else
                 {
                     if (sequencerController.PlayingSequence.IsActive())
@@ -440,7 +272,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (justStartPreviewing)
                 wasShowingStepsPanel = showStepsPanel;
-            
+
             showStepsPanel = !AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing;
         }
 
@@ -480,8 +312,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (!sequencerController.IsPlaying)
                 PlaySequence();
 
-            sequencerController.PlayingSequence.Goto(tweenProgress *
-                                                     sequencerController.PlayingSequence.Duration());
+            sequencerController.PlayingSequence.Goto(tweenProgress * sequencerController.PlayingSequence.Duration());
         }
 
         private float GetCurrentSequencerProgress()
@@ -491,13 +322,8 @@ namespace BrunoMikoski.AnimationSequencer
                 tweenProgress = sequencerController.PlayingSequence.ElapsedPercentage();
             else
                 tweenProgress = 0;
-            return tweenProgress;
-        }
 
-        private void SetCurrentSequenceProgress(float progress)
-        {
-            sequencerController.PlayingSequence.Goto(progress *
-                                                     sequencerController.PlayingSequence.Duration());
+            return tweenProgress;
         }
 
         private void DrawDurationInfo()
@@ -506,7 +332,107 @@ namespace BrunoMikoski.AnimationSequencer
                 EditorGUILayout.HelpBox($"Sequence duration: {sequencerController.PlayingSequence.Duration()} seconds.", MessageType.Info);
         }
 
-        private void DrawFoldoutArea(string title,ref bool foldout, Action additionalInspectorGUI)
+        private void DrawSettings()
+        {
+            bool wasEnabled = GUI.enabled;
+            if (DOTweenEditorPreview.isPreviewing)
+                GUI.enabled = false;
+
+            SerializedProperty autoPlayModeSerializedProperty = serializedObject.FindProperty("autoplayMode");
+            SerializedProperty pauseOnStartSerializedProperty = serializedObject.FindProperty("startPaused");
+            SerializedProperty timeScaleIndependentSerializedProperty = serializedObject.FindProperty("timeScaleIndependent");
+            SerializedProperty sequenceDirectionSerializedProperty = serializedObject.FindProperty("playType");
+            SerializedProperty updateTypeSerializedProperty = serializedObject.FindProperty("updateType");
+            SerializedProperty autoKillSerializedProperty = serializedObject.FindProperty("autoKill");
+            SerializedProperty loopsSerializedProperty = serializedObject.FindProperty("loops");
+            SerializedProperty loopTypeSerializedProperty = serializedObject.FindProperty("loopType");
+
+            using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
+            {
+                AnimationSequencerController.AutoplayType autoplayMode = (AnimationSequencerController.AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
+                EditorGUILayout.PropertyField(autoPlayModeSerializedProperty);
+                if (autoplayMode != AnimationSequencerController.AutoplayType.Nothing)
+                    EditorGUILayout.PropertyField(pauseOnStartSerializedProperty);
+                DrawPlaybackSpeedSlider();
+                EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
+                EditorGUILayout.PropertyField(sequenceDirectionSerializedProperty);
+                EditorGUILayout.PropertyField(updateTypeSerializedProperty);
+                EditorGUILayout.PropertyField(autoKillSerializedProperty);
+                EditorGUILayout.PropertyField(loopsSerializedProperty);
+
+                if (loopsSerializedProperty.intValue != 0)
+                    EditorGUILayout.PropertyField(loopTypeSerializedProperty);
+
+                if (changedCheck.changed)
+                {
+                    loopsSerializedProperty.intValue = Mathf.Clamp(loopsSerializedProperty.intValue, -1, int.MaxValue);
+                    serializedObject.ApplyModifiedProperties();
+                }
+            }
+
+            GUI.enabled = wasEnabled;
+        }
+
+        private void DrawPlaybackSpeedSlider()
+        {
+            GUILayout.FlexibleSpace();
+            EditorGUI.BeginChangeCheck();
+
+            var playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
+            playbackSpeedProperty.floatValue = EditorGUILayout.Slider("Playback Speed", playbackSpeedProperty.floatValue, 0, 2);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                UpdateSequenceTimeScale();
+            }
+
+            GUILayout.FlexibleSpace();
+        }
+
+        private void UpdateSequenceTimeScale()
+        {
+            if (sequencerController.PlayingSequence == null)
+                return;
+
+            sequencerController.PlayingSequence.timeScale = sequencerController.PlaybackSpeed * tweenTimeScale;
+        }
+
+        protected virtual void DrawCallbacks()
+        {
+            bool wasGUIEnabled = GUI.enabled;
+            if (DOTweenEditorPreview.isPreviewing)
+                GUI.enabled = false;
+
+            SerializedProperty onStartEventSerializedProperty = serializedObject.FindProperty("onStartEvent");
+            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
+            SerializedProperty onProgressEventSerializedProperty = serializedObject.FindProperty("onProgressEvent");
+
+            using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
+            {
+                EditorGUILayout.PropertyField(onStartEventSerializedProperty);
+                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
+                EditorGUILayout.PropertyField(onProgressEventSerializedProperty);
+
+                if (changedCheck.changed)
+                    serializedObject.ApplyModifiedProperties();
+            }
+
+            GUI.enabled = wasGUIEnabled;
+        }
+
+        private void DrawAnimationSteps()
+        {
+            bool wasGUIEnabled = GUI.enabled;
+            if (DOTweenEditorPreview.isPreviewing)
+                GUI.enabled = false;
+
+            reorderableList.DoLayoutList();
+
+            GUI.enabled = wasGUIEnabled;
+        }
+
+        private void DrawFoldoutArea(string title, ref bool foldout, Action additionalInspectorGUI)
         {
             using (new EditorGUILayout.VerticalScope("FrameBox"))
             {
@@ -514,14 +440,42 @@ namespace BrunoMikoski.AnimationSequencer
                 rect.x += 10;
                 rect.width -= 10;
                 rect.y -= 4;
-                
+
                 foldout = EditorGUI.Foldout(rect, foldout, title);
-                
+
                 if (foldout)
                     additionalInspectorGUI.Invoke();
             }
         }
-        
+
+        private void OnEditorPlayModeChanged(PlayModeStateChange playModeState)
+        {
+            if (playModeState == PlayModeStateChange.ExitingEditMode)
+            {
+                if (DOTweenEditorPreview.isPreviewing)
+                {
+                    sequencerController.ResetToInitialState();
+                    sequencerController.ClearPlayingSequence();
+                    DOTweenEditorPreview.Stop();
+                }
+            }
+        }
+
+        private void PrefabSaving(GameObject gameObject)
+        {
+            if (DOTweenEditorPreview.isPreviewing)
+            {
+                sequencerController.ResetToInitialState();
+                sequencerController.ClearPlayingSequence();
+                DOTweenEditorPreview.Stop();
+            }
+        }
+
+        private void OnDrawerHeader(Rect rect)
+        {
+            EditorGUI.LabelField(rect, "Animation Steps");
+        }
+
         private void OnDrawAnimationStep(Rect rect, int index, bool isActive, bool isFocused)
         {
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
@@ -533,27 +487,95 @@ namespace BrunoMikoski.AnimationSequencer
             FlowType flowType = (FlowType)flowTypeSerializedProperty.enumValueIndex;
 
             int baseIdentLevel = EditorGUI.indentLevel;
-            
+
             GUIContent guiContent = new GUIContent(element.displayName);
             if (animationStepBase != null)
                 guiContent = new GUIContent(animationStepBase.GetDisplayNameForEditor(index + 1));
 
             if (flowType == FlowType.Join)
                 EditorGUI.indentLevel = baseIdentLevel + 1;
-            
+
             rect.height = EditorGUIUtility.singleLineHeight;
             rect.x += 10;
             rect.width -= 20;
 
-            EditorGUI.PropertyField(
-                rect,
-                element,
-                guiContent,
-                false
-            );
+            EditorGUI.LabelField(rect, guiContent);
+            EditorGUI.PropertyField(rect, element, new GUIContent(""), false);
 
             EditorGUI.indentLevel = baseIdentLevel;
             // DrawContextInputOnItem(element, index, rect);
+        }
+
+        private float GetAnimationStepHeight(int index)
+        {
+            if (index > reorderableList.serializedProperty.arraySize - 1)
+                return EditorGUIUtility.singleLineHeight;
+
+            SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
+            return element.GetPropertyDrawerHeight();
+        }
+
+        private void OnClickToAddNew(Rect buttonRect, ReorderableList list)
+        {
+            AnimationStepAdvancedDropdown.Show(buttonRect, OnNewAnimationStepTypeSelected);
+        }
+
+        private void OnNewAnimationStepTypeSelected(AnimationStepAdvancedDropdownItem animationStepAdvancedDropdownItem)
+        {
+            AddNewAnimationStepOfType(animationStepAdvancedDropdownItem.AnimationStepType);
+        }
+
+        private void AddNewAnimationStepOfType(Type targetAnimationType)
+        {
+            SerializedProperty animationStepsProperty = reorderableList.serializedProperty;
+            int targetIndex = animationStepsProperty.arraySize;
+            animationStepsProperty.InsertArrayElementAtIndex(targetIndex);
+            SerializedProperty arrayElementAtIndex = animationStepsProperty.GetArrayElementAtIndex(targetIndex);
+            object managedReferenceValue = Activator.CreateInstance(targetAnimationType);
+            arrayElementAtIndex.managedReferenceValue = managedReferenceValue;
+
+            //TODO copy from last step would be better here.
+            SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
+            if (targetSerializedProperty != null)
+                targetSerializedProperty.objectReferenceValue = (serializedObject.targetObject as AnimationSequencerController)?.gameObject;
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private void OnClickToRemove(ReorderableList list)
+        {
+            SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(list.index);
+            SerializedPropertyExtensions.ClearPropertyCache(element.propertyPath);
+            reorderableList.serializedProperty.DeleteArrayElementAtIndex(list.index);
+            reorderableList.serializedProperty.serializedObject.ApplyModifiedProperties();
+        }
+
+        private void OnListOrderChanged(ReorderableList list)
+        {
+            SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
+            list.serializedProperty.serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawContextInputOnItem(SerializedProperty element, int index, Rect rect1)
+        {
+            rect1.x -= 24;
+            rect1.width += 24;
+            Event current = Event.current;
+
+            if (rect1.Contains(current.mousePosition) && current.type == EventType.ContextClick)
+            {
+                GenericMenu menu = new GenericMenu();
+                menu.AddItem(new GUIContent("Copy Values"), false, () => ContextClickUtils.SetSource(element));
+                if (ContextClickUtils.CanPasteToTarget(element))
+                    menu.AddItem(new GUIContent("Paste Values"), false, () => ContextClickUtils.ApplySourceToTarget(element));
+                else
+                    menu.AddDisabledItem(new GUIContent("Paste Values"));
+                menu.AddSeparator("");
+                menu.AddItem(new GUIContent("Duplicate Item"), false, () => DuplicateItem(index));
+                menu.AddItem(new GUIContent("Delete Item"), false, () => RemoveItemAtIndex(index));
+                menu.ShowAsContext();
+                current.Use();
+            }
         }
 
         private void RemoveItemAtIndex(int index)
@@ -569,91 +591,6 @@ namespace BrunoMikoski.AnimationSequencer
             SerializedProperty source = reorderableList.serializedProperty.GetArrayElementAtIndex(index + 1);
             ContextClickUtils.CopyPropertyValue(sourceSerializedProperty, source);
             source.serializedObject.ApplyModifiedProperties();
-        }
-        
-        private void DrawContextInputOnItem(SerializedProperty element, int index, Rect rect1)
-        {
-            rect1.x -= 24;
-            rect1.width += 24;
-            Event current = Event.current;
-            if (rect1.Contains(current.mousePosition) && current.type == EventType.ContextClick)
-            {
-                GenericMenu menu = new GenericMenu();
-
-                menu.AddItem(
-                    new GUIContent("Copy Values"),
-                    false,
-                    () =>
-                    {
-                        ContextClickUtils.SetSource(element);
-                    }
-                );
-                if (ContextClickUtils.CanPasteToTarget(element))
-                {
-                    menu.AddItem(
-                        new GUIContent("Paste Values"),
-                        false,
-                        () =>
-                        {
-                            ContextClickUtils.ApplySourceToTarget(element);
-                        }
-                    );
-                    
-                }
-                else
-                {
-                    menu.AddDisabledItem(new GUIContent("Paste Values"));
-                }
-                menu.AddSeparator("");
-
-                menu.AddItem(
-                    new GUIContent("Duplicate Item"),
-                    false,
-                    () =>
-                    {
-                        DuplicateItem(index);
-                    }
-                );
-                
-                menu.AddItem(
-                    new GUIContent("Delete Item"),
-                    false,
-                    () =>
-                    {
-                        RemoveItemAtIndex(index);
-                    }
-                );
-                
-                menu.ShowAsContext();
-                current.Use();
-            }
-        }
-
-       
-        private float GetAnimationStepHeight(int index)
-        {
-            if (index > reorderableList.serializedProperty.arraySize - 1)
-                return EditorGUIUtility.singleLineHeight;
-            
-            SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
-            return element.GetPropertyDrawerHeight();
-        }
-
-        private void SetDefaults()
-        {
-            sequencerController = target as AnimationSequencerController;
-            if (sequencerController != null)
-            {
-                sequencerController.SetAutoplayMode(AnimationControllerDefaults.Instance.AutoplayMode);
-                sequencerController.SetPlayOnStart(AnimationControllerDefaults.Instance.PlayOnStart);
-                sequencerController.SetPauseOnStart(AnimationControllerDefaults.Instance.PauseOnStart);
-                sequencerController.SetTimeScaleIndependent(AnimationControllerDefaults.Instance.TimeScaleIndependent);
-                sequencerController.SetPlayType(AnimationControllerDefaults.Instance.PlayType);
-                sequencerController.SetUpdateType(AnimationControllerDefaults.Instance.UpdateType);
-                sequencerController.SetAutoKill(AnimationControllerDefaults.Instance.AutoKill);
-                sequencerController.SetLoops(AnimationControllerDefaults.Instance.Loops);
-                sequencerController.ResetComplete();
-            }
         }
     }
 }

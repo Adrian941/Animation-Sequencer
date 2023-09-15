@@ -23,7 +23,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             float startingYPosition = position.y;
 
-            EditorGUI.LabelField(position, displayName, EditorStyles.boldLabel);
+            //-26 = "X" button size.
+            EditorGUI.LabelField(new Rect(position.x, position.y, position.width - 26, position.height), displayName, EditorStyles.boldLabel);
 
             position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             EditorGUI.BeginChangeCheck();
@@ -33,16 +34,15 @@ namespace BrunoMikoski.AnimationSequencer
                 Rect propertyRect = position;
                 EditorGUI.PropertyField(propertyRect, serializedProperty, true);
 
-                position.y += EditorGUI.GetPropertyHeight(serializedProperty, true);  
+                position.y += EditorGUI.GetPropertyHeight(serializedProperty, true) + EditorGUIUtility.standardVerticalSpacing;
             }
             
             position.x -= 10;
-            position.width += 10;
+            position.width += 20;
 
             Rect boxPosition = position;
             boxPosition.y = startingYPosition - 10;
             boxPosition.height = (position.y - startingYPosition) + 20;
-            boxPosition.width += 20;
             GUI.Box(boxPosition, GUIContent.none, EditorStyles.helpBox);
             
             EditorGUI.EndProperty();

@@ -74,8 +74,8 @@ namespace BrunoMikoski.AnimationSequencer
             string targetName = "NULL";
             if (target != null)
                 targetName = target.name;
-            
-            return $"{index}. {targetName}: {String.Join(", ", actions.Select(action => action.DisplayName)).Truncate(45)}";
+
+            return $"{index}. {targetName}: {string.Join(", ", actions.Select(action => action.DisplayName))}";
         }
 
         public override float GetDuration()
