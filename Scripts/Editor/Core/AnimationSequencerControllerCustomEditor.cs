@@ -499,7 +499,8 @@ namespace BrunoMikoski.AnimationSequencer
             rect.x += 10;
             rect.width -= 20;
 
-            EditorGUI.PropertyField(rect, element, guiContent, false);
+            EditorGUI.LabelField(rect, guiContent);
+            EditorGUI.PropertyField(rect, element, new GUIContent(""), false);
 
             EditorGUI.indentLevel = baseIdentLevel;
             // DrawContextInputOnItem(element, index, rect);

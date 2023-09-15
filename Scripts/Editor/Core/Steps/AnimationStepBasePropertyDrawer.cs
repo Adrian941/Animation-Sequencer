@@ -29,6 +29,9 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (property.TryGetTargetObjectOfProperty(out AnimationStepBase animationStepBase))
                 {
+                    if (animationStepBase.FlowType == FlowType.Join)
+                        EditorGUI.indentLevel--;
+
                     StepAnimationData animationData = animationStepBase.GetAnimationData();
                     float percentageDuration = animationData.percentageDuration * 100;
 

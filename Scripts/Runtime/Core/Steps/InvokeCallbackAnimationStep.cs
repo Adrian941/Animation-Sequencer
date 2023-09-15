@@ -49,8 +49,8 @@ namespace BrunoMikoski.AnimationSequencer
                 
                 persistentTargetNamesArray[i] = $"{callback.GetPersistentTarget(i).name}.{callback.GetPersistentMethodName(i)}()";
             }
-            
-            var persistentTargetNames = $"{string.Join(", ", persistentTargetNamesArray).Truncate(45)}";
+
+            var persistentTargetNames = $"{string.Join(", ", persistentTargetNamesArray)}";
             
             return $"{index}. {DisplayName}: {persistentTargetNames}";
         }

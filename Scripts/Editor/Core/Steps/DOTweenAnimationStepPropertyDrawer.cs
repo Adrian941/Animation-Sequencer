@@ -99,13 +99,21 @@ namespace BrunoMikoski.AnimationSequencer
             float originHeight = position.y;
             if (property.isExpanded)
             {
-
                 if (EditorGUI.indentLevel > 0)
                     position = EditorGUI.IndentedRect(position);
 
                 EditorGUI.indentLevel++;
                 position = EditorGUI.IndentedRect(position);
                 EditorGUI.indentLevel--;
+
+                SerializedProperty flowTypeSerializedProperty = property.FindPropertyRelative("flowType");
+                FlowType flowType = (FlowType)flowTypeSerializedProperty.enumValueIndex;
+                if (flowType == FlowType.Join)
+                {
+                    EditorGUI.indentLevel++;
+                    position = EditorGUI.IndentedRect(position);
+                    EditorGUI.indentLevel--;
+                }
 
                 EditorGUI.BeginChangeCheck();
 
@@ -168,11 +176,11 @@ namespace BrunoMikoski.AnimationSequencer
 
                     GUI.enabled = guiEnabled;
                 }
-                
+
                 EditorGUI.indentLevel--;
                 position = EditorGUI.IndentedRect(position);
                 EditorGUI.indentLevel++;
-                
+
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();
             }
