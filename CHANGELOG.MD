@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+
+## [0.5.6]
+### Changed
+- Fixed issue with "Move to RectTransform Anchored Position" and "Move To Anchored Position" tween. The destination target was calculated wrong if the current object has a scale other than one.
 - Fixed issue with CustomEditor size when the step animation is of type "Join".
 - Update: "Animation Sequence Settings" and "Sequence Settings" panels mixed.
 - Added a progress bar in the inspector. This bar contains data about the animation of each step.
 - Added information in editor preview about the duration of the sequence.
-- Fixed isseu with some animation steps when running in "Backward" direction.
+- Fixed issue with some animation steps when running in "Backward" direction.
 - Code Cleanup: Removed extra methods from the "Progress" slider. This also fixed an issue in the editor when exiting "EditingPrefab" in unity 2021.
 
 ## [0.5.4]
@@ -222,6 +226,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
+[0.5.6]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.6
 [0.5.4]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.4
 [0.5.1]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.5.1
 [0.5.0]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.5.0

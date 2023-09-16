@@ -20,6 +20,8 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Vector2 GetPosition()
         {
             Vector2 targetCanvasLocalPosition = targetRectTransform.InverseTransformPoint(target.position);
+            targetCanvasLocalPosition.x *= targetRectTransform.localScale.x;
+            targetCanvasLocalPosition.y *= targetRectTransform.localScale.y;
 
             return targetRectTransform.anchoredPosition + targetCanvasLocalPosition;
         }

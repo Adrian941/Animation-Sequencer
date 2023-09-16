@@ -37,6 +37,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             Vector3 targetWorldPosition = ((RectTransform)parentCanvas.transform).TransformPoint(position);
             Vector2 targetCanvasLocalPosition = targetRectTransform.InverseTransformPoint(targetWorldPosition);
+            targetCanvasLocalPosition.x *= targetRectTransform.localScale.x;
+            targetCanvasLocalPosition.y *= targetRectTransform.localScale.y;
 
             return targetRectTransform.anchoredPosition + targetCanvasLocalPosition;
         }
