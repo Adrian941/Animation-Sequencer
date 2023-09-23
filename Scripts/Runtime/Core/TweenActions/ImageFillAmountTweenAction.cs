@@ -32,13 +32,13 @@ namespace BrunoMikoski.AnimationSequencer
                 targetImage = target.GetComponent<Image>();
                 if (targetImage == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component");
+                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
                     return null;
                 }
             }
 
             if (targetImage.type != Image.Type.Filled)
-                Debug.Log($"{target} with {TargetComponentType} component must be of type 'Filled' to work with 'Fill Amount' tween");
+                Debug.Log($"{target} with {TargetComponentType} component must be of type 'Filled' to work with 'Fill Amount' tween.");
 
             originalFillAmount = targetImage.fillAmount;
 

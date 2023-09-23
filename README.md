@@ -54,19 +54,52 @@ I LOVE Tween, I love DOTween even more! But having to wait for a recompilation e
 
 ## Built in Steps
  - Tween Target 
-    - DOAnchoredPosition
-    - DOMove
-    - DOScale
-    - DORotate
-    - DOFade (Canvas Group)
-    - DOFade (Graphic)
-    - DOPath
-    - DOShake (Position/Rotation/Scale)
-    - DOPunch (Position/Rotation/Scale)
-    - DOText (TextMeshPro Support)
-    - DOFill  
+    - Audio Source (Only works in Runtime)
+    	- Volume
+        - Pitch
+    - Camera
+        - Color
+    	- Field Of View
+	- Orthographic Size
+    - Canvas Group
+        - Fade (Alpha)
+    - Graphic
+        - Color
+    	- Fade (Alpha)
+	- Texture Offset (Only works in Runtime)
+	- Texture Scale (Only works in Runtime)
+    - Image
+        - Fill Amount
+    - Light
+        - Color
+    	- Intensity
+    - Rect Transform
+        - Anchored Position
+    	- Size Delta
+    - Renderer
+	- Texture Offset (Only works in Runtime)
+	- Texture Scale (Only works in Runtime)
+    - Slider
+        - Value
+    - SpriteRenderer
+        - Color
+    - Text
+	- Text
+	- Counter
+    - TMP_Text (TextMeshPro Support)
+        - Text
+    - Transform
+    	- Position
+        - Path
+	- Punch (Position/Rotation/Scale)
+        - Rotation
+    	- Scale
+	- Shake (Position/Rotation/Scale)
+ - Invoke Callback
  - Play Particle System
  - Play Animation Sequencer
+ - Set Game Object Active
+ - Wait for Interval
 
 ## How to use?
 - Animation Sequencer rely on DOTween for now, so it a requirement that you have `DOTween` on your project with properly created `asmdef` for it (Created by the `DOTween` setup panel)

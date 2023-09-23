@@ -32,7 +32,7 @@ namespace BrunoMikoski.AnimationSequencer
                 targetGraphic = target.GetComponent<Graphic>();
                 if (targetGraphic == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component");
+                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
                     return null;
                 }
             }

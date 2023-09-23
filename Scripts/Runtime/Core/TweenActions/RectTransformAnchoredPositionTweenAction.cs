@@ -61,6 +61,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
+        [SerializeField]
+        private bool snapping;
+        public bool Snapping
+        {
+            get => snapping;
+            set => snapping = value;
+        }
+
         private RectTransform targetRectTransform;
         private Vector2 originalAnchorPosition;
         private Canvas parentCanvas;
@@ -73,14 +81,14 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (targetRectTransform == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component");
+                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
                     return null;
                 }
             }
 
             originalAnchorPosition = targetRectTransform.anchoredPosition;
 
-            TweenerCore<Vector2, Vector2, VectorOptions> tween = targetRectTransform.DOAnchorPos(GetPosition(), duration);
+            TweenerCore<Vector2, Vector2, VectorOptions> tween = targetRectTransform.DOAnchorPos(GetPosition(), duration, snapping);
             tween.SetOptions(axisConstraint);
 
             return tween;

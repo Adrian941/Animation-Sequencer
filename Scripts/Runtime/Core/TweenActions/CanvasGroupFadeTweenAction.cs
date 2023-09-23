@@ -11,7 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class CanvasGroupFadeTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(CanvasGroup);
-        public override string DisplayName => "Fade Canvas Group";
+        public override string DisplayName => "Fade (Canvas Group)";
 
         [SerializeField, Range(0, 1)]
         private float alpha;
@@ -31,7 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
                 targetCanvasGroup = target.GetComponent<CanvasGroup>();
                 if (targetCanvasGroup == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component");
+                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
                     return null;
                 }
             }

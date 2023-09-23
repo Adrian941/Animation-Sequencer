@@ -61,6 +61,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
+        [SerializeField]
+        private bool snapping;
+        public bool Snapping
+        {
+            get => snapping;
+            set => snapping = value;
+        }
+
         private Transform targetTransform;
         private Vector3 originalPosition;
 
@@ -72,12 +80,12 @@ namespace BrunoMikoski.AnimationSequencer
             if (typeInput == TypeInput.Vector && local)
             {
                 originalPosition = targetTransform.localPosition;
-                tween = targetTransform.DOLocalMove(GetPosition(), duration);
+                tween = targetTransform.DOLocalMove(GetPosition(), duration, snapping);
             }
             else
             {
                 originalPosition = targetTransform.position;
-                tween = targetTransform.DOMove(GetPosition(), duration);
+                tween = targetTransform.DOMove(GetPosition(), duration, snapping);
             }
             tween.SetOptions(axisConstraint);
 

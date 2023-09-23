@@ -27,6 +27,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
+        [SerializeField]
+        private bool snapping;
+        public bool Snapping
+        {
+            get => snapping;
+            set => snapping = value;
+        }
+
         private RectTransform targetRectTransform;
         private Vector2 originalSize;
 
@@ -38,14 +46,14 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (targetRectTransform == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component");
+                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
                     return null;
                 }
             }
 
             originalSize = targetRectTransform.sizeDelta;
 
-            var tween = targetRectTransform.DOSizeDelta(sizeDelta, duration);
+            var tween = targetRectTransform.DOSizeDelta(sizeDelta, duration, snapping);
             tween.SetOptions(axisConstraint);
 
             return tween;
