@@ -59,42 +59,42 @@ I LOVE Tween, I love DOTween even more! But having to wait for a recompilation e
         - Pitch
     - Camera
         - Color
-    	- Field Of View
-	- Orthographic Size
+        - Field Of View
+        - Orthographic Size
     - Canvas Group
         - Fade (Alpha)
     - Graphic
         - Color
-    	- Fade (Alpha)
-	- Texture Offset (Only works in Runtime)
-	- Texture Scale (Only works in Runtime)
+        - Fade (Alpha)
+        - Texture Offset (Only works in Runtime)
+        - Texture Scale (Only works in Runtime)
     - Image
         - Fill Amount
     - Light
         - Color
-    	- Intensity
+        - Intensity
     - Rect Transform
         - Anchored Position
-    	- Size Delta
+        - Size Delta
     - Renderer
-	- Texture Offset (Only works in Runtime)
-	- Texture Scale (Only works in Runtime)
+        - Texture Offset (Only works in Runtime)
+        - Texture Scale (Only works in Runtime)
     - Slider
         - Value
     - SpriteRenderer
         - Color
     - Text
-	- Text
-	- Counter
+        - Text
+        - Counter
     - TMP_Text (TextMeshPro Support)
         - Text
     - Transform
-    	- Position
+        - Position
         - Path
-	- Punch (Position/Rotation/Scale)
+        - Punch (Position/Rotation/Scale)
         - Rotation
-    	- Scale
-	- Shake (Position/Rotation/Scale)
+        - Scale
+        - Shake (Position/Rotation/Scale)
  - Invoke Callback
  - Play Particle System
  - Play Animation Sequencer
