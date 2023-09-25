@@ -12,6 +12,16 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Position";
+        public override string[] ExcludedFields
+        {
+            get
+            {
+                if (relative && typeInput == TypeInput.Vector)
+                    return new string[] { "local" };
+
+                return base.ExcludedFields;
+            }
+        }
 
         [SerializeField]
         private TypeInput typeInput;
@@ -80,14 +90,14 @@ namespace BrunoMikoski.AnimationSequencer
             if (typeInput == TypeInput.Vector && local)
             {
                 originalPosition = targetTransform.localPosition;
-                tween = targetTransform.DOLocalMove(GetPosition(), duration, snapping);
+                tween = targetTransform.DOLocalMove(GetPosition(), duration);
             }
             else
             {
                 originalPosition = targetTransform.position;
-                tween = targetTransform.DOMove(GetPosition(), duration, snapping);
+                tween = targetTransform.DOMove(GetPosition(), duration);
             }
-            tween.SetOptions(axisConstraint);
+            tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }

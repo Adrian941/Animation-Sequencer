@@ -29,6 +29,25 @@ namespace BrunoMikoski.AnimationSequencer
             position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             EditorGUI.BeginChangeCheck();
 
+            if (property.TryGetTargetObjectOfProperty(out TweenActionBase tweenActionBase))
+            {
+                string[] excludedFields = tweenActionBase.ExcludedFields;
+                if (excludedFields != null && excludedFields.Length > 0)
+                {
+                    if (excludedPropertiesNames.Length > 0)
+                    {
+                        string[] tempPropertiesNames = new string[excludedPropertiesNames.Length + excludedFields.Length];
+                        excludedPropertiesNames.CopyTo(tempPropertiesNames, 0);
+                        excludedFields.CopyTo(tempPropertiesNames, excludedPropertiesNames.Length);
+                        excludedPropertiesNames = tempPropertiesNames;
+                    }
+                    else
+                    {
+                        excludedPropertiesNames = excludedFields;
+                    }
+                }
+            }
+
             foreach (SerializedProperty serializedProperty in property.GetChildren())
             {
                 bool shouldDraw = true;

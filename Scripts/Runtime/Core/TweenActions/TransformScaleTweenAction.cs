@@ -29,6 +29,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
+        [SerializeField]
+        private bool snapping;
+        public bool Snapping
+        {
+            get => snapping;
+            set => snapping = value;
+        }
+
         private Transform targetTransform;
         private Vector3? originalScale;
 
@@ -38,7 +46,7 @@ namespace BrunoMikoski.AnimationSequencer
             originalScale = targetTransform.localScale;
 
             TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(scale, duration).SetEase(ease);
-            tween.SetOptions(axisConstraint);
+            tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }

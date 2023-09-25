@@ -31,6 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
+        [Tooltip("If TRUE the endValue will be calculated as startValue + endValue instead than being used directly.")]
         protected bool relative;
         public bool Relative
         {
@@ -40,6 +41,10 @@ namespace BrunoMikoski.AnimationSequencer
 
         public virtual Type TargetComponentType { get; }
         public abstract string DisplayName { get; }
+        /// <summary>
+        /// Called by the Editor to hide fields in the inspector like "direction" or "relative" (Some tweens have no "direction" effect).
+        /// </summary>
+        public virtual string[] ExcludedFields => null;
 
         protected abstract Tweener GenerateTween_Internal(GameObject target, float duration);
 

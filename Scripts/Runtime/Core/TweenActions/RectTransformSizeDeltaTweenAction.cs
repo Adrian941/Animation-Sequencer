@@ -53,8 +53,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalSize = targetRectTransform.sizeDelta;
 
-            var tween = targetRectTransform.DOSizeDelta(sizeDelta, duration, snapping);
-            tween.SetOptions(axisConstraint);
+            var tween = targetRectTransform.DOSizeDelta(sizeDelta, duration);
+            tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }

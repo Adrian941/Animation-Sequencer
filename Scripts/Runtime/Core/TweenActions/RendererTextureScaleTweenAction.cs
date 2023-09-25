@@ -21,6 +21,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => scale = value;
         }
 
+        [SerializeField]
+        private AxisConstraint axisConstraint;
+        public AxisConstraint AxisConstraint
+        {
+            get => axisConstraint;
+            set => axisConstraint = value;
+        }
+
         private Renderer targetRenderer;
         private Vector2 originalTextureScale;
 
@@ -49,6 +57,7 @@ namespace BrunoMikoski.AnimationSequencer
                 Vector2 myVector = Vector2.zero;
                 tween = DOTween.To(() => myVector, x => myVector = x, Vector2.one, duration);
             }
+            tween.SetOptions(axisConstraint);
 
             return tween;
         }

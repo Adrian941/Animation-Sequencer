@@ -13,6 +13,16 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Path";
+        public override string[] ExcludedFields
+        {
+            get
+            {
+                if (relative && typeInput == TypeInput.Vector)
+                    return new string[] { "direction", "local" };
+
+                return new string[] { "direction" };
+            }
+        }
 
         [SerializeField]
         private TypeInput typeInput;
@@ -78,6 +88,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => pathType = value;
         }
 
+        [SerializeField]
+        private bool closePath;
+        public bool ClosePath
+        {
+            get => closePath;
+            set => closePath = value;
+        }
+
         private Transform targetTransform;
         private Vector3 originalPosition;
 
@@ -96,6 +114,7 @@ namespace BrunoMikoski.AnimationSequencer
                 originalPosition = targetTransform.position;
                 tween = targetTransform.DOPath(GetPositions(), duration, pathType, pathMode, resolution, gizmoColor);
             }
+            tween.SetOptions(closePath);
 
             return tween;
         }

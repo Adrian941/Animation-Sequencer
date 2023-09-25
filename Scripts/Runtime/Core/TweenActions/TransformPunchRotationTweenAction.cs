@@ -6,33 +6,13 @@ using UnityEngine;
 namespace BrunoMikoski.AnimationSequencer
 {
     [Serializable]
-    public sealed class TransformPunchRotationTweenAction : TweenActionBase
+    public sealed class TransformPunchRotationTweenAction : TransformPunchBaseTweenAction
     {
-        public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Punch Rotation";
 
-        [SerializeField]
-        private Vector3 punch = new Vector3(45, 45, 45);
-        public Vector3 Punch
+        public TransformPunchRotationTweenAction()
         {
-            get => punch;
-            set => punch = value;
-        }
-
-        [SerializeField]
-        private int vibrato = 10;
-        public int Vibrato
-        {
-            get => vibrato;
-            set => vibrato = value;
-        }
-
-        [SerializeField]
-        private float elasticity = 1f;
-        public float Elasticity
-        {
-            get => elasticity;
-            set => elasticity = value;
+            punch = new Vector3(45, 45, 45);
         }
 
         private Transform targetTransform;

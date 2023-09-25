@@ -12,6 +12,16 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(RectTransform);
         public override string DisplayName => "Anchored Position";
+        public override string[] ExcludedFields
+        {
+            get
+            {
+                if (relative && typeInput == TypeInput.Vector)
+                    return new string[] { "local" };
+
+                return base.ExcludedFields;
+            }
+        }
 
         [SerializeField]
         private TypeInput typeInput;
@@ -88,8 +98,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalAnchorPosition = targetRectTransform.anchoredPosition;
 
-            TweenerCore<Vector2, Vector2, VectorOptions> tween = targetRectTransform.DOAnchorPos(GetPosition(), duration, snapping);
-            tween.SetOptions(axisConstraint);
+            TweenerCore<Vector2, Vector2, VectorOptions> tween = targetRectTransform.DOAnchorPos(GetPosition(), duration);
+            tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }
@@ -109,7 +119,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPositionFromVectorInput()
         {
-            if (local)
+            if (local || relative)
                 return position;
 
             if (parentCanvas == null)

@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update: Hide unnecessary fields in the inspector.
 - Added new tween actions: Audio Source (Volume, Pitch), Camera (Color, Field Of View, Orthographic Size), Graphic (Texture Offset, Texture Scale), Light (Color, Intensity), Renderer (Texture Offset, Texture Scale), Slider (Value), SpriteRenderer (Color), Text (Text, Counter).
 - Tween actions refactoring.
 
