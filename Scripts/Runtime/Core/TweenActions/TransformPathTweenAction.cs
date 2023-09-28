@@ -1,5 +1,6 @@
 #if DOTWEEN_ENABLED
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Core.PathCore;
@@ -17,10 +18,20 @@ namespace BrunoMikoski.AnimationSequencer
         {
             get
             {
-                if (relative && typeInput == TypeInput.Vector)
-                    return new string[] { "direction", "local" };
+                List<string> result = new List<string> { "direction" };
 
-                return new string[] { "direction" };
+                if (typeInput == TypeInput.Vector)
+                {
+                    result.Add("targets");
+                    if (relative) result.Add("local");
+                }
+                else
+                {
+                    result.Add("positions");
+                    result.Add("local");
+                }
+
+                return result.ToArray();
             }
         }
 

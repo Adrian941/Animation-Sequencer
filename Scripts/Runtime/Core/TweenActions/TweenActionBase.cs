@@ -46,10 +46,13 @@ namespace BrunoMikoski.AnimationSequencer
         /// </summary>
         public virtual string[] ExcludedFields => null;
 
+        protected virtual void SetTweenAnimationStep(TweenAnimationStep tweenAnimationStep) { }
+
         protected abstract Tweener GenerateTween_Internal(GameObject target, float duration);
 
-        public Tween GenerateTween(GameObject target, float duration)
+        public Tween GenerateTween(GameObject target, float duration, TweenAnimationStep tweenAnimationStep = null)
         {
+            SetTweenAnimationStep (tweenAnimationStep);
             Tweener tween = GenerateTween_Internal(target, duration);
             if (direction == AnimationDirection.From)
                 // tween.SetRelative() does not work for From variant of "Move To Anchored Position", it must be set
@@ -68,6 +71,26 @@ namespace BrunoMikoski.AnimationSequencer
     {
         Vector,
         Object
+    }
+
+    public enum TypeInputWithAnchor
+    {
+        Vector,
+        Object,
+        Anchor
+    }
+
+    public enum MovementDirection
+    {
+        TopLeft,
+        TopCenter,
+        TopRight,
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+        BottomLeft,
+        BottomCenter,
+        BottomRight
     }
 }
 #endif

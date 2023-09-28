@@ -59,6 +59,15 @@ namespace BrunoMikoski.AnimationSequencer
             return tween;
         }
 
+        public Vector2 GetEndValue(GameObject target)
+        {
+            Vector2 endValue = sizeDelta;
+            if (relative)
+                endValue += (target.transform as RectTransform).sizeDelta;
+
+            return endValue;
+        }
+
         public override void ResetToInitialState()
         {
             if (targetRectTransform == null)

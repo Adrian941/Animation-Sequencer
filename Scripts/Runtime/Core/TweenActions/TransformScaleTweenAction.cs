@@ -51,6 +51,15 @@ namespace BrunoMikoski.AnimationSequencer
             return tween;
         }
 
+        public Vector3 GetEndValue(GameObject target)
+        {
+            Vector3 endValue = scale;
+            if (relative)
+                endValue += target.transform.localScale;
+
+            return endValue;
+        }
+
         public override void ResetToInitialState()
         {
             if (!originalScale.HasValue)
