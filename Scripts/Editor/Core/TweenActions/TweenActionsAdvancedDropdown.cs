@@ -90,10 +90,11 @@ namespace BrunoMikoski.AnimationSequencer
             base.Show(rect);
         }
 
-        private bool IsTypeAlreadyInUse(SerializedProperty actionsSerializedProperty, Type targetType)
+        public bool IsTypeAlreadyInUse(SerializedProperty actionsSerializedProperty, Type targetType)
         {
             if (string.IsNullOrEmpty(targetType.FullName))
                 return false;
+
             for (int i = 0; i < actionsSerializedProperty.arraySize; i++)
             {
                 SerializedProperty actionElement = actionsSerializedProperty.GetArrayElementAtIndex(i);

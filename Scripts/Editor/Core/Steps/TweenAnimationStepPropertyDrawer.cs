@@ -139,7 +139,10 @@ namespace BrunoMikoski.AnimationSequencer
                     AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
                         item =>
                         {
-                            AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
+                            if (AnimationSequenceEditorGUIUtility.TweenActionsDropdown.IsTypeAlreadyInUse(actionsSerializedProperty, item.BaseTweenActionType))
+                                Debug.Log($"The '{item.name}' action already exists in this step.");
+                            else
+                                AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
                         });
                 }
 
