@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+
+## [1.0.0]
+### Changed
 - Update: Avoid adding a tween action to the same step more than once.
 - Added "Anchor" type input to the "Anchored Position" tween action to add the ability to move the target to a specific parent anchor (TopLeft, TopCenter, TopRight, MiddleLeft, MiddleCenter, MiddleRight, BottomLeft, BottomCenter, BottomRight).
 - Update: Hide unnecessary fields in the inspector.
@@ -231,6 +234,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
+[1.0.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.0
 [0.5.6]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.6
 [0.5.4]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.4
 [0.5.1]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.5.1
