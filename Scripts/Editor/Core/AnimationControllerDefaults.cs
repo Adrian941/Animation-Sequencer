@@ -16,8 +16,8 @@ namespace BrunoMikoski.AnimationSequencer
         public bool PreferUsingPreviousActionEasing => preferUsingPreviousActionEasing;
 
         [SerializeField]
-        private DOTweenActionBase.AnimationDirection defaultDirection = DOTweenActionBase.AnimationDirection.To;
-        public DOTweenActionBase.AnimationDirection DefaultDirection => defaultDirection;
+        private TweenActionBase.AnimationDirection defaultDirection = TweenActionBase.AnimationDirection.To;
+        public TweenActionBase.AnimationDirection DefaultDirection => defaultDirection;
         
         [SerializeField]
         private bool preferUsingPreviousDirection = true;

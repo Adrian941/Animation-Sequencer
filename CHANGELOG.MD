@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 
+## [1.0.0]
+### Changed
+- Update: Avoid adding a tween action to the same step more than once.
+- Added "Anchor" type input to the "Anchored Position" tween action to add the ability to move the target to a specific parent anchor (TopLeft, TopCenter, TopRight, MiddleLeft, MiddleCenter, MiddleRight, BottomLeft, BottomCenter, BottomRight).
+- Update: Hide unnecessary fields in the inspector.
+- Added new tween actions: Audio Source (Volume, Pitch), Camera (Color, Field Of View, Orthographic Size), Graphic (Texture Offset, Texture Scale), Light (Color, Intensity), Renderer (Texture Offset, Texture Scale), Slider (Value), SpriteRenderer (Color), Text (Text, Counter).
+- Tween actions refactoring.
+
 ## [0.5.6]
 ### Changed
 - Fixed issue with "Move to RectTransform Anchored Position" and "Move To Anchored Position" tween. The destination target was calculated wrong if the current object has a scale other than one.
@@ -226,6 +234,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
+[1.0.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.0
 [0.5.6]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.6
 [0.5.4]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.4
 [0.5.1]: https://github.com/brunomikoski/Animation-Sequencer/releases/tag/v0.5.1
