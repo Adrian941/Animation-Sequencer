@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Added an option in the settings menu on `Edit/Preferences/AnimationSequencer` to show or not the animation data for each step in the inspector like the blue progress bar.
 
 ## [1.0.0]
 ### Changed
