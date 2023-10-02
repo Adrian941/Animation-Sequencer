@@ -19,7 +19,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 List<string> result = new List<string>();
 
-                if (typeInput == TypeInput.Vector)
+                if (inputType == InputType.Vector)
                 {
                     result.Add("target");
                     result.Add("offset");
@@ -36,11 +36,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private TypeInput typeInput;
-        public TypeInput TypeInput
+        private InputType inputType;
+        public InputType InputType
         {
-            get => typeInput;
-            set => typeInput = value;
+            get => inputType;
+            set => inputType = value;
         }
 
         [SerializeField]
@@ -99,7 +99,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
 
             TweenerCore<Vector3, Vector3, VectorOptions> tween;
-            if (typeInput == TypeInput.Vector && local)
+            if (inputType == InputType.Vector && local)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalMove(GetPosition(), duration);
@@ -116,11 +116,11 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector3 GetPosition()
         {
-            switch (typeInput)
+            switch (inputType)
             {
-                case TypeInput.Vector:
+                case InputType.Vector:
                     return position;
-                case TypeInput.Object:
+                case InputType.Object:
                     return target.position + offset;
             }
 
@@ -132,7 +132,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (typeInput == TypeInput.Vector && local)
+            if (inputType == InputType.Vector && local)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;

@@ -67,13 +67,13 @@ namespace BrunoMikoski.AnimationSequencer
         public abstract void ResetToInitialState();
     }
 
-    public enum TypeInput
+    public enum InputType
     {
         Vector,
         Object
     }
 
-    public enum TypeInputWithAnchor
+    public enum InputTypeWithAnchor
     {
         Vector,
         Object,

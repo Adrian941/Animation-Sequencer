@@ -12,6 +12,15 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Size Delta";
 
         [SerializeField]
+        [Tooltip("If TRUE the input value will be used as a percentage (e.g. 50%, 100%, 200%...)")]
+        private bool percentage;
+        public bool Percentage
+        {
+            get => percentage;
+            set => percentage = value;
+        }
+
+        [SerializeField]
         private Vector2 sizeDelta;
         public Vector2 SizeDelta
         {
@@ -53,7 +62,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalSize = targetRectTransform.sizeDelta;
 
-            var tween = targetRectTransform.DOSizeDelta(sizeDelta, duration);
+            Vector3 endValue = percentage ? Vector2.Scale(originalSize, sizeDelta / 100) : sizeDelta;
+            var tween = targetRectTransform.DOSizeDelta(endValue, duration);
             tween.SetOptions(axisConstraint, snapping);
 
             return tween;
@@ -61,7 +71,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Vector2 GetEndValue(GameObject target)
         {
-            Vector2 endValue = sizeDelta;
+            Vector2 endValue = percentage ? Vector2.Scale((target.transform as RectTransform).sizeDelta, sizeDelta / 100) : sizeDelta;
             if (relative)
                 endValue += (target.transform as RectTransform).sizeDelta;
 

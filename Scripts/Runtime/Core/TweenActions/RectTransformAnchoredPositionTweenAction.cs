@@ -19,20 +19,20 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 List<string> result = new List<string>();
 
-                switch (typeInput)
+                switch (inputType)
                 {
-                    case TypeInputWithAnchor.Vector:
+                    case InputTypeWithAnchor.Vector:
                         result.Add("target");
                         result.Add("offset");
                         result.Add("moveDirection");
                         if (relative) result.Add("local");
                         break;
-                    case TypeInputWithAnchor.Object:
+                    case InputTypeWithAnchor.Object:
                         result.Add("position");
                         result.Add("local");
                         result.Add("moveDirection");
                         break;
-                    case TypeInputWithAnchor.Anchor:
+                    case InputTypeWithAnchor.Anchor:
                         result.Add("target");
                         result.Add("position");
                         result.Add("local");
@@ -45,15 +45,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         public RectTransformAnchoredPositionTweenAction()
         {
-            typeInput = TypeInputWithAnchor.Anchor;
+            inputType = InputTypeWithAnchor.Anchor;
         }
 
         [SerializeField]
-        private TypeInputWithAnchor typeInput;
-        public TypeInputWithAnchor TypeInput
+        private InputTypeWithAnchor inputType;
+        public InputTypeWithAnchor InputType
         {
-            get => typeInput;
-            set => typeInput = value;
+            get => inputType;
+            set => inputType = value;
         }
 
         [SerializeField]
@@ -155,13 +155,13 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPosition()
         {
-            switch (typeInput)
+            switch (inputType)
             {
-                case TypeInputWithAnchor.Vector:
+                case InputTypeWithAnchor.Vector:
                     return GetPositionFromVectorInput();
-                case TypeInputWithAnchor.Object:
+                case InputTypeWithAnchor.Object:
                     return GetPositionFromObjectInput();
-                case TypeInputWithAnchor.Anchor:
+                case InputTypeWithAnchor.Anchor:
                     return GetPositionFromAnchorInput();
             }
 
