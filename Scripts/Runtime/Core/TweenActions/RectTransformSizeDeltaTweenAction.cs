@@ -62,7 +62,14 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalSize = targetRectTransform.sizeDelta;
 
-            Vector3 endValue = percentage ? Vector2.Scale(originalSize, sizeDelta / 100) : sizeDelta;
+            Vector2 endValue = percentage ? Vector2.Scale(targetRectTransform.rect.size, sizeDelta / 100) : sizeDelta;
+            if (!relative && IsRectTransformStretched(targetRectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched))
+            {
+                Vector2 strechValue = -(targetRectTransform.rect.size - (endValue + targetRectTransform.sizeDelta));
+                if (isHorizontallyStretched) endValue.x = strechValue.x;
+                if (isVerticallyStretched) endValue.y = strechValue.y;
+            }
+
             var tween = targetRectTransform.DOSizeDelta(endValue, duration);
             tween.SetOptions(axisConstraint, snapping);
 
@@ -71,11 +78,31 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Vector2 GetEndValue(GameObject target)
         {
-            Vector2 endValue = percentage ? Vector2.Scale((target.transform as RectTransform).sizeDelta, sizeDelta / 100) : sizeDelta;
+            RectTransform rectTransform = target.transform as RectTransform;
+            Vector2 endValue = percentage ? Vector2.Scale(rectTransform.rect.size, sizeDelta / 100) : sizeDelta;
+            
             if (relative)
-                endValue += (target.transform as RectTransform).sizeDelta;
+                endValue += rectTransform.rect.size;
 
             return endValue;
+        }
+
+        private bool IsRectTransformStretched(RectTransform rectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched)
+        {
+            // Check if horizontal or vertical anchor is at the extremes (0 and 1) to determine horizontal or vertical stretching.
+            isHorizontallyStretched = rectTransform.anchorMin.x == 0f && rectTransform.anchorMax.x == 1f;
+            isVerticallyStretched = rectTransform.anchorMin.y == 0f && rectTransform.anchorMax.y == 1f;
+
+            // If not horizontally or vertically stretched, check if anchor values are not in a specific set.
+            if (!isHorizontallyStretched)
+                isHorizontallyStretched = !(IsValueInSet(rectTransform.anchorMin.x) && IsValueInSet(rectTransform.anchorMax.x));
+            if (!isVerticallyStretched)
+                isVerticallyStretched = !(IsValueInSet(rectTransform.anchorMin.y) && IsValueInSet(rectTransform.anchorMax.y));
+
+            return isHorizontallyStretched || isVerticallyStretched;
+
+            // This static method checks if a value is in a specific set (0, 0.5, or 1).
+            static bool IsValueInSet(float value) => value == 0f || value == 0.5f || value == 1f;
         }
 
         public override void ResetToInitialState()
