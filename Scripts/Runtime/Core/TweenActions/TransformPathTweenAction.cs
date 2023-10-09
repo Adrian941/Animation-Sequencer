@@ -20,7 +20,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 List<string> result = new List<string> { "direction" };
 
-                if (typeInput == TypeInput.Vector)
+                if (inputType == InputType.Vector)
                 {
                     result.Add("targets");
                     if (relative) result.Add("local");
@@ -36,11 +36,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private TypeInput typeInput;
-        public TypeInput TypeInput
+        private InputType inputType;
+        public InputType InputType
         {
-            get => typeInput;
-            set => typeInput = value;
+            get => inputType;
+            set => inputType = value;
         }
 
         [SerializeField]
@@ -115,7 +115,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
 
             TweenerCore<Vector3, Path, PathOptions> tween;
-            if (typeInput == TypeInput.Vector && local)
+            if (inputType == InputType.Vector && local)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalPath(GetPositions(), duration, pathType, pathMode, resolution, gizmoColor);
@@ -132,11 +132,11 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector3[] GetPositions()
         {
-            switch (typeInput)
+            switch (inputType)
             {
-                case TypeInput.Vector:
+                case InputType.Vector:
                     return GetPositionsFromVectorInput();
-                case TypeInput.Object:
+                case InputType.Object:
                     return GetPositionsFromObjectInput();
             }
 

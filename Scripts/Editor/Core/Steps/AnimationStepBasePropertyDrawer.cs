@@ -32,22 +32,25 @@ namespace BrunoMikoski.AnimationSequencer
                     if (animationStepBase.FlowType == FlowType.Join)
                         EditorGUI.indentLevel--;
 
-                    StepAnimationData animationData = animationStepBase.GetAnimationData();
-                    float percentageDuration = animationData.percentageDuration * 100;
+                    if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo)
+                    {
+                        StepAnimationData animationData = animationStepBase.GetAnimationData();
+                        float percentageDuration = animationData.percentageDuration * 100;
 
-                    EditorGUIExtra.ProgressBar(new Rect(position.x, position.y, position.width, 54),
-                        animationData.startTime / animationData.mainSequenceDuration,
-                        animationData.endTime / animationData.mainSequenceDuration,
-                        $"Duration: {percentageDuration.ToString(percentageDuration % 1 == 0 ? "F0" : "F2")}%",
-                        "0s",
-                        $"{animationData.mainSequenceDuration.ToString(animationData.mainSequenceDuration % 1 == 0 ? "F0" : "F2")}s",
-                        $"{animationData.startTime.ToString(animationData.startTime % 1 == 0 ? "F0" : "F2")}s",
-                        $"{animationData.endTime.ToString(animationData.endTime % 1 == 0 ? "F0" : "F2")}s");
+                        EditorGUIExtra.ProgressBar(new Rect(position.x, position.y, position.width, 54),
+                            animationData.startTime / animationData.mainSequenceDuration,
+                            animationData.endTime / animationData.mainSequenceDuration,
+                            $"Duration: {percentageDuration.ToString(percentageDuration % 1 == 0 ? "F0" : "F2")}%",
+                            "0s",
+                            $"{animationData.mainSequenceDuration.ToString(animationData.mainSequenceDuration % 1 == 0 ? "F0" : "F2")}s",
+                            $"{animationData.startTime.ToString(animationData.startTime % 1 == 0 ? "F0" : "F2")}s",
+                            $"{animationData.endTime.ToString(animationData.endTime % 1 == 0 ? "F0" : "F2")}s");
+
+                        position.y += 54 + EditorGUIUtility.standardVerticalSpacing;
+                        DrawHorizontalLine(position);
+                        position.y += EditorGUIUtility.standardVerticalSpacing * 3;
+                    }
                 }
-                position.y += 54 + EditorGUIUtility.standardVerticalSpacing;
-
-                DrawHorizontalLine(position);
-                position.y += EditorGUIUtility.standardVerticalSpacing * 3;
 
                 foreach (SerializedProperty serializedProperty in property.GetChildren())
                 {

@@ -1,7 +1,7 @@
 {
   "name": "com.brunomikoski.animationsequencer",
   "displayName": "Animation Sequencer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2018.4",
   "description": "Animation sequencer is a way to create complex animations of sequence of events by a friendly user interface. Requires DOTween v1.2.632",
   "keywords": [
@@ -20,5 +20,12 @@
     "name": "Bruno Mikoski",
     "url": "https://www.brunomikoski.com"
   },
-  "type": "library"
+  "type": "library",
+  "samples": [
+    {
+      "displayName": "Sample Scene",
+      "description": "Sample scene that demonstrate the usage of the Animation Sequencer.",
+      "path": "Samples~/SampleScene"
+    }
+  ]
 }

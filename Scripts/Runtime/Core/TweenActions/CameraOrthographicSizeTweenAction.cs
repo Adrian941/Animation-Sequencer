@@ -14,6 +14,15 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Orthographic Size";
 
         [SerializeField]
+        [Tooltip("If TRUE the input value will be used as a percentage (e.g. 50%, 100%, 200%...)")]
+        private bool percentage;
+        public bool Percentage
+        {
+            get => percentage;
+            set => percentage = value;
+        }
+
+        [SerializeField]
         private float orthographicSize = 10f;
         public float OrthographicSize
         {
@@ -41,7 +50,8 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalOrthographicSize = targetCamera.orthographicSize;
 
-            TweenerCore<float, float, FloatOptions> tween = targetCamera.DOOrthoSize(orthographicSize, duration);
+            float endValue = percentage ? originalOrthographicSize * (orthographicSize / 100) : orthographicSize;
+            TweenerCore<float, float, FloatOptions> tween = targetCamera.DOOrthoSize(endValue, duration);
 
             return tween;
         }

@@ -19,20 +19,20 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 List<string> result = new List<string>();
 
-                switch (typeInput)
+                switch (inputType)
                 {
-                    case TypeInputWithAnchor.Vector:
+                    case InputTypeWithAnchor.Vector:
                         result.Add("target");
                         result.Add("offset");
                         result.Add("moveDirection");
                         if (relative) result.Add("local");
                         break;
-                    case TypeInputWithAnchor.Object:
+                    case InputTypeWithAnchor.Object:
                         result.Add("position");
                         result.Add("local");
                         result.Add("moveDirection");
                         break;
-                    case TypeInputWithAnchor.Anchor:
+                    case InputTypeWithAnchor.Anchor:
                         result.Add("target");
                         result.Add("position");
                         result.Add("local");
@@ -45,15 +45,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         public RectTransformAnchoredPositionTweenAction()
         {
-            typeInput = TypeInputWithAnchor.Anchor;
+            inputType = InputTypeWithAnchor.Anchor;
         }
 
         [SerializeField]
-        private TypeInputWithAnchor typeInput;
-        public TypeInputWithAnchor TypeInput
+        private InputTypeWithAnchor inputType;
+        public InputTypeWithAnchor InputType
         {
-            get => typeInput;
-            set => typeInput = value;
+            get => inputType;
+            set => inputType = value;
         }
 
         [SerializeField]
@@ -155,13 +155,13 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPosition()
         {
-            switch (typeInput)
+            switch (inputType)
             {
-                case TypeInputWithAnchor.Vector:
+                case InputTypeWithAnchor.Vector:
                     return GetPositionFromVectorInput();
-                case TypeInputWithAnchor.Object:
+                case InputTypeWithAnchor.Object:
                     return GetPositionFromObjectInput();
-                case TypeInputWithAnchor.Anchor:
+                case InputTypeWithAnchor.Anchor:
                     return GetPositionFromAnchorInput();
             }
 
@@ -190,7 +190,7 @@ namespace BrunoMikoski.AnimationSequencer
             Vector2 anchorPosition = Vector2.zero;
             Vector2 anchorOffset = Vector2.zero;
             CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta);
-            Vector2 sizeDelta = endSizeDelta.HasValue? endSizeDelta.Value : targetRectTransform.sizeDelta;
+            Vector2 sizeDelta = endSizeDelta.HasValue? endSizeDelta.Value : targetRectTransform.rect.size;
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
             Vector2 rectMiddleSize = new Vector2(sizeDelta.x / 2, sizeDelta.y / 2) * localScale;
 

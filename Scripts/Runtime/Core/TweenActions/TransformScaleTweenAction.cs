@@ -14,6 +14,15 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Scale";
 
         [SerializeField]
+        [Tooltip("If TRUE the input value will be used as a percentage (e.g. 50%, 100%, 200%...)")]
+        private bool percentage;
+        public bool Percentage
+        {
+            get => percentage;
+            set => percentage = value;
+        }
+
+        [SerializeField]
         private Vector3 scale;
         public Vector3 Scale
         {
@@ -45,7 +54,8 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
             originalScale = targetTransform.localScale;
 
-            TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(scale, duration).SetEase(ease);
+            Vector3 endValue = percentage ? Vector3.Scale(originalScale.Value, scale / 100) : scale;
+            TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration).SetEase(ease);
             tween.SetOptions(axisConstraint, snapping);
 
             return tween;
@@ -53,7 +63,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Vector3 GetEndValue(GameObject target)
         {
-            Vector3 endValue = scale;
+            Vector3 endValue = percentage ? Vector3.Scale(target.transform.localScale, scale / 100) : scale;
             if (relative)
                 endValue += target.transform.localScale;
 
