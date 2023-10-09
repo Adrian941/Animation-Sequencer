@@ -20,5 +20,12 @@
     "name": "Bruno Mikoski",
     "url": "https://www.brunomikoski.com"
   },
-  "type": "library"
+  "type": "library",
+  "samples": [
+    {
+      "displayName": "Sample Scene",
+      "description": "Sample scene that demonstrate the usage of the Animation Sequencer.",
+      "path": "Samples~/SampleScene"
+    }
+  ]
 }
