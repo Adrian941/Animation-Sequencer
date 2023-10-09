@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+
+## [1.0.1]
+### Changed
+- Added a sample scene that demonstrate the usage of the Animation Sequencer.
 - Fixed issue with "Size Delta" tween when RectTransform was set to stretched.
 - Added an option to use the input value as a percentage for "Orthographic Size", "Size Delta" and "Scale" tween actions.
 - Added an option in the settings menu on `Edit/Preferences/AnimationSequencer` to show or not the animation data for each step in the inspector like the blue progress bar.
@@ -237,6 +241,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
+[1.0.1]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.1
 [1.0.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.0
 [0.5.6]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.6
 [0.5.4]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.4
