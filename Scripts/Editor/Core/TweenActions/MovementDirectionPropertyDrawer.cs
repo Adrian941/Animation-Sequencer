@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Created by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(MovementDirection))]
     public class MovementDirectionPropertyDrawer : PropertyDrawer
     {

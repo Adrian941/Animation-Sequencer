@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Created by Pablo Huaxteco
     /// <summary>
     /// Provides methods for comparing software version numbers using Semantic Versioning(X.Y.Z).
     /// </summary>

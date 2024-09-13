@@ -8,6 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Renamed by Pablo Huaxteco
     public sealed class TweenActionAdvancedDropdownItem : AdvancedDropdownItem
     {
         private Type baseTweenActionType;
@@ -19,6 +20,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
     }
 
+    // Renamed by Pablo Huaxteco
     public sealed class TweenActionsAdvancedDropdown : AdvancedDropdown
     {
         private Action<TweenActionAdvancedDropdownItem> callback;
