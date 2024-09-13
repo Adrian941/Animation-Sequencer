@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(AnimationStepBase), true)]
     public class AnimationStepBasePropertyDrawer : PropertyDrawer
     {

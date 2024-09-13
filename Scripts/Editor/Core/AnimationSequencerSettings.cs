@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     public sealed class AnimationSequencerSettings : ScriptableObjectForPreferences<AnimationSequencerSettings>
     {
         [SerializeField]

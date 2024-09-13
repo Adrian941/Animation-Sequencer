@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Created by Pablo Huaxteco
     [Serializable]
     public abstract class TransformShakeBaseTweenAction : TweenActionBase
     {

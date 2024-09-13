@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Renamed by Pablo Huaxteco
     [Serializable]
     public sealed class TMP_TextTweenAction : TweenActionBase
     {

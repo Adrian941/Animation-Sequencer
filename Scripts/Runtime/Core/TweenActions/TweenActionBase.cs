@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [Serializable]
     public abstract class TweenActionBase
     {

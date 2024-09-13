@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(TweenActionBase), true)]
     public class TweenActionBasePropertyDrawer : PropertyDrawer
     {

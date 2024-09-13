@@ -7,6 +7,7 @@ using UnityEngine.Events;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [DisallowMultipleComponent]
     public class AnimationSequencerController : MonoBehaviour
     {

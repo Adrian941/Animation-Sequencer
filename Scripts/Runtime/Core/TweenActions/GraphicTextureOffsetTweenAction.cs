@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Created by Pablo Huaxteco
     [Serializable]
     public sealed class GraphicTextureOffsetTweenAction : TweenActionBase
     {

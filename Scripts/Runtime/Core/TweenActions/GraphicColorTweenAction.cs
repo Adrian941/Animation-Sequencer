@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [Serializable]
     public sealed class GraphicColorTweenAction : TweenActionBase
     {
