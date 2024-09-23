@@ -77,7 +77,7 @@ namespace BrunoMikoski.AnimationSequencer
                     property.serializedObject.ApplyModifiedProperties();
             }
 
-            property.SetPropertyDrawerHeight(position.y - originY + EditorGUIUtility.singleLineHeight);
+            property.SetPropertyDrawerHeight(position.y - originY + (property.isExpanded ? 0 : EditorGUIUtility.singleLineHeight));
         }
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
