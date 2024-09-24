@@ -498,7 +498,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             rect.height = EditorGUIUtility.singleLineHeight;
             rect.x += 10;
-            rect.width -= 20;
+            rect.width -= 10;
 
             EditorGUI.LabelField(rect, guiContent);
             EditorGUI.PropertyField(rect, element, new GUIContent(""), false);
