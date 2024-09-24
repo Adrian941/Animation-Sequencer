@@ -83,6 +83,7 @@ namespace BrunoMikoski.AnimationSequencer
                     isRelativeSerializedProperty.boolValue = AnimationControllerDefaults.Instance.UseRelative;
             }
 
+            actionsSerializedProperty.isExpanded = true;
             actionsSerializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
@@ -132,10 +133,18 @@ namespace BrunoMikoski.AnimationSequencer
                     EditorGUI.PropertyField(position, loopTypeSerializedProperty);
                     position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                 }
-
+                
                 position.y += EditorGUIUtility.standardVerticalSpacing;
                 position.height = EditorGUIUtility.singleLineHeight * 1.15f;
-                if (GUI.Button(position, "Add Actions"))
+                float originalWidth = position.width;
+                Rect actionsFoldoutPosition = position;
+                actionsFoldoutPosition.x += 10;
+                actionsFoldoutPosition.width = EditorGUIUtility.labelWidth - 10;
+                actionsSerializedProperty.isExpanded = EditorGUI.Foldout(actionsFoldoutPosition, actionsSerializedProperty.isExpanded, "Actions", true, EditorStyles.foldout);
+
+                position.x += EditorGUIUtility.labelWidth;
+                position.width = originalWidth - EditorGUIUtility.labelWidth;
+                if (GUI.Button(position, "+"))
                 {
                     AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
                         item =>
@@ -146,29 +155,34 @@ namespace BrunoMikoski.AnimationSequencer
                                 AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
                         });
                 }
+                position.x -= EditorGUIUtility.labelWidth;
+                position.width = originalWidth;
                 position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
-                for (int i = 0; i < actionsSerializedProperty.arraySize; i++)
+                if (actionsSerializedProperty.isExpanded)
                 {
-                    SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
-
-                    bool guiEnabled = GUI.enabled;
-                    DrawDeleteActionButton(position, property, i);
-
-                    if (GUI.enabled)
+                    for (int i = 0; i < actionsSerializedProperty.arraySize; i++)
                     {
-                        bool isValidTargetForRequiredComponent = IsValidTargetForRequiredComponent(targetSerializedProperty, actionSerializedProperty);
-                        GUI.enabled = isValidTargetForRequiredComponent;
+                        SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
+
+                        bool guiEnabled = GUI.enabled;
+                        DrawDeleteActionButton(position, property, i);
+
+                        if (GUI.enabled)
+                        {
+                            bool isValidTargetForRequiredComponent = IsValidTargetForRequiredComponent(targetSerializedProperty, actionSerializedProperty);
+                            GUI.enabled = isValidTargetForRequiredComponent;
+                        }
+
+                        EditorGUI.PropertyField(position, actionSerializedProperty);
+
+                        position.y += actionSerializedProperty.GetPropertyDrawerHeight();
+
+                        if (i < actionsSerializedProperty.arraySize - 1)
+                            position.y += EditorGUIUtility.standardVerticalSpacing;
+
+                        GUI.enabled = guiEnabled;
                     }
-
-                    EditorGUI.PropertyField(position, actionSerializedProperty);
-
-                    position.y += actionSerializedProperty.GetPropertyDrawerHeight();
-
-                    if (i < actionsSerializedProperty.arraySize - 1)
-                        position.y += EditorGUIUtility.standardVerticalSpacing;
-
-                    GUI.enabled = guiEnabled;
                 }
 
                 EditorGUI.indentLevel--;
