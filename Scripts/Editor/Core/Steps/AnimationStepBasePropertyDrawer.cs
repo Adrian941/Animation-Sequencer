@@ -53,6 +53,7 @@ namespace BrunoMikoski.AnimationSequencer
                     }
                 }
 
+                bool isExtraStandardVerticalSpacingAdded = false;
                 foreach (SerializedProperty serializedProperty in property.GetChildren())
                 {
                     bool shouldDraw = true;
@@ -71,7 +72,11 @@ namespace BrunoMikoski.AnimationSequencer
 
                     EditorGUI.PropertyField(position, serializedProperty);
                     position.y += EditorGUI.GetPropertyHeight(serializedProperty) + EditorGUIUtility.standardVerticalSpacing;
+                    isExtraStandardVerticalSpacingAdded = true;
                 }
+
+                if (isExtraStandardVerticalSpacingAdded)
+                    position.y -= EditorGUIUtility.standardVerticalSpacing;
 
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();

@@ -133,7 +133,8 @@ namespace BrunoMikoski.AnimationSequencer
                     position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                 }
 
-                position.height = EditorGUIUtility.singleLineHeight;
+                position.y += EditorGUIUtility.standardVerticalSpacing;
+                position.height = EditorGUIUtility.singleLineHeight * 1.15f;
                 if (GUI.Button(position, "Add Actions"))
                 {
                     AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
@@ -145,11 +146,7 @@ namespace BrunoMikoski.AnimationSequencer
                                 AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
                         });
                 }
-
-                position.y += 10;
-
-                if (actionsSerializedProperty.arraySize > 0)
-                    position.y += 26;
+                position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
                 for (int i = 0; i < actionsSerializedProperty.arraySize; i++)
                 {
@@ -169,7 +166,7 @@ namespace BrunoMikoski.AnimationSequencer
                     position.y += actionSerializedProperty.GetPropertyDrawerHeight();
 
                     if (i < actionsSerializedProperty.arraySize - 1)
-                        position.y += 30;
+                        position.y += EditorGUIUtility.standardVerticalSpacing;
 
                     GUI.enabled = guiEnabled;
                 }
@@ -181,7 +178,7 @@ namespace BrunoMikoski.AnimationSequencer
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();
             }
-            property.SetPropertyDrawerHeight(position.y - originHeight + EditorGUIUtility.singleLineHeight);
+            property.SetPropertyDrawerHeight(position.y - originHeight + (property.isExpanded ? 0 : EditorGUIUtility.singleLineHeight));
         }
 
         private static bool IsValidTargetForRequiredComponent(SerializedProperty targetSerializedProperty, SerializedProperty actionSerializedProperty)
@@ -198,6 +195,7 @@ namespace BrunoMikoski.AnimationSequencer
             Rect buttonPosition = position;
             buttonPosition.width = 24;
             buttonPosition.x += position.width - 34;
+            buttonPosition.y += 10;
             if (GUI.Button(buttonPosition, "X", EditorStyles.miniButton))
             {
                 EditorApplication.delayCall += () =>
