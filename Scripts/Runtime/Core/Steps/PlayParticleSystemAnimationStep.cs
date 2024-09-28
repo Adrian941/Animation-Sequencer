@@ -37,6 +37,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
+            if (particleSystem == null)
+            {
+                Debug.LogWarning($"One <b>\"{DisplayName}\"</b> Step is null and will not be considered in the animation. Please assign or remove it.");
+                return;
+            }
+
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
             sequence.AppendCallback(()=>
@@ -45,7 +51,6 @@ namespace BrunoMikoski.AnimationSequencer
                     StartParticles();
                 else
                     FinishParticles();
-
             });
             sequence.AppendInterval(duration);
             sequence.AppendCallback(()=>
@@ -88,7 +93,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (particleSystem != null)
                 display = particleSystem.name;
 
-            return $"{index}. Play {display} particle system";
+            return $"{index}. Play \"{display}\" particle system";
         }
 
         public override float GetDuration()

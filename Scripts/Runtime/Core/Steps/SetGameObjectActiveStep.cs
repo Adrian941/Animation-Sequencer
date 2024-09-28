@@ -31,6 +31,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
+            if (target == null)
+            {
+                Debug.LogWarning($"One <b>\"{DisplayName}\"</b> Step is null and will not be considered in the animation. Please assign or remove it.");
+                return;
+            }
+
             if (!originalActive.HasValue)
                 originalActive = target.activeSelf;
 
@@ -47,6 +53,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
+            if (target == null)
+                return;
+
             if (!originalActive.HasValue)
                 return;
 
@@ -59,7 +68,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (target != null)
                 display = target.name;
             
-            return $"{index}. Set {display} Active: {active}";
+            return $"{index}. Set \"{display}\" Active: {active}";
         }
     }
 }

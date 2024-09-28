@@ -38,6 +38,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
+            if (target == null)
+            {
+                Debug.LogWarning($"One <b>\"{DisplayName}\"</b> Step is null and will not be considered in the animation. Please assign or remove it.");
+                return;
+            }
+
             Sequence sequence = DOTween.Sequence();
             for (int i = 0; i < actions.Length; i++)
             {
@@ -61,6 +67,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
+            if (target == null)
+                return;
+
             for (int i = actions.Length - 1; i >= 0; i--)
             {
                 actions[i].ResetToInitialState();
@@ -76,7 +85,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (target != null)
                 targetName = target.name;
 
-            return $"{index}. {targetName}: {string.Join(", ", actions.Select(action => action.DisplayName))}";
+            return $"{index}. Tween \"{targetName}\": {string.Join(", ", actions.Select(action => action.DisplayName))}";
         }
 
         public override float GetDuration()
