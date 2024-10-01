@@ -51,6 +51,22 @@ namespace BrunoMikoski.AnimationSequencer
                         DrawHorizontalLine(position);
                         position.y += EditorGUIUtility.standardVerticalSpacing * 3;
                     }
+
+                    string[] excludedFields = animationStepBase.ExcludedFields;
+                    if (excludedFields != null && excludedFields.Length > 0)
+                    {
+                        if (excludedPropertiesNames.Length > 0)
+                        {
+                            string[] tempPropertiesNames = new string[excludedPropertiesNames.Length + excludedFields.Length];
+                            excludedPropertiesNames.CopyTo(tempPropertiesNames, 0);
+                            excludedFields.CopyTo(tempPropertiesNames, excludedPropertiesNames.Length);
+                            excludedPropertiesNames = tempPropertiesNames;
+                        }
+                        else
+                        {
+                            excludedPropertiesNames = excludedFields;
+                        }
+                    }
                 }
 
                 bool isExtraStandardVerticalSpacingAdded = false;

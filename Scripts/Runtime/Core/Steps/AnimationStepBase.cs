@@ -20,7 +20,12 @@ namespace BrunoMikoski.AnimationSequencer
         private StepAnimationData animationData;
 
         public abstract string DisplayName { get; }
-        
+
+        /// <summary>
+        /// Called by the Editor to hide fields in the inspector.
+        /// </summary>
+        public virtual string[] ExcludedFields => null;
+
         public abstract void AddTweenToSequence(Sequence animationSequence);
 
         public abstract void ResetToInitialState();

@@ -1,5 +1,6 @@
 #if DOTWEEN_ENABLED
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -10,6 +11,18 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class PlayParticleSystemAnimationStep : AnimationStepBase
     {
         public override string DisplayName => "Play Particle System";
+        public override string[] ExcludedFields
+        {
+            get
+            {
+                List<string> result = new List<string>();
+
+                if (!setLifetime)
+                    result.Add("duration");
+
+                return result.ToArray();
+            }
+        }
 
         [SerializeField]
         private ParticleSystem particleSystem;
@@ -19,20 +32,21 @@ namespace BrunoMikoski.AnimationSequencer
             set => particleSystem = value;
         }
 
+        [SerializeField]
+        [Tooltip("Particles will stop emitting when the duration is over.")]
+        private bool setLifetime;
+        public bool SetLifetime
+        {
+            get => setLifetime;
+            set => setLifetime = value;
+        }
+
         [SerializeField, Min(0)]
         private float duration = 1;
         public float Duration
         {
             get => duration;
             set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
-        }
-
-        [SerializeField]
-        private bool stopEmittingWhenOver;
-        public bool StopEmittingWhenOver
-        {
-            get => stopEmittingWhenOver;
-            set => stopEmittingWhenOver = value;
         }
 
         public override void AddTweenToSequence(Sequence animationSequence)
@@ -52,7 +66,9 @@ namespace BrunoMikoski.AnimationSequencer
                 else
                     FinishParticles();
             });
-            sequence.AppendInterval(duration);
+
+            if (setLifetime) sequence.AppendInterval(duration);
+
             sequence.AppendCallback(()=>
             {
                 if (!animationSequence.IsBackwards())
@@ -67,9 +83,7 @@ namespace BrunoMikoski.AnimationSequencer
                 animationSequence.Append(sequence);
         }
 
-        public override void ResetToInitialState()
-        {
-        }
+        public override void ResetToInitialState() { }
 
         private void StartParticles()
         {
@@ -78,7 +92,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void FinishParticles()
         {
-            if (stopEmittingWhenOver)
+            if (setLifetime)
                 particleSystem.Stop();
         }
 
@@ -98,7 +112,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override float GetDuration()
         {
-            return base.GetDuration() + duration;
+            return base.GetDuration() + (setLifetime ? duration : 0);
         }
     }
 }
