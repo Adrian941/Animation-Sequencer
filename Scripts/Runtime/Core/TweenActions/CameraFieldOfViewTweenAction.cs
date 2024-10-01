@@ -32,13 +32,14 @@ namespace BrunoMikoski.AnimationSequencer
                 targetCamera = target.GetComponent<Camera>();
                 if (targetCamera == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
+                    Debug.LogWarning($"The <b>\"{target.name}\"</b> GameObject does not have a <b>{TargetComponentType.Name}</b> component required  for " +
+                        $"the <b>\"{DisplayName}\"</b> action. Please consider assigning a <b>{TargetComponentType.Name}</b> component or removing the action.", target);
                     return null;
                 }
             }
 
             if (targetCamera.orthographic)
-                Debug.Log($"{target} with {TargetComponentType} component must be of type 'Perspective' projection to work with 'Field Of View' tween.");
+                Debug.Log($"The <b>\"{target.name}\"</b> GameObject with a <b>{TargetComponentType.Name}</b> component must be of type \"Perspective\" projection to work with <b>\"{DisplayName}\"</b> action.", target);
 
             originalFieldOfView = targetCamera.fieldOfView;
 

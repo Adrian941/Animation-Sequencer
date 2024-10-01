@@ -45,12 +45,17 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             Sequence sequence = DOTween.Sequence();
+            bool isDelayAssigned = false;
             for (int i = 0; i < actions.Length; i++)
             {
                 Tween tween = actions[i].GenerateTween(target, duration, this);
-                if (i == 0)
+                if (tween == null)
+                    continue;
+
+                if (!isDelayAssigned)
                 {
                     tween.SetDelay(Delay);
+                    isDelayAssigned = true;
                 }
                 sequence.Join(tween);
             }

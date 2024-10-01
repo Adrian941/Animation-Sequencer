@@ -33,13 +33,14 @@ namespace BrunoMikoski.AnimationSequencer
                 targetImage = target.GetComponent<Image>();
                 if (targetImage == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
+                    Debug.LogWarning($"The <b>\"{target.name}\"</b> GameObject does not have an <b>{TargetComponentType.Name}</b> component required  for " +
+                        $"the <b>\"{DisplayName}\"</b> action. Please consider assigning an <b>{TargetComponentType.Name}</b> component or removing the action.", target);
                     return null;
                 }
             }
 
             if (targetImage.type != Image.Type.Filled)
-                Debug.Log($"{target} with {TargetComponentType} component must be of type 'Filled' to work with 'Fill Amount' tween.");
+                Debug.Log($"The <b>\"{target.name}\"</b> GameObject with an <b>{TargetComponentType.Name}</b> component must be of type \"Filled\" to work with <b>\"{DisplayName}\"</b> action.", target);
 
             originalFillAmount = targetImage.fillAmount;
 
