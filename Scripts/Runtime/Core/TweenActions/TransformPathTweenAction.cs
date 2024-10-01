@@ -37,7 +37,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private InputType inputType;
+        private InputType inputType = InputType.Object;
         public InputType InputType
         {
             get => inputType;
@@ -114,6 +114,12 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
+
+            if ((inputType == InputType.Vector && positions.Length == 0) || (inputType == InputType.Object && targets.Length == 0))
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have <b>\"Targets\"</b>. Please consider assigning <b>\"Targets\"</b> or removing the action.");
+                return null;
+            }
 
             TweenerCore<Vector3, Path, PathOptions> tween;
             if (inputType == InputType.Vector && local)

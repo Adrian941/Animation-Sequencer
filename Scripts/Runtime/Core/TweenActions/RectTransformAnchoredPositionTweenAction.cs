@@ -47,6 +47,7 @@ namespace BrunoMikoski.AnimationSequencer
         public RectTransformAnchoredPositionTweenAction()
         {
             inputType = InputTypeWithAnchor.Anchor;
+            moveDirection = MovementDirection.MiddleCenter;
         }
 
         [SerializeField]
@@ -145,6 +146,13 @@ namespace BrunoMikoski.AnimationSequencer
                         $"the <b>\"{DisplayName}\"</b> action. Please consider assigning a <b>{TargetComponentType.Name}</b> component or removing the action.", target);
                     return null;
                 }
+            }
+
+            if (inputType == InputTypeWithAnchor.Object && this.target == null)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
+                    $"selecting another <b>\"Input Type\"</b> or removing the action.");
+                return null;
             }
 
             originalAnchorPosition = targetRectTransform.anchoredPosition;

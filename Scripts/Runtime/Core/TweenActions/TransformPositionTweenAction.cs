@@ -99,6 +99,13 @@ namespace BrunoMikoski.AnimationSequencer
         {
             targetTransform = target.transform;
 
+            if (inputType == InputType.Object && this.target == null)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
+                    $"selecting another <b>\"Input Type\"</b> or removing the action.");
+                return null;
+            }
+
             TweenerCore<Vector3, Vector3, VectorOptions> tween;
             if (inputType == InputType.Vector && local)
             {
