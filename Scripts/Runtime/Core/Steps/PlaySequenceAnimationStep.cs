@@ -22,7 +22,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             if (sequencer == null)
             {
-                Debug.LogWarning($"One <b>\"{DisplayName}\"</b> Step is null and will not be considered in the animation. Please assign or remove it.");
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
                 return;
             }
 
