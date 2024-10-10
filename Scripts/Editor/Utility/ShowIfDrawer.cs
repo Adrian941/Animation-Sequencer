@@ -16,7 +16,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (shouldShow)
                 return EditorGUI.GetPropertyHeight(property, label, true);
             else
-                return -EditorGUIUtility.standardVerticalSpacing;
+                return 0;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -66,7 +66,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private bool EvaluateConditionWithDefaults(SerializedProperty property, string propertyName, object comparisonValue, string operatorString = "")
         {
-            SerializedProperty conditionProperty = property.serializedObject.FindProperty(propertyName);
+            SerializedProperty conditionProperty = GetConditionProperty(property, propertyName);
             if (conditionProperty == null)
             {
                 Debug.LogWarning($"In 'ShowIf' attribute, the property '{propertyName}' could not be found. " +
@@ -104,6 +104,15 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             return EvaluateCondition(conditionProperty, operatorString, comparisonValue);
+        }
+
+        private SerializedProperty GetConditionProperty(SerializedProperty property, string propertyName)
+        {
+            // Check if the property is nested
+            string propertyPath = property.propertyPath;
+            string fullPath = propertyPath.Replace(property.name, propertyName);
+
+            return property.serializedObject.FindProperty(fullPath);
         }
 
         private bool EvaluateCondition(SerializedProperty conditionProperty, string operatorString, object comparisonValue)
@@ -205,7 +214,7 @@ namespace BrunoMikoski.AnimationSequencer
         private object ParseComparisonValue(SerializedProperty property, string propertyName, string comparisonValue)
         {
             // Find the property to evaluate.
-            SerializedProperty conditionProperty = property.serializedObject.FindProperty(propertyName);
+            SerializedProperty conditionProperty = GetConditionProperty(property, propertyName);
             if (conditionProperty == null)
                 return comparisonValue;
 
