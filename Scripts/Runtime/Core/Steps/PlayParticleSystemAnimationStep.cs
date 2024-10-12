@@ -1,6 +1,5 @@
 #if DOTWEEN_ENABLED
 using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -11,18 +10,6 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class PlayParticleSystemAnimationStep : AnimationStepBase
     {
         public override string DisplayName => "Play Particle System";
-        public override string[] ExcludedFields
-        {
-            get
-            {
-                List<string> result = new List<string>();
-
-                if (!setLifetime)
-                    result.Add("duration");
-
-                return result.ToArray();
-            }
-        }
 
         [SerializeField]
         private ParticleSystem particleSystem;
@@ -41,6 +28,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => setLifetime = value;
         }
 
+        [ShowIf("setLifetime")]
         [SerializeField, Min(0)]
         private float duration = 1;
         public float Duration

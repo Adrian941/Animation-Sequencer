@@ -1,6 +1,5 @@
 #if DOTWEEN_ENABLED
 using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -14,35 +13,6 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(RectTransform);
         public override string DisplayName => "Anchored Position";
-        public override string[] ExcludedFields
-        {
-            get
-            {
-                List<string> result = new List<string>();
-
-                switch (inputType)
-                {
-                    case InputTypeWithAnchor.Vector:
-                        result.Add("target");
-                        result.Add("offset");
-                        result.Add("moveDirection");
-                        if (relative) result.Add("local");
-                        break;
-                    case InputTypeWithAnchor.Object:
-                        result.Add("position");
-                        result.Add("local");
-                        result.Add("moveDirection");
-                        break;
-                    case InputTypeWithAnchor.Anchor:
-                        result.Add("target");
-                        result.Add("position");
-                        result.Add("local");
-                        break;
-                }
-
-                return result.ToArray();
-            }
-        }
 
         public RectTransformAnchoredPositionTweenAction()
         {
@@ -58,6 +28,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => inputType = value;
         }
 
+        [ShowIf("inputType", InputTypeWithAnchor.Vector)]
         [SerializeField]
         private Vector2 position;
         public Vector2 Position
@@ -66,6 +37,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => position = value;
         }
 
+        [ShowIf("inputType == InputTypeWithAnchor.Vector && relative == false")]
         [SerializeField]
         private bool local = true;
         public bool Local
@@ -74,6 +46,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => local = value;
         }
 
+        [ShowIf("inputType", InputTypeWithAnchor.Object)]
         [SerializeField]
         private RectTransform target;
         public RectTransform Target
@@ -90,6 +63,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => moveDirection = value;
         }
 
+        [ShowIf("inputType != InputTypeWithAnchor.Vector")]
         [SerializeField]
         private Vector2 offset;
         public Vector2 Offset

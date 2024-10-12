@@ -1,6 +1,5 @@
 #if DOTWEEN_ENABLED
 using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Core.PathCore;
@@ -15,26 +14,6 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Path";
-        public override string[] ExcludedFields
-        {
-            get
-            {
-                List<string> result = new List<string> { "direction" };
-
-                if (inputType == InputType.Vector)
-                {
-                    result.Add("targets");
-                    if (relative) result.Add("local");
-                }
-                else
-                {
-                    result.Add("positions");
-                    result.Add("local");
-                }
-
-                return result.ToArray();
-            }
-        }
 
         [SerializeField]
         private InputType inputType = InputType.Object;
@@ -52,6 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => positions = value;
         }
 
+        [ShowIf("inputType == InputType.Vector && relative == false")]
         [SerializeField]
         private bool local;
         public bool Local

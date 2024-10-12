@@ -64,6 +64,9 @@ namespace BrunoMikoski.AnimationSequencer
                 if (!shouldDraw)
                     continue;
 
+                if (!ShouldShowProperty(serializedProperty, property))
+                    continue;
+
                 Rect propertyRect = position;
                 EditorGUI.PropertyField(propertyRect, serializedProperty, true);
 
@@ -84,6 +87,11 @@ namespace BrunoMikoski.AnimationSequencer
                 property.serializedObject.ApplyModifiedProperties();
 
             property.SetPropertyDrawerHeight(position.y - originY);
+        }
+
+        protected virtual bool ShouldShowProperty(SerializedProperty currentProperty, SerializedProperty property)
+        {
+            return true;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

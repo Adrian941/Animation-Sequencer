@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using System.Reflection;
+using System.Linq;
 
 namespace BrunoMikoski.AnimationSequencer
 {
@@ -11,20 +12,21 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            bool shouldShow = ShouldShow(property);
-
-            if (shouldShow)
+            if (ShouldShow(property))
                 return EditorGUI.GetPropertyHeight(property, label, true);
             else
-                return 0;
+                return -EditorGUIUtility.standardVerticalSpacing;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            bool shouldShow = ShouldShow(property);
-
-            if (shouldShow)
+            if (ShouldShow(property))
+            {
+#if !UNITY_2021_1_OR_NEWER
+                ProcessMinAttribute(property);
+#endif
                 EditorGUI.PropertyField(position, property, label, true);
+            }
         }
 
         private bool ShouldShow(SerializedProperty property)
@@ -95,9 +97,15 @@ namespace BrunoMikoski.AnimationSequencer
                         return true;
                     }
 
-                    if ((comparisonValue is Enum) == false)
+                    //if ((comparisonValue is Enum) == false)
+                    //{
+                    //    Debug.LogWarning("In 'ShowIf' attribute, the comparison value must be of enum type.");
+                    //    return true;
+                    //}
+
+                    if (!conditionProperty.enumNames.Contains(comparisonValue.ToString()))
                     {
-                        Debug.LogWarning("In 'ShowIf' attribute, the comparison value must be of enum type.");
+                        Debug.LogWarning($"In 'ShowIf' attribute, the comparison value '{comparisonValue}' does not match the expected enum type for the condition.");
                         return true;
                     }
                     break;
@@ -130,8 +138,9 @@ namespace BrunoMikoski.AnimationSequencer
                     bool isConditionPropertyNull = conditionProperty.objectReferenceValue == null;
                     return isConditionPropertyNull == isEqualityOperator;
                 case SerializedPropertyType.Enum:
-                    Enum enumValue = GetEnumValue(conditionProperty);
-                    return enumValue.Equals(comparisonValue) == isEqualityOperator;
+                    //Enum enumValue = GetEnumValue(conditionProperty);
+                    //return enumValue.Equals(comparisonValue) == isEqualityOperator;
+                    return conditionProperty.enumNames[conditionProperty.enumValueIndex].Equals(comparisonValue.ToString()) == isEqualityOperator;
                 default:
                     return true;
             }
@@ -224,30 +233,54 @@ namespace BrunoMikoski.AnimationSequencer
                 case SerializedPropertyType.Boolean:
                     return bool.Parse(comparisonValue);
                 case SerializedPropertyType.Enum:
-                    var targetObject = conditionProperty.serializedObject.targetObject;
-                    var targetType = targetObject.GetType();
+                    // If the comparisonValue is in format [EnumType].[EnumValue], only take [EnumValue].
+                    if (comparisonValue.Contains("."))
+                        comparisonValue = comparisonValue.Split('.')[1];
 
-                    // Find the corresponding field for the enum property.
-                    var enumField = targetType.GetField(conditionProperty.name);
-                    if (enumField != null)
-                    {
-                        var enumType = enumField.FieldType;
+                    return comparisonValue;
 
-                        // If the comparisonValue is in format [EnumType].[EnumValue], only take [EnumValue].
-                        if (comparisonValue.Contains("."))
-                            comparisonValue = comparisonValue.Split('.')[1];
+                    //var targetObject = conditionProperty.serializedObject.targetObject;
+                    //var targetType = targetObject.GetType();
 
-                        // Parse the comparison value to the enum type.
-                        return Enum.Parse(enumType, comparisonValue);
-                    }
-                    else
-                    {
-                        return comparisonValue;
-                    }
+                    //// Find the corresponding field for the enum property.
+                    //var enumField = targetType.GetField(conditionProperty.name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+                    //if (enumField != null)
+                    //{
+                    //    var enumType = enumField.FieldType;
+
+                    //    // Parse the comparison value to the enum type.
+                    //    return Enum.Parse(enumType, comparisonValue);
+                    //}
+                    //else
+                    //{
+                    //    return comparisonValue;
+                    //}
                 default:
                     // Handle other types like int, float, strings, etc.
                     return comparisonValue;
             }
+        }
+
+        private void ProcessMinAttribute(SerializedProperty property)
+        {
+            MinAttribute minAttribute = GetMinAttribute();
+            if (minAttribute != null)
+            {
+                if (property.propertyType == SerializedPropertyType.Float)
+                    property.floatValue = Mathf.Max(property.floatValue, minAttribute.min);
+                else if (property.propertyType == SerializedPropertyType.Integer)
+                    property.intValue = Mathf.Max(property.intValue, (int)minAttribute.min);
+            }
+        }
+
+        private MinAttribute GetMinAttribute()
+        {
+            var minAttributes = fieldInfo.GetCustomAttributes(typeof(MinAttribute), false);
+            if (minAttributes.Length > 0)
+                return (MinAttribute)minAttributes[0];
+
+            return null;
         }
     }
 }
