@@ -5,14 +5,10 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(TweenAnimationStep))]
     public class TweenAnimationStepPropertyDrawer : AnimationStepBasePropertyDrawer
     {
-        public override bool CanCacheInspectorGUI(SerializedProperty property)
-        {
-            return false;
-        }
-
         private void AddNewActionOfType(SerializedProperty actionsSerializedProperty, Type targetType)
         {
             actionsSerializedProperty.arraySize++;
@@ -110,12 +106,12 @@ namespace BrunoMikoski.AnimationSequencer
                     EditorGUI.indentLevel--;
                 }
 
-                EditorGUI.BeginChangeCheck();
+                position.y += base.GetPropertyHeight(property, label) + EditorGUIUtility.standardVerticalSpacing;
+                position.height = EditorGUIUtility.singleLineHeight;
 
+                EditorGUI.BeginChangeCheck();
                 SerializedProperty actionsSerializedProperty = property.FindPropertyRelative("actions");
                 SerializedProperty targetSerializedProperty = property.FindPropertyRelative("target");
-                position.y += base.GetPropertyHeight(property, label) + EditorGUIUtility.standardVerticalSpacing;
-
                 SerializedProperty loopCountSerializedProperty = property.FindPropertyRelative("loopCount");
                 EditorGUI.PropertyField(position, loopCountSerializedProperty);
                 position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -161,7 +157,8 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (actionsSerializedProperty.isExpanded)
                 {
-                    for (int i = 0; i < actionsSerializedProperty.arraySize; i++)
+                    int arraySize = actionsSerializedProperty.arraySize;
+                    for (int i = 0; i < arraySize; i++)
                     {
                         SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
 
@@ -178,7 +175,7 @@ namespace BrunoMikoski.AnimationSequencer
 
                         position.y += actionSerializedProperty.GetPropertyDrawerHeight();
 
-                        if (i < actionsSerializedProperty.arraySize - 1)
+                        if (i < arraySize - 1)
                             position.y += EditorGUIUtility.standardVerticalSpacing;
 
                         GUI.enabled = guiEnabled;
