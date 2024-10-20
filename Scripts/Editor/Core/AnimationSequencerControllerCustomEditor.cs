@@ -45,7 +45,7 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.elementHeightCallback += GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback += OnClickToAddNew;
             reorderableList.onRemoveCallback += OnClickToRemove;
-            reorderableList.onReorderCallback += OnListOrderChanged;
+            reorderableList.onReorderCallbackWithDetails += OnListOrderChanged;
             EditorApplication.playModeStateChanged += OnEditorPlayModeChanged;
 
 #if UNITY_2021_1_OR_NEWER
@@ -69,7 +69,7 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.elementHeightCallback -= GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback -= OnClickToAddNew;
             reorderableList.onRemoveCallback -= OnClickToRemove;
-            reorderableList.onReorderCallback -= OnListOrderChanged;
+            reorderableList.onReorderCallbackWithDetails -= OnListOrderChanged;
             EditorApplication.playModeStateChanged -= OnEditorPlayModeChanged;
 
 #if UNITY_2021_1_OR_NEWER
@@ -482,14 +482,12 @@ namespace BrunoMikoski.AnimationSequencer
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
             SerializedProperty flowTypeSerializedProperty = element.FindPropertyRelative("flowType");
 
-            if (!element.TryGetTargetObjectOfProperty(out AnimationStepBase animationStepBase))
-                return;
-
             FlowType flowType = (FlowType)flowTypeSerializedProperty.enumValueIndex;
 
             int baseIdentLevel = EditorGUI.indentLevel;
 
             GUIContent guiContent = new GUIContent(element.displayName);
+            AnimationStepBase animationStepBase = sequencerController.AnimationSteps[index];
             if (animationStepBase != null)
                 guiContent = new GUIContent(animationStepBase.GetDisplayNameForEditor(index + 1));
 
@@ -551,10 +549,45 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.serializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
-        private void OnListOrderChanged(ReorderableList list)
+        private void OnListOrderChanged(ReorderableList list, int oldIndex, int newIndex)
         {
+            bool isCyclicRotationRight = true;
+            int greatestIndex = oldIndex;
+            int smallestIndex = newIndex;
+            if (newIndex > oldIndex)
+            {
+                isCyclicRotationRight = false;
+                greatestIndex = newIndex;
+                smallestIndex = oldIndex;
+            }
+
+            int startIndex = isCyclicRotationRight ? greatestIndex  : smallestIndex;
+            int count = greatestIndex - smallestIndex + 1;
+            float firstHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex).GetPropertyDrawerHeight();
+            for (int i = 0; i < count; i++)
+            {
+                SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex);
+
+                if (i == count - 1)
+                {
+                    element.SetPropertyDrawerHeight(firstHeight);
+                }
+                else
+                {
+                    
+                    int nextIndex = isCyclicRotationRight ? startIndex - 1 : startIndex + 1;
+                    float nextHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(nextIndex).GetPropertyDrawerHeight();
+                    element.SetPropertyDrawerHeight(nextHeight);
+                }
+
+                if (isCyclicRotationRight)
+                    startIndex--;
+                else
+                    startIndex++;
+            }
+
             SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
-            list.serializedProperty.serializedObject.ApplyModifiedProperties();
+            //list.serializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawContextInputOnItem(SerializedProperty element, int index, Rect rect1)

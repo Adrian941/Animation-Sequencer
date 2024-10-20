@@ -9,9 +9,8 @@ namespace BrunoMikoski.AnimationSequencer
     public static class SerializedPropertyExtensions
     {
         private static Dictionary<string, float> propertyPathToHeight = new Dictionary<string, float>();
-        private static Dictionary<string, Type> managedReferenceFullTypeNameToTypeCache = new Dictionary<string, Type>();
-
         private static Dictionary<string, object> propertyPathToObjectCache = new Dictionary<string, object>();
+        private static Dictionary<string, Type> managedReferenceFullTypeNameToTypeCache = new Dictionary<string, Type>();
         
         public static Type GetTypeFromManagedFullTypeName(this SerializedProperty serializedProperty)
         {
@@ -52,6 +51,11 @@ namespace BrunoMikoski.AnimationSequencer
             propertyPathToHeight[propertyPath] = height;
         }
 
+        public static void ClearPropertyDrawerHeight()
+        {
+            propertyPathToHeight.Clear();
+        }
+
         public static void ClearPropertyCache(string pathOrPartOfPath = "")
         {
             if (string.IsNullOrEmpty(pathOrPartOfPath))
@@ -59,9 +63,9 @@ namespace BrunoMikoski.AnimationSequencer
                 propertyPathToObjectCache.Clear();
                 return;
             }
-            
+
             List<string> propertiesTobeRemoved = new List<string>();
-            foreach (KeyValuePair<string,object> keyValuePair in propertyPathToObjectCache)
+            foreach (KeyValuePair<string, object> keyValuePair in propertyPathToObjectCache)
             {
                 string key = keyValuePair.Key;
                 if (key.IndexOf(pathOrPartOfPath, StringComparison.Ordinal) == -1)
@@ -153,8 +157,7 @@ namespace BrunoMikoski.AnimationSequencer
                     return null;
             }
             return enm.Current;
-        }
-        
+        }       
         
         public static IEnumerable<SerializedProperty> GetChildren(this SerializedProperty serializedProperty)
         {
@@ -176,6 +179,7 @@ namespace BrunoMikoski.AnimationSequencer
                 while (currentProperty.Next(false));
             }
         }
+
         public static IEnumerable<SerializedProperty> GetVisibleChildren(this SerializedProperty serializedProperty)
         {
             SerializedProperty currentProperty = serializedProperty.Copy();

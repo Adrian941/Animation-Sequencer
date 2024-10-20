@@ -33,6 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeReference]
         private AnimationStepBase[] animationSteps = Array.Empty<AnimationStepBase>();
+        public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
         [SerializeField]
         private UpdateType updateType = UpdateType.Normal;
         [SerializeField]
