@@ -561,7 +561,7 @@ namespace BrunoMikoski.AnimationSequencer
                 smallestIndex = oldIndex;
             }
 
-            int startIndex = isCyclicRotationRight ? greatestIndex  : smallestIndex;
+            int startIndex = isCyclicRotationRight ? greatestIndex : smallestIndex;
             int count = greatestIndex - smallestIndex + 1;
             float firstHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex).GetPropertyDrawerHeight();
             for (int i = 0; i < count; i++)
@@ -574,7 +574,6 @@ namespace BrunoMikoski.AnimationSequencer
                 }
                 else
                 {
-                    
                     int nextIndex = isCyclicRotationRight ? startIndex - 1 : startIndex + 1;
                     float nextHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(nextIndex).GetPropertyDrawerHeight();
                     element.SetPropertyDrawerHeight(nextHeight);
@@ -587,7 +586,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
-            //list.serializedProperty.serializedObject.ApplyModifiedProperties();
+            list.serializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawContextInputOnItem(SerializedProperty element, int index, Rect rect1)
