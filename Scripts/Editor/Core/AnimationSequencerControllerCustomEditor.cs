@@ -89,6 +89,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             tweenTimeScale = 1f;
+            SerializedPropertyExtensions.ClearPropertyCache();
         }
 
         public override void OnInspectorGUI()
@@ -487,7 +488,8 @@ namespace BrunoMikoski.AnimationSequencer
             int baseIdentLevel = EditorGUI.indentLevel;
 
             GUIContent guiContent = new GUIContent(element.displayName);
-            AnimationStepBase animationStepBase = sequencerController.AnimationSteps[index];
+            AnimationStepBase animationStepBase = null;
+            try { animationStepBase = sequencerController.AnimationSteps[index]; } catch (Exception) { }
             if (animationStepBase != null)
                 guiContent = new GUIContent(animationStepBase.GetDisplayNameForEditor(index + 1));
 
@@ -544,9 +546,9 @@ namespace BrunoMikoski.AnimationSequencer
         private void OnClickToRemove(ReorderableList list)
         {
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(list.index);
-            SerializedPropertyExtensions.ClearPropertyCache(element.propertyPath);
             reorderableList.serializedProperty.DeleteArrayElementAtIndex(list.index);
             reorderableList.serializedProperty.serializedObject.ApplyModifiedProperties();
+            SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
         }
 
         private void OnListOrderChanged(ReorderableList list, int oldIndex, int newIndex)

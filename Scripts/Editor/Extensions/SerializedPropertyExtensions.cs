@@ -51,12 +51,12 @@ namespace BrunoMikoski.AnimationSequencer
             propertyPathToHeight[propertyPath] = height;
         }
 
-        public static void ClearPropertyDrawerHeight()
+        public static void ClearPropertyCache()
         {
-            propertyPathToHeight.Clear();
+            ClearPropertyCache("");
         }
 
-        public static void ClearPropertyCache(string pathOrPartOfPath = "")
+        public static void ClearPropertyCache(string pathOrPartOfPath)
         {
             if (string.IsNullOrEmpty(pathOrPartOfPath))
             {
@@ -84,17 +84,17 @@ namespace BrunoMikoski.AnimationSequencer
             if (prop == null) 
                 return false;
 
-            // if (propertyPathToObjectCache.TryGetValue(prop.propertyPath, out object result))
-            // {
-            //     if (result != null)
-            //     {
-            //         resultObject = result as T;
-            //         return true;
-            //     }
-            //
-            //     propertyPathToObjectCache.Remove(prop.propertyPath);
-            // }
-            
+            //if (propertyPathToObjectCache.TryGetValue(prop.propertyPath, out object result))
+            //{
+            //    if (result != null)
+            //    {
+            //        resultObject = result as T;
+            //        return true;
+            //    }
+
+            //    propertyPathToObjectCache.Remove(prop.propertyPath);
+            //}
+
             string path = prop.propertyPath.Replace(".Array.data[", "[");
             object obj = prop.serializedObject.targetObject;
             string[] elements = path.Split('.');
@@ -116,7 +116,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (obj is T t)
             {
                 resultObject = t;
-                // propertyPathToObjectCache.Add(prop.propertyPath, resultObject);
+                //propertyPathToObjectCache.Add(prop.propertyPath, resultObject);
                 return true;
             }
 
