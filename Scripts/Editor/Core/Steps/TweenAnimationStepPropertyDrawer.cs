@@ -160,25 +160,31 @@ namespace BrunoMikoski.AnimationSequencer
                     int arraySize = actionsSerializedProperty.arraySize;
                     for (int i = 0; i < arraySize; i++)
                     {
-                        SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
-
-                        bool guiEnabled = GUI.enabled;
-                        DrawDeleteActionButton(position, property, i);
-
-                        if (GUI.enabled)
+                        if (DrawDeleteActionButton(position, property, i))
                         {
-                            bool isValidTargetForRequiredComponent = IsValidTargetForRequiredComponent(targetSerializedProperty, actionSerializedProperty);
-                            GUI.enabled = isValidTargetForRequiredComponent;
+                            SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
+
+                            bool guiEnabled = GUI.enabled;
+
+                            if (GUI.enabled)
+                            {
+                                bool isValidTargetForRequiredComponent = IsValidTargetForRequiredComponent(targetSerializedProperty, actionSerializedProperty);
+                                GUI.enabled = isValidTargetForRequiredComponent;
+                            }
+
+                            EditorGUI.PropertyField(position, actionSerializedProperty);
+                            position.y += actionSerializedProperty.GetPropertyDrawerHeight();
+
+                            if (i < arraySize - 1)
+                                position.y += EditorGUIUtility.standardVerticalSpacing;
+
+                            GUI.enabled = guiEnabled;
                         }
-
-                        EditorGUI.PropertyField(position, actionSerializedProperty);
-
-                        position.y += actionSerializedProperty.GetPropertyDrawerHeight();
-
-                        if (i < arraySize - 1)
-                            position.y += EditorGUIUtility.standardVerticalSpacing;
-
-                        GUI.enabled = guiEnabled;
+                        else
+                        {
+                            i--;
+                            arraySize--;
+                        }
                     }
                 }
 
@@ -201,28 +207,28 @@ namespace BrunoMikoski.AnimationSequencer
             return AnimationSequenceEditorGUIUtility.CanActionBeAppliedToTarget(type, targetSerializedProperty.objectReferenceValue as GameObject);
         }
 
-        private static void DrawDeleteActionButton(Rect position, SerializedProperty property, int targetIndex)
+        private bool DrawDeleteActionButton(Rect position, SerializedProperty property, int targetIndex)
         {
             Rect buttonPosition = position;
             buttonPosition.width = 24;
             buttonPosition.x += position.width - 34;
             buttonPosition.y += 10;
+
             if (GUI.Button(buttonPosition, "X", EditorStyles.miniButton))
             {
-                EditorApplication.delayCall += () =>
-                {
-                    DeleteElementAtIndex(property, targetIndex);
-                };
+                DeleteElementAtIndex(property, targetIndex);
+                return false;
             }
+
+            return true;
         }
 
-        private static void DeleteElementAtIndex(SerializedProperty serializedProperty, int targetIndex)
+        private void DeleteElementAtIndex(SerializedProperty serializedProperty, int targetIndex)
         {
             SerializedProperty actionsPropertyPath = serializedProperty.FindPropertyRelative("actions");
             actionsPropertyPath.DeleteArrayElementAtIndex(targetIndex);
             SerializedPropertyExtensions.ClearPropertyCache(actionsPropertyPath.propertyPath);
-            actionsPropertyPath.serializedObject.ApplyModifiedProperties();
-            actionsPropertyPath.serializedObject.Update();
+            //actionsPropertyPath.serializedObject.ApplyModifiedProperties();
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
