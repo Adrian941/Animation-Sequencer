@@ -30,7 +30,7 @@ namespace BrunoMikoski.AnimationSequencer
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
-        private bool showStepsPanel = true;
+        private bool showStepsPanel;
         private float tweenTimeScale = 1f;
         private bool wasShowingStepsPanel;
         private bool justStartPreviewing;
@@ -100,7 +100,15 @@ namespace BrunoMikoski.AnimationSequencer
             DrawFoldoutArea("Preview", ref showPreviewPanel, DrawPreviewControls);
             DrawFoldoutArea("Settings", ref showSettingsPanel, DrawSettings);
             DrawFoldoutArea("Callbacks", ref showCallbacksPanel, DrawCallbacks);
+            SerializedProperty animationStepsProperty = null;
+            if (!DOTweenEditorPreview.isPreviewing)
+            {
+                animationStepsProperty = reorderableList.serializedProperty;
+                showStepsPanel = animationStepsProperty.isExpanded;
+            }
             DrawFoldoutArea("Steps", ref showStepsPanel, DrawAnimationSteps);
+            if (animationStepsProperty != null && !DOTweenEditorPreview.isPreviewing)
+                animationStepsProperty.isExpanded = showStepsPanel;
         }
 
         private void SetDefaults()
