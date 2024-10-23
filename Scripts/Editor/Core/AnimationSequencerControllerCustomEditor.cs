@@ -283,7 +283,8 @@ namespace BrunoMikoski.AnimationSequencer
             if (justStartPreviewing)
                 wasShowingStepsPanel = showStepsPanel;
 
-            showStepsPanel = !AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing;
+            if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
+                showStepsPanel = false;
         }
 
         private void DrawTimeScaleSlider()
