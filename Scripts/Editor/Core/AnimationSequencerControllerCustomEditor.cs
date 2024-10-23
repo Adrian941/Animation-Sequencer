@@ -59,7 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override bool RequiresConstantRepaint()
         {
-            return !Application.isPlaying && DOTweenEditorPreview.isPreviewing;
+            return Application.isPlaying || DOTweenEditorPreview.isPreviewing;
         }
 
         private void OnDisable()
