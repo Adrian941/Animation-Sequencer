@@ -13,6 +13,8 @@ namespace BrunoMikoski.AnimationSequencer
         private float delay;
         public float Delay => delay;
 
+        [Tooltip("Defines how the animation flows within a sequence. 'Append' plays the animation after the previous step's animation. " +
+            "'Join' plays the animation at the same time as the previous step's animation.")]
         [SerializeField]
         private FlowType flowType;
         public FlowType FlowType => flowType;

@@ -399,15 +399,14 @@ namespace BrunoMikoski.AnimationSequencer
                 EditorGUILayout.PropertyField(autoPlayModeSerializedProperty);
                 if (autoplayMode != AnimationSequencerController.AutoplayType.Nothing)
                     EditorGUILayout.PropertyField(pauseOnStartSerializedProperty);
-                DrawPlaybackSpeedSlider();
-                EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
                 EditorGUILayout.PropertyField(sequenceDirectionSerializedProperty);
                 EditorGUILayout.PropertyField(updateTypeSerializedProperty);
-                EditorGUILayout.PropertyField(autoKillSerializedProperty);
+                DrawPlaybackSpeedSlider();
+                EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
                 EditorGUILayout.PropertyField(loopsSerializedProperty);
-
                 if (loopsSerializedProperty.intValue != 0)
                     EditorGUILayout.PropertyField(loopTypeSerializedProperty);
+                EditorGUILayout.PropertyField(autoKillSerializedProperty);
 
                 if (changedCheck.changed)
                 {
@@ -425,7 +424,8 @@ namespace BrunoMikoski.AnimationSequencer
             EditorGUI.BeginChangeCheck();
 
             var playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
-            playbackSpeedProperty.floatValue = EditorGUILayout.Slider("Playback Speed", playbackSpeedProperty.floatValue, 0, 2);
+            GUIContent playbackSpeedLabel = new GUIContent("Playback Speed", "Speed of the animation playback.");
+            playbackSpeedProperty.floatValue = EditorGUILayout.Slider(playbackSpeedLabel, playbackSpeedProperty.floatValue, 0, 2);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -453,14 +453,14 @@ namespace BrunoMikoski.AnimationSequencer
                 GUI.enabled = false;
 
             SerializedProperty onStartEventSerializedProperty = serializedObject.FindProperty("onStartEvent");
-            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
             SerializedProperty onProgressEventSerializedProperty = serializedObject.FindProperty("onProgressEvent");
+            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
 
             using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
             {
                 EditorGUILayout.PropertyField(onStartEventSerializedProperty);
-                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
                 EditorGUILayout.PropertyField(onProgressEventSerializedProperty);
+                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
 
                 if (changedCheck.changed)
                     serializedObject.ApplyModifiedProperties();

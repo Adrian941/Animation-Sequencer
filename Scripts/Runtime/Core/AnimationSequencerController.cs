@@ -38,8 +38,8 @@ namespace BrunoMikoski.AnimationSequencer
         public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
         public float PlaybackSpeed => playbackSpeed;
         public UnityEvent OnStartEvent { get { return onStartEvent; } protected set { onStartEvent = value; } }
+        public UnityEvent OnProgressEvent { get { return onProgressEvent; } protected set { onProgressEvent = value; } }
         public UnityEvent OnFinishedEvent { get { return onFinishedEvent; } protected set { onFinishedEvent = value; } }
-        public UnityEvent OnProgressEvent => onProgressEvent;
         public Sequence PlayingSequence => playingSequence;
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
         public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
@@ -49,6 +49,7 @@ namespace BrunoMikoski.AnimationSequencer
         private AnimationStepBase[] animationSteps = Array.Empty<AnimationStepBase>();
         [SerializeField]
         private UpdateType updateType = UpdateType.Normal;
+        [Tooltip("If true, the animation is independent of the Time Scale.")]
         [SerializeField]
         private bool timeScaleIndependent = false;
         [SerializeField]
@@ -57,12 +58,16 @@ namespace BrunoMikoski.AnimationSequencer
         protected bool startPaused;
         [SerializeField]
         private float playbackSpeed = 1f;
+        [Tooltip("Direction of the animation (Forward or Backward).")]
         [SerializeField]
         protected PlayType playType = PlayType.Forward;
+        [Tooltip("Number of loops for the animation (0 for no loops).")]
         [SerializeField]
         private int loops = 0;
         [SerializeField]
         private LoopType loopType = LoopType.Restart;
+        [Tooltip("If true, the animation is automatically killed (released) after completion, which is useful for animations that are occasional. " +
+            "If false, the animation persists, ideal for frequently recurring animations.")]
         [SerializeField]
         private bool autoKill = true;
 
@@ -70,9 +75,9 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private UnityEvent onStartEvent = new UnityEvent();
         [SerializeField]
-        private UnityEvent onFinishedEvent = new UnityEvent();
-        [SerializeField]
         private UnityEvent onProgressEvent = new UnityEvent();
+        [SerializeField]
+        private UnityEvent onFinishedEvent = new UnityEvent();
 
         // Private variables
         private Sequence playingSequence;       

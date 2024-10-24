@@ -15,6 +15,7 @@ namespace BrunoMikoski.AnimationSequencer
             From
         }
 
+        [Tooltip("Specifies the direction of the animation: 'To' animates towards the end value, 'From' animates from the end value back to the start value.")]
         [SerializeField]
         protected AnimationDirection direction;
         public AnimationDirection Direction
@@ -32,7 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        [Tooltip("If TRUE the endValue will be calculated as startValue + endValue instead than being used directly.")]
+        [Tooltip("If true the end value will be calculated as (startValue + endValue) instead than being used directly.")]
         protected bool relative;
         public bool Relative
         {

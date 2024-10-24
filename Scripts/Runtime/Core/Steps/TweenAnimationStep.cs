@@ -12,6 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override string DisplayName => "Tween Target";
 
+        [Tooltip("Number of loops for the animation (0 for no loops).")]
         [SerializeField]
         private int loopCount;
         public int LoopCount
