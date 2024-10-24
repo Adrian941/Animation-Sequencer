@@ -11,6 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
     [DisallowMultipleComponent]
     public class AnimationSequencerController : MonoBehaviour
     {
+        #region Enumerations
         public enum PlayType
         {
             Forward,
@@ -30,10 +31,22 @@ namespace BrunoMikoski.AnimationSequencer
             Reset,
             Complete
         }
+        #endregion
 
+        #region Variables
+        // Public properties
+        public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
+        public float PlaybackSpeed => playbackSpeed;
+        public UnityEvent OnStartEvent { get { return onStartEvent; } protected set { onStartEvent = value; } }
+        public UnityEvent OnFinishedEvent { get { return onFinishedEvent; } protected set { onFinishedEvent = value; } }
+        public UnityEvent OnProgressEvent => onProgressEvent;
+        public Sequence PlayingSequence => playingSequence;
+        public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
+        public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
+
+        // Serialized fields
         [SerializeReference]
         private AnimationStepBase[] animationSteps = Array.Empty<AnimationStepBase>();
-        public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
         [SerializeField]
         private UpdateType updateType = UpdateType.Normal;
         [SerializeField]
@@ -44,7 +57,6 @@ namespace BrunoMikoski.AnimationSequencer
         protected bool startPaused;
         [SerializeField]
         private float playbackSpeed = 1f;
-        public float PlaybackSpeed => playbackSpeed;
         [SerializeField]
         protected PlayType playType = PlayType.Forward;
         [SerializeField]
@@ -53,30 +65,28 @@ namespace BrunoMikoski.AnimationSequencer
         private LoopType loopType = LoopType.Restart;
         [SerializeField]
         private bool autoKill = true;
-        
+
+        // Serialized events
         [SerializeField]
         private UnityEvent onStartEvent = new UnityEvent();
-        public UnityEvent OnStartEvent { get { return onStartEvent;} protected set {onStartEvent = value;}}
         [SerializeField]
         private UnityEvent onFinishedEvent = new UnityEvent();
-        public UnityEvent OnFinishedEvent { get { return onFinishedEvent;} protected set {onFinishedEvent = value;}}
         [SerializeField]
         private UnityEvent onProgressEvent = new UnityEvent();
-        public UnityEvent OnProgressEvent => onProgressEvent;
 
-        private Sequence playingSequence;
-        public Sequence PlayingSequence => playingSequence;
-        private PlayType playTypeInternal = PlayType.Forward;
-#if UNITY_EDITOR
-        private bool requiresReset = false;
-#endif
-        public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
-        public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
-
+        // Private variables
+        private Sequence playingSequence;       
+        private PlayType playTypeInternal = PlayType.Forward;       
         private bool isSequenceGenerated;
         private bool resetWhenCreateSequence;
 
+#if UNITY_EDITOR
+        // Editor-only variables
+        private bool requiresReset = false;
+#endif
+        #endregion
 
+        #region Unity lifecycle methods
         protected virtual void Awake()
         {
             playTypeInternal = playType;
@@ -97,13 +107,6 @@ namespace BrunoMikoski.AnimationSequencer
 
             Autoplay();
         }
-
-        private void Autoplay()
-        {
-            Play();
-            if (startPaused)
-                playingSequence.Pause();
-        }
         
         protected virtual void OnDisable()
         {
@@ -122,6 +125,17 @@ namespace BrunoMikoski.AnimationSequencer
         protected virtual void OnDestroy()
         {
             ClearPlayingSequence();
+        }
+        #endregion
+
+        #region Sequencer lifecycle methods
+        #region Playback Control
+        private void Autoplay()
+        {
+            Play();
+
+            if (startPaused)
+                playingSequence.Pause();
         }
 
         public virtual void Play()
@@ -203,6 +217,14 @@ namespace BrunoMikoski.AnimationSequencer
             Play(completeFirst, onCompleteCallback);
         }
 
+        public virtual IEnumerator PlayEnumerator()
+        {
+            Play();
+            yield return playingSequence.WaitForCompletion();
+        }
+        #endregion
+
+        #region Time and Progress Management
         public virtual void SetTime(float seconds, bool andPlay = true)
         {
             if (playingSequence == null)
@@ -222,7 +244,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             playingSequence.Goto(progress * playingSequence.Duration(), andPlay);
         }
+        #endregion
 
+        #region Pause, Resume, and Complete
         public virtual void TogglePause()
         {
             if (playingSequence == null)
@@ -274,13 +298,9 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence = null;
             resetWhenCreateSequence = false;
         }
+        #endregion
 
-        public virtual IEnumerator PlayEnumerator()
-        {
-            Play();
-            yield return playingSequence.WaitForCompletion();
-        }
-
+        #region Sequence Generation and Reset
         public virtual Sequence GenerateSequence()
         {
             Sequence sequence = DOTween.Sequence();
@@ -354,7 +374,10 @@ namespace BrunoMikoski.AnimationSequencer
             DOTween.Kill(playingSequence);
             playingSequence = null;
         }
-  
+        #endregion
+        #endregion
+
+        #region Set values
         public void SetAutoplayMode(AutoplayType autoplayType)
         {
             autoplayMode = autoplayType;
@@ -393,7 +416,9 @@ namespace BrunoMikoski.AnimationSequencer
         {
             loops = targetLoops;
         }
+        #endregion
 
+        #region Editor-Only methods
 #if UNITY_EDITOR
         // Unity Event Function called when component is added or reset.
         private void Reset()
@@ -419,6 +444,9 @@ namespace BrunoMikoski.AnimationSequencer
             CalculateStepsDuration();
         }
 #endif
+        #endregion
+
+        #region Helper methods
         public bool TryGetStepAtIndex<T>(int index, out T result) where T : AnimationStepBase
         {
             if (index < 0 || index > animationSteps.Length - 2)
@@ -464,6 +492,7 @@ namespace BrunoMikoski.AnimationSequencer
                 step.SetAnimationData(mainSequenceDuration, startTimeSteps[i]);
             }
         }
+        #endregion
     }
 }
 #endif

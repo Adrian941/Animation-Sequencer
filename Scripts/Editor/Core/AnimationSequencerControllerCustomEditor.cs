@@ -13,6 +13,8 @@ namespace BrunoMikoski.AnimationSequencer
     [CustomEditor(typeof(AnimationSequencerController), true)]
     public class AnimationSequencerControllerCustomEditor : Editor
     {
+        #region Variables
+        // Static variables and properties 
         private static AnimationStepAdvancedDropdown cachedAnimationStepsDropdown;
         private static AnimationStepAdvancedDropdown AnimationStepAdvancedDropdown
         {
@@ -24,6 +26,8 @@ namespace BrunoMikoski.AnimationSequencer
                 return cachedAnimationStepsDropdown;
             }
         }
+
+        // Private variables
         private AnimationSequencerController sequencerController;
         private ReorderableList reorderableList;
         private bool showPreviewPanel = true;
@@ -33,6 +37,7 @@ namespace BrunoMikoski.AnimationSequencer
         private float tweenTimeScale = 1f;
         private bool wasShowingStepsPanel;
         private bool justStartPreviewing;
+        #endregion
 
         #region OnEnable/OnDisable settings
         private void OnEnable()
