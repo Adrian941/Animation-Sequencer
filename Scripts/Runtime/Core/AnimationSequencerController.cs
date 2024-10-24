@@ -19,9 +19,9 @@ namespace BrunoMikoski.AnimationSequencer
         
         public enum AutoplayType
         {
+            Nothing,
             Start,
-            OnEnable,
-            Nothing
+            OnEnable
         }
 
         public enum KillType
