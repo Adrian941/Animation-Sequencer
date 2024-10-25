@@ -31,6 +31,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => position = value;
         }
 
+        [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
+            "If false, the tween will operate in world space coordinates.")]
         [ShowIf("inputType == InputType.Vector && relative == false")]
         [SerializeField]
         private bool local;
@@ -58,6 +60,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => offset = value;
         }
 
+        [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
+            "Use this to constrain movement to a single axis (X, Y, or Z) or a combination of them.")]
         [SerializeField]
         private AxisConstraint axisConstraint;
         public AxisConstraint AxisConstraint
@@ -66,6 +70,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => axisConstraint = value;
         }
 
+        [Tooltip("If true, the animated position values will snap to integer values, creating a more grid-like movement. " +
+            "Useful for animations that require precise, whole number positioning.")]
         [SerializeField]
         private bool snapping;
         public bool Snapping

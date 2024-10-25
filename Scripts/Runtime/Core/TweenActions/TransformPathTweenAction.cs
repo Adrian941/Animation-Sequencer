@@ -32,6 +32,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => positions = value;
         }
 
+        [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
+            "If false, the tween will operate in world space coordinates.")]
         [ShowIf("inputType == InputType.Vector && relative == false")]
         [SerializeField]
         private bool local;
@@ -57,6 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => gizmoColor = value;
         }
 
+        [Tooltip("Higher values create smoother curves but are more performance-intensive. Default is 10; 5 works well for gentle curves.")]
         [SerializeField]
         private int resolution = 10;
         public int Resolution

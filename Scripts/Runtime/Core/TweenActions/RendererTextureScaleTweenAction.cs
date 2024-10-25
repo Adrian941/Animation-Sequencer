@@ -22,6 +22,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => scale = value;
         }
 
+        [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
+            "Use this to constrain movement to a single axis (X, Y, or Z) or a combination of them.")]
         [SerializeField]
         private AxisConstraint axisConstraint;
         public AxisConstraint AxisConstraint
