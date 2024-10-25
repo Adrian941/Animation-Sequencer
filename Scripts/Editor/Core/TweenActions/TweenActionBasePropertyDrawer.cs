@@ -19,10 +19,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             position.x += 10;
             position.width -= 20;
+            position.y += 10;
 
             EditorGUI.BeginProperty(position, GUIContent.none, property);
-
-            float startingYPosition = position.y;
 
             //-26 = "X" button size.
             EditorGUI.LabelField(new Rect(position.x, position.y, position.width - 26, position.height), displayName, EditorStyles.boldLabel);
@@ -65,6 +64,9 @@ namespace BrunoMikoski.AnimationSequencer
                 if (!shouldDraw)
                     continue;
 
+                if (!ShouldShowProperty(serializedProperty, property))
+                    continue;
+
                 Rect propertyRect = position;
                 EditorGUI.PropertyField(propertyRect, serializedProperty, true);
 
@@ -73,10 +75,11 @@ namespace BrunoMikoski.AnimationSequencer
 
             position.x -= 10;
             position.width += 20;
+            position.y += 10;
 
             Rect boxPosition = position;
-            boxPosition.y = startingYPosition - 10;
-            boxPosition.height = (position.y - startingYPosition) + 20;
+            boxPosition.y = originY;
+            boxPosition.height = position.y - originY;
             GUI.Box(boxPosition, GUIContent.none, EditorStyles.helpBox);
 
             EditorGUI.EndProperty();
@@ -84,6 +87,11 @@ namespace BrunoMikoski.AnimationSequencer
                 property.serializedObject.ApplyModifiedProperties();
 
             property.SetPropertyDrawerHeight(position.y - originY);
+        }
+
+        protected virtual bool ShouldShowProperty(SerializedProperty currentProperty, SerializedProperty property)
+        {
+            return true;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

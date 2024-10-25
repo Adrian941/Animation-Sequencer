@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(CustomEase))]
     public class CustomEasePropertyDrawer : PropertyDrawer
     {
@@ -46,7 +47,10 @@ namespace BrunoMikoski.AnimationSequencer
             buttonRect.x += popupRect.width;
             buttonRect.height -= 1;
 
-            Rect displayRect = EditorGUI.PrefixLabel(popupRect, new GUIContent("Ease"));
+            GUIContent easeLabel = new GUIContent("Ease", "Controls the speed curve of the animation. " +
+                "Easing functions define the rate of change over time, such as gradual acceleration or deceleration. " +
+                "'InOutCirc', for example, starts and ends slowly, with faster movement in the middle.");
+            Rect displayRect = EditorGUI.PrefixLabel(popupRect, easeLabel);
             GUIStyle leftAlignedButton = EditorStyles.miniButton;
             leftAlignedButton.alignment = TextAnchor.MiddleLeft;
             if (GUI.Button(displayRect, displayName, leftAlignedButton))

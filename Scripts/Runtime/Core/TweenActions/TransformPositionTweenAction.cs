@@ -1,6 +1,5 @@
 #if DOTWEEN_ENABLED
 using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -14,27 +13,6 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Position";
-        public override string[] ExcludedFields
-        {
-            get
-            {
-                List<string> result = new List<string>();
-
-                if (inputType == InputType.Vector)
-                {
-                    result.Add("target");
-                    result.Add("offset");
-                    if (relative) result.Add("local");
-                }
-                else
-                {
-                    result.Add("position");
-                    result.Add("local");
-                }
-
-                return result.ToArray();
-            }
-        }
 
         [SerializeField]
         private InputType inputType;
@@ -44,6 +22,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => inputType = value;
         }
 
+        [ShowIf("inputType", InputType.Vector)]
         [SerializeField]
         private Vector3 position;
         public Vector3 Position
@@ -52,6 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => position = value;
         }
 
+        [ShowIf("inputType == InputType.Vector && relative == false")]
         [SerializeField]
         private bool local;
         public bool Local
@@ -60,6 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => local = value;
         }
 
+        [ShowIf("inputType", InputType.Object)]
         [SerializeField]
         private Transform target;
         public Transform Target
@@ -68,6 +49,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => target = value;
         }
 
+        [ShowIf("inputType", InputType.Object)]
         [SerializeField]
         private Vector3 offset;
         public Vector3 Offset
@@ -98,6 +80,13 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
+
+            if (inputType == InputType.Object && this.target == null)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
+                    $"selecting another <b>\"Input Type\"</b> or removing the action.");
+                return null;
+            }
 
             TweenerCore<Vector3, Vector3, VectorOptions> tween;
             if (inputType == InputType.Vector && local)

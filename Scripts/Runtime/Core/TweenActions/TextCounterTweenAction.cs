@@ -41,7 +41,8 @@ namespace BrunoMikoski.AnimationSequencer
                 targetText = target.GetComponent<Text>();
                 if (targetText == null)
                 {
-                    Debug.LogError($"{target} does not have {TargetComponentType} component.");
+                    Debug.LogWarning($"The <b>\"{target.name}\"</b> GameObject does not have a <b>{TargetComponentType.Name}</b> component required  for " +
+                        $"the <b>\"{DisplayName}\"</b> action. Please consider assigning a <b>{TargetComponentType.Name}</b> component or removing the action.", target);
                     return null;
                 }
             }

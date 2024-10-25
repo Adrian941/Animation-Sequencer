@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [Serializable]
     public partial class CustomEase : IEquatable<CustomEase>
     {
@@ -16,29 +17,27 @@ namespace BrunoMikoski.AnimationSequencer
         public Ease Ease => ease;
         [SerializeField]
         private AnimationCurve curve;
-
         private EaseFunction easeFunction;
 
-
         public bool UseCustomCurve => ease == Ease.INTERNAL_Custom;
+
+        public CustomEase()
+        {
+            ease = Ease.InOutCirc;
+        }
+
+        public CustomEase(Ease ease)
+        {
+            this.ease = ease;
+            curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+            easeFunction = new EaseCurve(curve).Evaluate;
+        }
 
         public CustomEase(AnimationCurve curve)
         {
             this.curve = curve;
             ease = Ease.INTERNAL_Custom;
             easeFunction = new EaseCurve(curve).Evaluate;
-        }
-
-        public CustomEase(Ease ease)
-        {
-            this.ease = ease;
-            easeFunction = null;
-            curve = null;
-        }
-
-        public CustomEase()
-        {
-            ease = Ease.InOutCirc;
         }
         
         public float Lerp(float from, float to, float fraction)

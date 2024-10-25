@@ -15,6 +15,7 @@ namespace BrunoMikoski.AnimationSequencer
             From
         }
 
+        [Tooltip("Specifies the direction of the animation: 'To' animates towards the end value, 'From' animates from the end value back to the start value.")]
         [SerializeField]
         protected AnimationDirection direction;
         public AnimationDirection Direction
@@ -32,7 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        [Tooltip("If TRUE the endValue will be calculated as startValue + endValue instead than being used directly.")]
+        [Tooltip("If true the end value will be calculated as (startValue + endValue) instead than being used directly.")]
         protected bool relative;
         public bool Relative
         {
@@ -55,6 +56,9 @@ namespace BrunoMikoski.AnimationSequencer
         {
             SetTweenAnimationStep (tweenAnimationStep);
             Tweener tween = GenerateTween_Internal(target, duration);
+            if (tween == null)
+                return null;
+
             if (direction == AnimationDirection.From)
                 // tween.SetRelative() does not work for From variant of "Move To Anchored Position", it must be set
                 // here instead. Not sure if this is a bug in DOTween or expected behaviour...

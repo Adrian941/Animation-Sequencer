@@ -13,8 +13,8 @@ namespace BrunoMikoski.AnimationSequencer
     [CustomEditor(typeof(AnimationSequencerController), true)]
     public class AnimationSequencerControllerCustomEditor : Editor
     {
-        private ReorderableList reorderableList;
-        private AnimationSequencerController sequencerController;
+        #region Variables
+        // Static variables and properties 
         private static AnimationStepAdvancedDropdown cachedAnimationStepsDropdown;
         private static AnimationStepAdvancedDropdown AnimationStepAdvancedDropdown
         {
@@ -27,25 +27,50 @@ namespace BrunoMikoski.AnimationSequencer
             }
         }
 
+        // Private variables
+        private AnimationSequencerController sequencerController;
+        private ReorderableList reorderableList;
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
-        private bool showStepsPanel = true;
+        private bool showStepsPanel;
         private float tweenTimeScale = 1f;
         private bool wasShowingStepsPanel;
         private bool justStartPreviewing;
+        #endregion
 
-
+        #region OnEnable/OnDisable settings
         private void OnEnable()
         {
+            InitializeReferences();
+            InitializeReorderableList();
+            SubscribeToEditorEvents();
+            Repaint();
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeFromEditorEvents();
+            ResetEditorState();
+        }
+
+        private void InitializeReferences()
+        {
             sequencerController = target as AnimationSequencerController;
+        }
+
+        private void InitializeReorderableList()
+        {
             reorderableList = new ReorderableList(serializedObject, serializedObject.FindProperty("animationSteps"), true, false, true, true);
-            reorderableList.drawHeaderCallback += OnDrawerHeader;
             reorderableList.drawElementCallback += OnDrawAnimationStep;
             reorderableList.elementHeightCallback += GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback += OnClickToAddNew;
             reorderableList.onRemoveCallback += OnClickToRemove;
-            reorderableList.onReorderCallback += OnListOrderChanged;
+            reorderableList.onReorderCallbackWithDetails += OnListOrderChanged;
+        }
+
+        private void SubscribeToEditorEvents()
+        {
             EditorApplication.playModeStateChanged += OnEditorPlayModeChanged;
 
 #if UNITY_2021_1_OR_NEWER
@@ -53,23 +78,15 @@ namespace BrunoMikoski.AnimationSequencer
 #else
             UnityEditor.Experimental.SceneManagement.PrefabStage.prefabSaving += PrefabSaving;
 #endif
-
-            Repaint();
         }
 
-        public override bool RequiresConstantRepaint()
+        private void UnsubscribeFromEditorEvents()
         {
-            return true;
-        }
-
-        private void OnDisable()
-        {
-            reorderableList.drawHeaderCallback -= OnDrawerHeader;
             reorderableList.drawElementCallback -= OnDrawAnimationStep;
             reorderableList.elementHeightCallback -= GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback -= OnClickToAddNew;
             reorderableList.onRemoveCallback -= OnClickToRemove;
-            reorderableList.onReorderCallback -= OnListOrderChanged;
+            reorderableList.onReorderCallbackWithDetails -= OnListOrderChanged;
             EditorApplication.playModeStateChanged -= OnEditorPlayModeChanged;
 
 #if UNITY_2021_1_OR_NEWER
@@ -77,18 +94,23 @@ namespace BrunoMikoski.AnimationSequencer
 #else
             UnityEditor.Experimental.SceneManagement.PrefabStage.prefabSaving -= PrefabSaving;
 #endif
+        }
 
+        private void ResetEditorState()
+        {
             if (!Application.isPlaying)
-            {
-                if (DOTweenEditorPreview.isPreviewing)
-                {
-                    sequencerController.ResetToInitialState();
-                    sequencerController.ClearPlayingSequence();
-                    DOTweenEditorPreview.Stop();
-                }
-            }
+                StopSequence();
 
             tweenTimeScale = 1f;
+            SerializedPropertyExtensions.ClearPropertyCache();
+        }
+        #endregion
+
+        #region CustomEditor methods
+        // Used to update the progress bar in the editor.
+        public override bool RequiresConstantRepaint()
+        {
+            return Application.isPlaying || DOTweenEditorPreview.isPreviewing;
         }
 
         public override void OnInspectorGUI()
@@ -99,9 +121,19 @@ namespace BrunoMikoski.AnimationSequencer
             DrawFoldoutArea("Preview", ref showPreviewPanel, DrawPreviewControls);
             DrawFoldoutArea("Settings", ref showSettingsPanel, DrawSettings);
             DrawFoldoutArea("Callbacks", ref showCallbacksPanel, DrawCallbacks);
+            SerializedProperty animationStepsProperty = null;
+            if (!DOTweenEditorPreview.isPreviewing)
+            {
+                animationStepsProperty = reorderableList.serializedProperty;
+                showStepsPanel = animationStepsProperty.isExpanded;
+            }
             DrawFoldoutArea("Steps", ref showStepsPanel, DrawAnimationSteps);
+            if (animationStepsProperty != null && !DOTweenEditorPreview.isPreviewing)
+                animationStepsProperty.isExpanded = showStepsPanel;
         }
+        #endregion
 
+        #region Sequencer defaults
         private void SetDefaults()
         {
             sequencerController = target as AnimationSequencerController;
@@ -109,8 +141,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencerController != null)
             {
                 sequencerController.SetAutoplayMode(AnimationControllerDefaults.Instance.AutoplayMode);
-                sequencerController.SetPlayOnStart(AnimationControllerDefaults.Instance.PlayOnStart);
-                sequencerController.SetPauseOnStart(AnimationControllerDefaults.Instance.PauseOnStart);
+                sequencerController.SetPauseOnStart(AnimationControllerDefaults.Instance.StartPaused);
                 sequencerController.SetTimeScaleIndependent(AnimationControllerDefaults.Instance.TimeScaleIndependent);
                 sequencerController.SetPlayType(AnimationControllerDefaults.Instance.PlayType);
                 sequencerController.SetUpdateType(AnimationControllerDefaults.Instance.UpdateType);
@@ -119,7 +150,9 @@ namespace BrunoMikoski.AnimationSequencer
                 sequencerController.ResetComplete();
             }
         }
+        #endregion
 
+        #region Preview panel
         private void DrawPreviewControls()
         {
             DrawMediaPlayerControlButtons();
@@ -186,9 +219,7 @@ namespace BrunoMikoski.AnimationSequencer
                 GUI.enabled = DOTweenEditorPreview.isPreviewing;
                 if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StopButtonGUIContent, previewButtonStyle))
                 {
-                    sequencerController.ResetToInitialState();
-                    sequencerController.ClearPlayingSequence();
-                    DOTweenEditorPreview.Stop();
+                    StopSequence();
 
                     if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
                         showStepsPanel = wasShowingStepsPanel;
@@ -274,7 +305,18 @@ namespace BrunoMikoski.AnimationSequencer
             if (justStartPreviewing)
                 wasShowingStepsPanel = showStepsPanel;
 
-            showStepsPanel = !AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing;
+            if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
+                showStepsPanel = false;
+        }
+
+        private void StopSequence()
+        {
+            if (DOTweenEditorPreview.isPreviewing)
+            {
+                sequencerController.ResetToInitialState();
+                sequencerController.ClearPlayingSequence();
+                DOTweenEditorPreview.Stop();
+            }
         }
 
         private void DrawTimeScaleSlider()
@@ -332,7 +374,9 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
                 EditorGUILayout.HelpBox($"Sequence duration: {sequencerController.PlayingSequence.Duration()} seconds.", MessageType.Info);
         }
+        #endregion
 
+        #region Settings panel
         private void DrawSettings()
         {
             bool wasEnabled = GUI.enabled;
@@ -354,15 +398,14 @@ namespace BrunoMikoski.AnimationSequencer
                 EditorGUILayout.PropertyField(autoPlayModeSerializedProperty);
                 if (autoplayMode != AnimationSequencerController.AutoplayType.Nothing)
                     EditorGUILayout.PropertyField(pauseOnStartSerializedProperty);
-                DrawPlaybackSpeedSlider();
-                EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
                 EditorGUILayout.PropertyField(sequenceDirectionSerializedProperty);
                 EditorGUILayout.PropertyField(updateTypeSerializedProperty);
-                EditorGUILayout.PropertyField(autoKillSerializedProperty);
+                DrawPlaybackSpeedSlider();
+                EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
                 EditorGUILayout.PropertyField(loopsSerializedProperty);
-
                 if (loopsSerializedProperty.intValue != 0)
                     EditorGUILayout.PropertyField(loopTypeSerializedProperty);
+                EditorGUILayout.PropertyField(autoKillSerializedProperty);
 
                 if (changedCheck.changed)
                 {
@@ -380,7 +423,8 @@ namespace BrunoMikoski.AnimationSequencer
             EditorGUI.BeginChangeCheck();
 
             var playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
-            playbackSpeedProperty.floatValue = EditorGUILayout.Slider("Playback Speed", playbackSpeedProperty.floatValue, 0, 2);
+            GUIContent playbackSpeedLabel = new GUIContent("Playback Speed", "Speed of the animation playback.");
+            playbackSpeedProperty.floatValue = EditorGUILayout.Slider(playbackSpeedLabel, playbackSpeedProperty.floatValue, 0, 2);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -398,7 +442,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             sequencerController.PlayingSequence.timeScale = sequencerController.PlaybackSpeed * tweenTimeScale;
         }
+        #endregion
 
+        #region Callbacks panel
         protected virtual void DrawCallbacks()
         {
             bool wasGUIEnabled = GUI.enabled;
@@ -406,14 +452,14 @@ namespace BrunoMikoski.AnimationSequencer
                 GUI.enabled = false;
 
             SerializedProperty onStartEventSerializedProperty = serializedObject.FindProperty("onStartEvent");
-            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
             SerializedProperty onProgressEventSerializedProperty = serializedObject.FindProperty("onProgressEvent");
+            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
 
             using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
             {
                 EditorGUILayout.PropertyField(onStartEventSerializedProperty);
-                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
                 EditorGUILayout.PropertyField(onProgressEventSerializedProperty);
+                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
 
                 if (changedCheck.changed)
                     serializedObject.ApplyModifiedProperties();
@@ -421,7 +467,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             GUI.enabled = wasGUIEnabled;
         }
+        #endregion
 
+        #region Steps panel
         private void DrawAnimationSteps()
         {
             bool wasGUIEnabled = GUI.enabled;
@@ -433,63 +481,18 @@ namespace BrunoMikoski.AnimationSequencer
             GUI.enabled = wasGUIEnabled;
         }
 
-        private void DrawFoldoutArea(string title, ref bool foldout, Action additionalInspectorGUI)
-        {
-            using (new EditorGUILayout.VerticalScope("FrameBox"))
-            {
-                Rect rect = EditorGUILayout.GetControlRect();
-                rect.x += 10;
-                rect.width -= 10;
-                rect.y -= 4;
-
-                foldout = EditorGUI.Foldout(rect, foldout, title);
-
-                if (foldout)
-                    additionalInspectorGUI.Invoke();
-            }
-        }
-
-        private void OnEditorPlayModeChanged(PlayModeStateChange playModeState)
-        {
-            if (playModeState == PlayModeStateChange.ExitingEditMode)
-            {
-                if (DOTweenEditorPreview.isPreviewing)
-                {
-                    sequencerController.ResetToInitialState();
-                    sequencerController.ClearPlayingSequence();
-                    DOTweenEditorPreview.Stop();
-                }
-            }
-        }
-
-        private void PrefabSaving(GameObject gameObject)
-        {
-            if (DOTweenEditorPreview.isPreviewing)
-            {
-                sequencerController.ResetToInitialState();
-                sequencerController.ClearPlayingSequence();
-                DOTweenEditorPreview.Stop();
-            }
-        }
-
-        private void OnDrawerHeader(Rect rect)
-        {
-            EditorGUI.LabelField(rect, "Animation Steps");
-        }
-
         private void OnDrawAnimationStep(Rect rect, int index, bool isActive, bool isFocused)
         {
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
             SerializedProperty flowTypeSerializedProperty = element.FindPropertyRelative("flowType");
-
-            if (!element.TryGetTargetObjectOfProperty(out AnimationStepBase animationStepBase))
-                return;
 
             FlowType flowType = (FlowType)flowTypeSerializedProperty.enumValueIndex;
 
             int baseIdentLevel = EditorGUI.indentLevel;
 
             GUIContent guiContent = new GUIContent(element.displayName);
+            AnimationStepBase animationStepBase = null;
+            try { animationStepBase = sequencerController.AnimationSteps[index]; } catch (Exception) { }
             if (animationStepBase != null)
                 guiContent = new GUIContent(animationStepBase.GetDisplayNameForEditor(index + 1));
 
@@ -498,7 +501,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             rect.height = EditorGUIUtility.singleLineHeight;
             rect.x += 10;
-            rect.width -= 20;
+            rect.width -= 10;
 
             EditorGUI.LabelField(rect, guiContent);
             EditorGUI.PropertyField(rect, element, new GUIContent(""), false);
@@ -546,13 +549,47 @@ namespace BrunoMikoski.AnimationSequencer
         private void OnClickToRemove(ReorderableList list)
         {
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(list.index);
-            SerializedPropertyExtensions.ClearPropertyCache(element.propertyPath);
             reorderableList.serializedProperty.DeleteArrayElementAtIndex(list.index);
             reorderableList.serializedProperty.serializedObject.ApplyModifiedProperties();
+            SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
         }
 
-        private void OnListOrderChanged(ReorderableList list)
+        private void OnListOrderChanged(ReorderableList list, int oldIndex, int newIndex)
         {
+            bool isCyclicRotationRight = true;
+            int greatestIndex = oldIndex;
+            int smallestIndex = newIndex;
+            if (newIndex > oldIndex)
+            {
+                isCyclicRotationRight = false;
+                greatestIndex = newIndex;
+                smallestIndex = oldIndex;
+            }
+
+            int startIndex = isCyclicRotationRight ? greatestIndex : smallestIndex;
+            int count = greatestIndex - smallestIndex + 1;
+            float firstHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex).GetPropertyDrawerHeight();
+            for (int i = 0; i < count; i++)
+            {
+                SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex);
+
+                if (i == count - 1)
+                {
+                    element.SetPropertyDrawerHeight(firstHeight);
+                }
+                else
+                {
+                    int nextIndex = isCyclicRotationRight ? startIndex - 1 : startIndex + 1;
+                    float nextHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(nextIndex).GetPropertyDrawerHeight();
+                    element.SetPropertyDrawerHeight(nextHeight);
+                }
+
+                if (isCyclicRotationRight)
+                    startIndex--;
+                else
+                    startIndex++;
+            }
+
             SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
             list.serializedProperty.serializedObject.ApplyModifiedProperties();
         }
@@ -593,6 +630,38 @@ namespace BrunoMikoski.AnimationSequencer
             ContextClickUtils.CopyPropertyValue(sourceSerializedProperty, source);
             source.serializedObject.ApplyModifiedProperties();
         }
+        #endregion
+
+        #region Generic foldout
+        private void DrawFoldoutArea(string title, ref bool foldout, Action additionalInspectorGUI)
+        {
+            using (new EditorGUILayout.VerticalScope("FrameBox"))
+            {
+                Rect rect = EditorGUILayout.GetControlRect();
+                rect.x += 10;
+                rect.width -= 10;
+                rect.y -= 4;
+
+                foldout = EditorGUI.Foldout(rect, foldout, title);
+
+                if (foldout)
+                    additionalInspectorGUI.Invoke();
+            }
+        }
+        #endregion
+
+        #region Other callbacks
+        private void OnEditorPlayModeChanged(PlayModeStateChange playModeState)
+        {
+            if (playModeState == PlayModeStateChange.ExitingEditMode)
+                StopSequence();
+        }
+
+        private void PrefabSaving(GameObject gameObject)
+        {
+            StopSequence();
+        }
+        #endregion
     }
 }
 #endif

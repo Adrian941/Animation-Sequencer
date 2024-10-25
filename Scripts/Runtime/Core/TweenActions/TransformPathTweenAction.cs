@@ -1,6 +1,5 @@
 #if DOTWEEN_ENABLED
 using System;
-using System.Collections.Generic;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Core.PathCore;
@@ -15,29 +14,9 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Path";
-        public override string[] ExcludedFields
-        {
-            get
-            {
-                List<string> result = new List<string> { "direction" };
-
-                if (inputType == InputType.Vector)
-                {
-                    result.Add("targets");
-                    if (relative) result.Add("local");
-                }
-                else
-                {
-                    result.Add("positions");
-                    result.Add("local");
-                }
-
-                return result.ToArray();
-            }
-        }
 
         [SerializeField]
-        private InputType inputType;
+        private InputType inputType = InputType.Object;
         public InputType InputType
         {
             get => inputType;
@@ -52,6 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => positions = value;
         }
 
+        [ShowIf("inputType == InputType.Vector && relative == false")]
         [SerializeField]
         private bool local;
         public bool Local
@@ -114,6 +94,12 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
+
+            if ((inputType == InputType.Vector && positions.Length == 0) || (inputType == InputType.Object && targets.Length == 0))
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have <b>\"Targets\"</b>. Please consider assigning <b>\"Targets\"</b> or removing the action.");
+                return null;
+            }
 
             TweenerCore<Vector3, Path, PathOptions> tween;
             if (inputType == InputType.Vector && local)

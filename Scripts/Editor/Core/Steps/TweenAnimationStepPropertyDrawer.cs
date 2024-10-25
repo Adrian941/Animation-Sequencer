@@ -1,91 +1,15 @@
 #if DOTWEEN_ENABLED
+using DG.Tweening;
 using System;
 using UnityEditor;
 using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(TweenAnimationStep))]
     public class TweenAnimationStepPropertyDrawer : AnimationStepBasePropertyDrawer
     {
-        public override bool CanCacheInspectorGUI(SerializedProperty property)
-        {
-            return false;
-        }
-
-        private void AddNewActionOfType(SerializedProperty actionsSerializedProperty, Type targetType)
-        {
-            actionsSerializedProperty.arraySize++;
-            SerializedProperty arrayElement = actionsSerializedProperty.GetArrayElementAtIndex(actionsSerializedProperty.arraySize - 1);
-            arrayElement.managedReferenceValue = Activator.CreateInstance(targetType);
-
-            if (actionsSerializedProperty.arraySize > 1)
-            {
-                SerializedProperty previousElement = actionsSerializedProperty.GetArrayElementAtIndex(actionsSerializedProperty.arraySize - 2);
-
-                if (AnimationControllerDefaults.Instance.PreferUsingPreviousDirection)
-                {
-                    SerializedProperty previousDirection = previousElement.FindPropertyRelative("direction");
-                    if (previousDirection != null)
-                    {
-                        SerializedProperty currentDirection = arrayElement.FindPropertyRelative("direction");
-                        if (currentDirection != null)
-                            currentDirection.enumValueIndex = previousDirection.enumValueIndex;
-                    }
-                }
-
-                if (AnimationControllerDefaults.Instance.PreferUsingPreviousActionEasing)
-                {
-                    SerializedProperty previousEase = previousElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
-                    if (previousEase != null)
-                    {
-                        SerializedProperty currentEase = arrayElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
-                        if (currentEase != null)
-                            currentEase.enumValueIndex = previousEase.enumValueIndex;
-                    }
-                }
-                else
-                {
-                    SerializedProperty currentEase = arrayElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
-                    if (currentEase != null)
-                        currentEase.enumValueIndex = (int)AnimationControllerDefaults.Instance.DefaultEasing.Ease;
-                }
-
-                if (AnimationControllerDefaults.Instance.PreferUsingPreviousRelativeValue)
-                {
-                    SerializedProperty previousEase = previousElement.FindPropertyRelative("isRelative");
-                    if (previousEase != null)
-                    {
-                        SerializedProperty currentEase = arrayElement.FindPropertyRelative("isRelative");
-                        if (currentEase != null)
-                            currentEase.boolValue = previousEase.boolValue;
-                    }
-                }
-                else
-                {
-                    SerializedProperty currentEase = arrayElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
-                    if (currentEase != null)
-                        currentEase.enumValueIndex = (int)AnimationControllerDefaults.Instance.DefaultEasing.Ease;
-                }
-            }
-            else
-            {
-                SerializedProperty currentEase = arrayElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
-                if (currentEase != null)
-                    currentEase.enumValueIndex = (int)AnimationControllerDefaults.Instance.DefaultEasing.Ease;
-
-                SerializedProperty currentDirection = arrayElement.FindPropertyRelative("direction");
-                if (currentDirection != null)
-                    currentDirection.enumValueIndex = (int)AnimationControllerDefaults.Instance.DefaultDirection;
-
-                SerializedProperty isRelativeSerializedProperty = arrayElement.FindPropertyRelative("isRelative");
-                if (isRelativeSerializedProperty != null)
-                    isRelativeSerializedProperty.boolValue = AnimationControllerDefaults.Instance.UseRelative;
-            }
-
-            actionsSerializedProperty.serializedObject.ApplyModifiedProperties();
-        }
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             DrawBaseGUI(position, property, label, "actions", "loopCount", "loopType");
@@ -109,12 +33,12 @@ namespace BrunoMikoski.AnimationSequencer
                     EditorGUI.indentLevel--;
                 }
 
-                EditorGUI.BeginChangeCheck();
+                position.y += base.GetPropertyHeight(property, label) + EditorGUIUtility.standardVerticalSpacing;
+                position.height = EditorGUIUtility.singleLineHeight;
 
+                EditorGUI.BeginChangeCheck();
                 SerializedProperty actionsSerializedProperty = property.FindPropertyRelative("actions");
                 SerializedProperty targetSerializedProperty = property.FindPropertyRelative("target");
-                position.y += base.GetPropertyHeight(property, label) + EditorGUIUtility.standardVerticalSpacing;
-
                 SerializedProperty loopCountSerializedProperty = property.FindPropertyRelative("loopCount");
                 EditorGUI.PropertyField(position, loopCountSerializedProperty);
                 position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -132,9 +56,18 @@ namespace BrunoMikoski.AnimationSequencer
                     EditorGUI.PropertyField(position, loopTypeSerializedProperty);
                     position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                 }
+                
+                position.y += EditorGUIUtility.standardVerticalSpacing;
+                position.height = EditorGUIUtility.singleLineHeight * 1.15f;
+                float originalWidth = position.width;
+                Rect actionsFoldoutPosition = position;
+                actionsFoldoutPosition.x += 10;
+                actionsFoldoutPosition.width = EditorGUIUtility.labelWidth - 10;
+                actionsSerializedProperty.isExpanded = EditorGUI.Foldout(actionsFoldoutPosition, actionsSerializedProperty.isExpanded, "Actions", true, EditorStyles.foldout);
 
-                position.height = EditorGUIUtility.singleLineHeight;
-                if (GUI.Button(position, "Add Actions"))
+                position.x += EditorGUIUtility.labelWidth;
+                position.width = originalWidth - EditorGUIUtility.labelWidth;
+                if (GUI.Button(position, "+"))
                 {
                     AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
                         item =>
@@ -145,33 +78,41 @@ namespace BrunoMikoski.AnimationSequencer
                                 AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
                         });
                 }
+                position.x -= EditorGUIUtility.labelWidth;
+                position.width = originalWidth;
+                position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
-                position.y += 10;
-
-                if (actionsSerializedProperty.arraySize > 0)
-                    position.y += 26;
-
-                for (int i = 0; i < actionsSerializedProperty.arraySize; i++)
+                if (actionsSerializedProperty.isExpanded)
                 {
-                    SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
-
-                    bool guiEnabled = GUI.enabled;
-                    DrawDeleteActionButton(position, property, i);
-
-                    if (GUI.enabled)
+                    int arraySize = actionsSerializedProperty.arraySize;
+                    for (int i = 0; i < arraySize; i++)
                     {
-                        bool isValidTargetForRequiredComponent = IsValidTargetForRequiredComponent(targetSerializedProperty, actionSerializedProperty);
-                        GUI.enabled = isValidTargetForRequiredComponent;
+                        if (DrawDeleteActionButton(position, property, i))
+                        {
+                            SerializedProperty actionSerializedProperty = actionsSerializedProperty.GetArrayElementAtIndex(i);
+
+                            bool guiEnabled = GUI.enabled;
+
+                            if (GUI.enabled)
+                            {
+                                bool isValidTargetForRequiredComponent = IsValidTargetForRequiredComponent(targetSerializedProperty, actionSerializedProperty);
+                                GUI.enabled = isValidTargetForRequiredComponent;
+                            }
+
+                            EditorGUI.PropertyField(position, actionSerializedProperty);
+                            position.y += actionSerializedProperty.GetPropertyDrawerHeight();
+
+                            if (i < arraySize - 1)
+                                position.y += EditorGUIUtility.standardVerticalSpacing;
+
+                            GUI.enabled = guiEnabled;
+                        }
+                        else
+                        {
+                            i--;
+                            arraySize--;
+                        }
                     }
-
-                    EditorGUI.PropertyField(position, actionSerializedProperty);
-
-                    position.y += actionSerializedProperty.GetPropertyDrawerHeight();
-
-                    if (i < actionsSerializedProperty.arraySize - 1)
-                        position.y += 30;
-
-                    GUI.enabled = guiEnabled;
                 }
 
                 EditorGUI.indentLevel--;
@@ -181,7 +122,79 @@ namespace BrunoMikoski.AnimationSequencer
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();
             }
-            property.SetPropertyDrawerHeight(position.y - originHeight + EditorGUIUtility.singleLineHeight);
+            property.SetPropertyDrawerHeight(position.y - originHeight + (property.isExpanded ? 0 : EditorGUIUtility.singleLineHeight));
+        }
+
+        private void AddNewActionOfType(SerializedProperty actionsSerializedProperty, Type targetType)
+        {
+            actionsSerializedProperty.arraySize++;
+            SerializedProperty newElement = actionsSerializedProperty.GetArrayElementAtIndex(actionsSerializedProperty.arraySize - 1);
+            newElement.managedReferenceValue = Activator.CreateInstance(targetType);
+
+            SerializedProperty SetDirection(SerializedProperty element, SerializedProperty previousElement = null)
+            {
+                SerializedProperty direction = element.FindPropertyRelative("direction");
+                if (direction == null) return null;
+
+                direction.enumValueIndex = previousElement != null && AnimationControllerDefaults.Instance.UsePreviousDirection
+                    ? previousElement.FindPropertyRelative("direction").enumValueIndex
+                    : (int)AnimationControllerDefaults.Instance.Direction;
+
+                return direction;
+            }
+
+            SerializedProperty SetEase(SerializedProperty element, SerializedProperty previousElement = null)
+            {
+                SerializedProperty ease = element.FindPropertyRelative("ease").FindPropertyRelative("ease");
+                if (ease == null) return null;
+
+                if (previousElement != null && AnimationControllerDefaults.Instance.UsePreviousEase)
+                {
+                    SerializedProperty previousEase = previousElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
+                    ease.enumValueIndex = previousEase.enumValueIndex;
+
+                    if (ease.enumValueIndex == (int)Ease.INTERNAL_Custom)
+                    {
+                        SerializedProperty previousCurve = previousElement.FindPropertyRelative("ease").FindPropertyRelative("curve");
+                        element.FindPropertyRelative("ease").FindPropertyRelative("curve").animationCurveValue = previousCurve.animationCurveValue;
+                    }
+                }
+                else
+                {
+                    ease.enumValueIndex = (int)AnimationControllerDefaults.Instance.Ease.Ease;
+                }
+
+                return ease;
+            }
+
+            SerializedProperty SetRelative(SerializedProperty element, SerializedProperty previousElement = null)
+            {
+                SerializedProperty relative = element.FindPropertyRelative("relative");
+                if (relative == null) return null;
+
+                relative.boolValue = previousElement != null && AnimationControllerDefaults.Instance.UsePreviousRelative
+                    ? previousElement.FindPropertyRelative("relative").boolValue
+                    : AnimationControllerDefaults.Instance.Relative;
+
+                return relative;
+            }
+
+            if (actionsSerializedProperty.arraySize > 1)
+            {
+                SerializedProperty previousElement = actionsSerializedProperty.GetArrayElementAtIndex(actionsSerializedProperty.arraySize - 2);
+                SetDirection(newElement, previousElement);
+                SetEase(newElement, previousElement);
+                SetRelative(newElement, previousElement);
+            }
+            else
+            {
+                SetDirection(newElement);
+                SetEase(newElement);
+                SetRelative(newElement);
+            }
+
+            actionsSerializedProperty.isExpanded = true;
+            actionsSerializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private static bool IsValidTargetForRequiredComponent(SerializedProperty targetSerializedProperty, SerializedProperty actionSerializedProperty)
@@ -193,27 +206,28 @@ namespace BrunoMikoski.AnimationSequencer
             return AnimationSequenceEditorGUIUtility.CanActionBeAppliedToTarget(type, targetSerializedProperty.objectReferenceValue as GameObject);
         }
 
-        private static void DrawDeleteActionButton(Rect position, SerializedProperty property, int targetIndex)
+        private bool DrawDeleteActionButton(Rect position, SerializedProperty property, int targetIndex)
         {
             Rect buttonPosition = position;
             buttonPosition.width = 24;
             buttonPosition.x += position.width - 34;
+            buttonPosition.y += 10;
+
             if (GUI.Button(buttonPosition, "X", EditorStyles.miniButton))
             {
-                EditorApplication.delayCall += () =>
-                {
-                    DeleteElementAtIndex(property, targetIndex);
-                };
+                DeleteElementAtIndex(property, targetIndex);
+                return false;
             }
+
+            return true;
         }
 
-        private static void DeleteElementAtIndex(SerializedProperty serializedProperty, int targetIndex)
+        private void DeleteElementAtIndex(SerializedProperty serializedProperty, int targetIndex)
         {
             SerializedProperty actionsPropertyPath = serializedProperty.FindPropertyRelative("actions");
             actionsPropertyPath.DeleteArrayElementAtIndex(targetIndex);
             SerializedPropertyExtensions.ClearPropertyCache(actionsPropertyPath.propertyPath);
-            actionsPropertyPath.serializedObject.ApplyModifiedProperties();
-            actionsPropertyPath.serializedObject.Update();
+            //actionsPropertyPath.serializedObject.ApplyModifiedProperties();
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

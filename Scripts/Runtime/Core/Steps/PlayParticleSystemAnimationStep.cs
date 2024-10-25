@@ -19,6 +19,16 @@ namespace BrunoMikoski.AnimationSequencer
             set => particleSystem = value;
         }
 
+        [SerializeField]
+        [Tooltip("Particles will stop emitting when the duration is over.")]
+        private bool setLifetime;
+        public bool SetLifetime
+        {
+            get => setLifetime;
+            set => setLifetime = value;
+        }
+
+        [ShowIf("setLifetime")]
         [SerializeField, Min(0)]
         private float duration = 1;
         public float Duration
@@ -27,16 +37,14 @@ namespace BrunoMikoski.AnimationSequencer
             set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
-        [SerializeField]
-        private bool stopEmittingWhenOver;
-        public bool StopEmittingWhenOver
-        {
-            get => stopEmittingWhenOver;
-            set => stopEmittingWhenOver = value;
-        }
-
         public override void AddTweenToSequence(Sequence animationSequence)
         {
+            if (particleSystem == null)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
+                return;
+            }
+
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
             sequence.AppendCallback(()=>
@@ -45,9 +53,10 @@ namespace BrunoMikoski.AnimationSequencer
                     StartParticles();
                 else
                     FinishParticles();
-
             });
-            sequence.AppendInterval(duration);
+
+            if (setLifetime) sequence.AppendInterval(duration);
+
             sequence.AppendCallback(()=>
             {
                 if (!animationSequence.IsBackwards())
@@ -62,9 +71,7 @@ namespace BrunoMikoski.AnimationSequencer
                 animationSequence.Append(sequence);
         }
 
-        public override void ResetToInitialState()
-        {
-        }
+        public override void ResetToInitialState() { }
 
         private void StartParticles()
         {
@@ -73,7 +80,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void FinishParticles()
         {
-            if (stopEmittingWhenOver)
+            if (setLifetime)
                 particleSystem.Stop();
         }
 
@@ -88,12 +95,12 @@ namespace BrunoMikoski.AnimationSequencer
             if (particleSystem != null)
                 display = particleSystem.name;
 
-            return $"{index}. Play {display} particle system";
+            return $"{index}. Play \"{display}\" particle system";
         }
 
         public override float GetDuration()
         {
-            return base.GetDuration() + duration;
+            return base.GetDuration() + (setLifetime ? duration : 0);
         }
     }
 }

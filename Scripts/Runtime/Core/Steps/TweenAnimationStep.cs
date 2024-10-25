@@ -12,6 +12,7 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override string DisplayName => "Tween Target";
 
+        [Tooltip("Number of loops for the animation (0 for no loops).")]
         [SerializeField]
         private int loopCount;
         public int LoopCount
@@ -38,13 +39,24 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
+            if (target == null)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
+                return;
+            }
+
             Sequence sequence = DOTween.Sequence();
+            bool isDelayAssigned = false;
             for (int i = 0; i < actions.Length; i++)
             {
                 Tween tween = actions[i].GenerateTween(target, duration, this);
-                if (i == 0)
+                if (tween == null)
+                    continue;
+
+                if (!isDelayAssigned)
                 {
                     tween.SetDelay(Delay);
+                    isDelayAssigned = true;
                 }
                 sequence.Join(tween);
             }
@@ -61,6 +73,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
+            if (target == null)
+                return;
+
             for (int i = actions.Length - 1; i >= 0; i--)
             {
                 actions[i].ResetToInitialState();
@@ -76,7 +91,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (target != null)
                 targetName = target.name;
 
-            return $"{index}. {targetName}: {string.Join(", ", actions.Select(action => action.DisplayName))}";
+            return $"{index}. Tween \"{targetName}\": {string.Join(", ", actions.Select(action => action.DisplayName))}";
         }
 
         public override float GetDuration()

@@ -20,6 +20,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void AddTweenToSequence(Sequence animationSequence)
         {
+            if (sequencer == null)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
+                return;
+            }
+
             Sequence sequence = sequencer.GenerateSequence();
             sequence.SetDelay(Delay);
 
@@ -31,6 +37,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void ResetToInitialState()
         {
+            if (sequencer == null)
+                return;
+
             sequencer.ResetToInitialState();
         }
 
@@ -40,7 +49,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencer != null)
                 display = sequencer.name;
 
-            return $"{index}. Play {display} Sequence";
+            return $"{index}. Play \"{display}\" Sequence";
         }
 
         public void SetTarget(AnimationSequencerController newTarget)
