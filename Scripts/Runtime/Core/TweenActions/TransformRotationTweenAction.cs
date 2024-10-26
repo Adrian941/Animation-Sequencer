@@ -22,6 +22,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => eulerAngles = value;
         }
 
+        [Tooltip("If true, the tween will use local coordinates of the object, rotating it relative to its parent's rotation. " +
+            "If false, the tween will operate in world space coordinates.")]
         [SerializeField]
         private bool local;
         public bool Local

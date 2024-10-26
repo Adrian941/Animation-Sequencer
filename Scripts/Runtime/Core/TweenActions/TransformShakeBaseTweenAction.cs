@@ -11,6 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override Type TargetComponentType => typeof(Transform);
         public override string[] ExcludedFields => new string[] { "direction", "ease", "relative" };
 
+        [Tooltip("Defines the shake strength on each axis.")]
         [SerializeField]
         protected Vector3 strength = Vector3.one;
         public Vector3 Strength
@@ -19,6 +20,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => strength = value;
         }
 
+        [Tooltip("Indicates how much will the shake vibrate.")]
         [SerializeField]
         protected int vibrato = 10;
         public int Vibrato
@@ -27,6 +29,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => vibrato = value;
         }
 
+        [Tooltip("Specifies the degree of randomness for the shake (0 to 180). Values over 90 may reduce quality. Set to 0 for a single directional shake.")]
         [SerializeField]
         protected float randomness = 90;
         public float Randomness
@@ -35,6 +38,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => randomness = value;
         }
 
+        [Tooltip("If true, the shake will fade out smoothly by the end of the tween; if false, it maintains full intensity.")]
         [SerializeField]
         protected bool fadeout = true;
         public bool Fadeout

@@ -11,6 +11,8 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override string DisplayName => "Punch Position";
 
+        [Tooltip("If true, the animated position values will snap to integer values, creating a more grid-like movement. " +
+            "Useful for animations that require precise, whole number positioning.")]
         [SerializeField]
         private bool snapping;
         public bool Snapping

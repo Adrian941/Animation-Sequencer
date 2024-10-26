@@ -10,10 +10,11 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformPathTweenAction : TweenActionBase
+    public class TransformPathTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Path";
+        protected virtual bool UseLocalPath { get { return local; } }
 
         [SerializeField]
         private InputType inputType = InputType.Object;
@@ -31,6 +32,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => positions = value;
         }
 
+        [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
+            "If false, the tween will operate in world space coordinates.")]
         [ShowIf("inputType == InputType.Vector && relative == false")]
         [SerializeField]
         private bool local;
@@ -56,6 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => gizmoColor = value;
         }
 
+        [Tooltip("Higher values create smoother curves but are more performance-intensive. Default is 10; 5 works well for gentle curves.")]
         [SerializeField]
         private int resolution = 10;
         public int Resolution
@@ -88,7 +92,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => closePath = value;
         }
 
-        private Transform targetTransform;
+        protected Transform targetTransform;
         private Vector3 originalPosition;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
@@ -102,7 +106,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             TweenerCore<Vector3, Path, PathOptions> tween;
-            if (inputType == InputType.Vector && local)
+            if (inputType == InputType.Vector && UseLocalPath)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalPath(GetPositions(), duration, pathType, pathMode, resolution, gizmoColor);
@@ -130,7 +134,7 @@ namespace BrunoMikoski.AnimationSequencer
             return null;
         }
 
-        private Vector3[] GetPositionsFromVectorInput()
+        protected virtual Vector3[] GetPositionsFromVectorInput()
         {
             return positions;
         }
@@ -153,7 +157,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (local)
+            if (UseLocalPath)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;
