@@ -60,8 +60,9 @@ namespace BrunoMikoski.AnimationSequencer
             originalScale = targetTransform.localScale;
 
             Vector3 endValue = percentage ? Vector3.Scale(originalScale.Value, scale / 100) : scale;
-            TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration).SetEase(ease);
-            tween.SetOptions(axisConstraint, snapping);
+            TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration, axisConstraint, snapping);
+            //TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration);
+            //tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }
