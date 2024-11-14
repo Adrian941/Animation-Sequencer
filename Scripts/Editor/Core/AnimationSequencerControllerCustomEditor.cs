@@ -63,6 +63,7 @@ namespace BrunoMikoski.AnimationSequencer
         private void InitializeReorderableList()
         {
             reorderableList = new ReorderableList(serializedObject, serializedObject.FindProperty("animationSteps"), true, false, true, true);
+            reorderableList.drawElementBackgroundCallback += OnDrawAnimationStepBackground;
             reorderableList.drawElementCallback += OnDrawAnimationStep;
             reorderableList.elementHeightCallback += GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback += OnClickToAddNew;
@@ -83,6 +84,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void UnsubscribeFromEditorEvents()
         {
+            reorderableList.drawElementBackgroundCallback -= OnDrawAnimationStepBackground;
             reorderableList.drawElementCallback -= OnDrawAnimationStep;
             reorderableList.elementHeightCallback -= GetAnimationStepHeight;
             reorderableList.onAddDropdownCallback -= OnClickToAddNew;
@@ -524,6 +526,24 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.DoLayoutList();
 
             GUI.enabled = wasGUIEnabled;
+        }
+
+        private void OnDrawAnimationStepBackground(Rect rect, int index, bool isActive, bool isFocused)
+        {
+            if (Event.current.type == EventType.Repaint)
+            {
+                Rect titleRect = new Rect(rect) { height = EditorGUIUtility.singleLineHeight };
+
+                if (isActive)
+                {
+                    ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, true, isFocused, false);
+                }
+                else
+                {
+                    EditorGUI.DrawRect(new Rect(rect.x, rect.y, rect.width, 1), new Color(0.1f, 0.1f, 0.1f));
+                    GUI.skin.box.Draw(titleRect, false, false, false, false);
+                }
+            }
         }
 
         private void OnDrawAnimationStep(Rect rect, int index, bool isActive, bool isFocused)
