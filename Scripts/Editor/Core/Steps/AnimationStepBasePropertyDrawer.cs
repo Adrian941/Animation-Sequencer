@@ -21,9 +21,9 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 EditorGUI.BeginChangeCheck();
 
-                EditorGUI.indentLevel++;
+                //EditorGUI.indentLevel++;
                 position = EditorGUI.IndentedRect(position);
-                EditorGUI.indentLevel--;
+                //EditorGUI.indentLevel--;
 
                 position.height = EditorGUIUtility.singleLineHeight;
                 position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;

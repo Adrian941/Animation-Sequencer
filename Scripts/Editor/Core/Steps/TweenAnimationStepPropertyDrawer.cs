@@ -20,9 +20,9 @@ namespace BrunoMikoski.AnimationSequencer
                 if (EditorGUI.indentLevel > 0)
                     position = EditorGUI.IndentedRect(position);
 
-                EditorGUI.indentLevel++;
-                position = EditorGUI.IndentedRect(position);
-                EditorGUI.indentLevel--;
+                //EditorGUI.indentLevel++;
+                //position = EditorGUI.IndentedRect(position);
+                //EditorGUI.indentLevel--;
 
                 SerializedProperty flowTypeSerializedProperty = property.FindPropertyRelative("flowType");
                 FlowType flowType = (FlowType)flowTypeSerializedProperty.enumValueIndex;
@@ -82,6 +82,8 @@ namespace BrunoMikoski.AnimationSequencer
                 position.width = originalWidth;
                 position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
+                float normalLabelWidth = EditorGUIUtility.labelWidth;
+                EditorGUIUtility.labelWidth = 112;
                 if (actionsSerializedProperty.isExpanded)
                 {
                     int arraySize = actionsSerializedProperty.arraySize;
@@ -114,10 +116,11 @@ namespace BrunoMikoski.AnimationSequencer
                         }
                     }
                 }
+                EditorGUIUtility.labelWidth = normalLabelWidth;
 
-                EditorGUI.indentLevel--;
-                position = EditorGUI.IndentedRect(position);
-                EditorGUI.indentLevel++;
+                //EditorGUI.indentLevel--;
+                //position = EditorGUI.IndentedRect(position);
+                //EditorGUI.indentLevel++;
 
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();
