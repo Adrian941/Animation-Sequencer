@@ -30,6 +30,7 @@ namespace BrunoMikoski.AnimationSequencer
         // Private variables
         private AnimationSequencerController sequencerController;
         private ReorderableList reorderableList;
+        private GUIStyle topRightTextStyle;
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
@@ -115,10 +116,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override void OnInspectorGUI()
         {
+            //Defaults.
             if (sequencerController.IsResetRequired())
                 SetDefaults();
 
-            DrawFoldoutArea("Preview", ref showPreviewPanel, DrawPreviewControls);
+            //Styles.
+            InitializeStyles();
+
+            //Foldout areas.
+            DrawFoldoutArea("Preview", ref showPreviewPanel, DrawPreviewControls, DrawExtraPreviewHeader);
             DrawFoldoutArea("Settings", ref showSettingsPanel, DrawSettings);
             DrawFoldoutArea("Callbacks", ref showCallbacksPanel, DrawCallbacks);
             SerializedProperty animationStepsProperty = null;
@@ -130,6 +136,18 @@ namespace BrunoMikoski.AnimationSequencer
             DrawFoldoutArea("Steps", ref showStepsPanel, DrawAnimationSteps);
             if (animationStepsProperty != null && !DOTweenEditorPreview.isPreviewing)
                 animationStepsProperty.isExpanded = showStepsPanel;
+        }
+
+        private void InitializeStyles()
+        {
+            if (topRightTextStyle == null)
+            {
+                topRightTextStyle = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = 11,
+                    normal = { textColor = new Color(0.1f, 0.1f, 0.1f) }
+                };
+            }
         }
         #endregion
 
@@ -153,12 +171,37 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Preview panel
+        private void DrawExtraPreviewHeader(Rect rect)
+        {
+            //Draw sequence duration.
+            if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
+                DrawTopRightText(rect, $"Duration: {sequencerController.PlayingSequence.Duration()}s", new Color(0f, 1f, 0f, 0.4f));
+        }
+
+        private Rect DrawTopRightText(Rect rect, string text, Color color)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                Vector2 textSize = topRightTextStyle.CalcSize(new GUIContent(text));
+                Rect backgroundRect = new Rect(rect.x + rect.width - textSize.x - 4,
+                    rect.y + 2,
+                    textSize.x + 4,
+                    textSize.y);
+                EditorGUI.DrawRect(backgroundRect, color);
+                GUI.Label(new Rect(backgroundRect.x + 2, backgroundRect.y, textSize.x, textSize.y), text, topRightTextStyle);
+
+                rect.width -= textSize.x + 6;
+            }
+
+            return rect;
+        }
+
         private void DrawPreviewControls()
         {
             DrawMediaPlayerControlButtons();
             DrawTimeScaleSlider();
             DrawProgressSlider();
-            DrawDurationInfo();
+            //DrawDurationInfo();
         }
 
         private void DrawMediaPlayerControlButtons()
@@ -168,7 +211,7 @@ namespace BrunoMikoski.AnimationSequencer
             bool guiEnabled = GUI.enabled;
 
             GUIStyle previewButtonStyle = new GUIStyle(GUI.skin.button);
-            previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 40;
+            previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 36;
 
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.BackButtonGUIContent, previewButtonStyle))
             {
@@ -324,8 +367,10 @@ namespace BrunoMikoski.AnimationSequencer
             GUILayout.FlexibleSpace();
             EditorGUI.BeginChangeCheck();
 
-            EditorGUILayout.LabelField("TimeScale");
-            tweenTimeScale = EditorGUILayout.Slider(tweenTimeScale, 0, 2);
+            float normalLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 65;
+            tweenTimeScale = EditorGUILayout.Slider("TimeScale", tweenTimeScale, 0, 2);
+            EditorGUIUtility.labelWidth = normalLabelWidth;
 
             UpdateSequenceTimeScale();
 
@@ -335,17 +380,17 @@ namespace BrunoMikoski.AnimationSequencer
         private void DrawProgressSlider()
         {
             GUILayout.FlexibleSpace();
-
             EditorGUI.BeginChangeCheck();
+
             float tweenProgress = GetCurrentSequencerProgress();
 
-            EditorGUILayout.LabelField("Progress");
-            tweenProgress = EditorGUILayout.Slider(tweenProgress, 0, 1);
+            float normalLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 65;
+            tweenProgress = EditorGUILayout.Slider("Progress", tweenProgress, 0, 1);
+            EditorGUIUtility.labelWidth = normalLabelWidth;
 
             if (EditorGUI.EndChangeCheck())
-            {
                 SetProgress(tweenProgress);
-            }
 
             GUILayout.FlexibleSpace();
         }
@@ -633,7 +678,7 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Generic foldout
-        private void DrawFoldoutArea(string title, ref bool foldout, Action additionalInspectorGUI)
+        private void DrawFoldoutArea(string title, ref bool foldout, Action additionalInspectorGUI, Action<Rect> additionalHeaderGUI = null)
         {
             using (new EditorGUILayout.VerticalScope("FrameBox"))
             {
@@ -643,6 +688,8 @@ namespace BrunoMikoski.AnimationSequencer
                 rect.y -= 4;
 
                 foldout = EditorGUI.Foldout(rect, foldout, title);
+
+                additionalHeaderGUI?.Invoke(rect);
 
                 if (foldout)
                     additionalInspectorGUI.Invoke();
