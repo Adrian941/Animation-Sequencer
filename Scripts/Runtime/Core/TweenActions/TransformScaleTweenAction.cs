@@ -76,7 +76,7 @@ namespace BrunoMikoski.AnimationSequencer
             return endValue;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (!originalScale.HasValue)
                 return;

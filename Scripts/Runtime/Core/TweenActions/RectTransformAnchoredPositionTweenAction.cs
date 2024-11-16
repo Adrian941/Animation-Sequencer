@@ -274,7 +274,7 @@ namespace BrunoMikoski.AnimationSequencer
             return targetCanvasLocalPosition;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (targetRectTransform == null)
                 return;

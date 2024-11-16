@@ -152,7 +152,7 @@ namespace BrunoMikoski.AnimationSequencer
             return result;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (targetTransform == null)
                 return;

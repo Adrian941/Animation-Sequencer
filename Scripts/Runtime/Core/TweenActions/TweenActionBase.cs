@@ -41,6 +41,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => relative = value;
         }
 
+        protected bool isTweenGenerated;
+
         public virtual Type TargetComponentType { get; }
         public abstract string DisplayName { get; }
         /// <summary>
@@ -56,7 +58,8 @@ namespace BrunoMikoski.AnimationSequencer
         {
             SetTweenAnimationStep (tweenAnimationStep);
             Tweener tween = GenerateTween_Internal(target, duration);
-            if (tween == null)
+            isTweenGenerated = tween != null;
+            if (!isTweenGenerated)
                 return null;
 
             if (direction == AnimationDirection.From)
@@ -69,7 +72,15 @@ namespace BrunoMikoski.AnimationSequencer
             return tween;
         }
 
-        public abstract void ResetToInitialState();
+        protected abstract void ResetToInitialState_Internal();
+
+        public void ResetToInitialState()
+        {
+            if (!isTweenGenerated)
+                return;
+
+            ResetToInitialState_Internal();
+        }
     }
 
     public enum InputType
