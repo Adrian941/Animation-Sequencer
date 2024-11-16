@@ -37,19 +37,27 @@ namespace BrunoMikoski.AnimationSequencer
             set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
-        public override void AddTweenToSequence(Sequence animationSequence)
+        private Sequence mainSequence;
+
+        protected override void SetMainSequence(Sequence mainSequence)
+        {
+            this.mainSequence = mainSequence;
+        }
+
+        public override Sequence GenerateTweenSequence()
         {
             if (particleSystem == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
-                return;
+                return null;
             }
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
+            sequence.AppendInterval(extraInterval);    //Interval added for a bug when this tween runs in "Backwards" direction.
             sequence.AppendCallback(()=>
             {
-                if (!animationSequence.IsBackwards())
+                if (!mainSequence.IsBackwards())
                     StartParticles();
                 else
                     FinishParticles();
@@ -59,16 +67,13 @@ namespace BrunoMikoski.AnimationSequencer
 
             sequence.AppendCallback(()=>
             {
-                if (!animationSequence.IsBackwards())
+                if (!mainSequence.IsBackwards())
                     FinishParticles();
                 else
                     StartParticles();
             });
 
-            if (FlowType == FlowType.Join)
-                animationSequence.Join(sequence);
-            else
-                animationSequence.Append(sequence);
+            return sequence;
         }
 
         public override void ResetToInitialState() { }
@@ -100,7 +105,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override float GetDuration()
         {
-            return base.GetDuration() + (setLifetime ? duration : 0);
+            return sequence == null ? -1 : sequence.Duration() - extraInterval;
+        }
+
+        public override float GetExtraIntervalAdded()
+        {
+            return sequence == null ? 0 : extraInterval;
         }
     }
 }

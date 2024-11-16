@@ -31,6 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
         private AnimationSequencerController sequencerController;
         private ReorderableList reorderableList;
         private GUIStyle topRightTextStyle;
+        private StepAnimationData[] stepsAnimationData;
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
@@ -38,6 +39,7 @@ namespace BrunoMikoski.AnimationSequencer
         private float tweenTimeScale = 1f;
         private bool wasShowingStepsPanel;
         private bool justStartPreviewing;
+        private float mainSequenceDuration = 0;
         #endregion
 
         #region OnEnable/OnDisable settings
@@ -307,6 +309,9 @@ namespace BrunoMikoski.AnimationSequencer
 
                     sequencerController.Play();
 
+                    if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo)
+                        CalculateStepsAnimationData();
+
                     DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
                 }
                 else
@@ -530,18 +535,65 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void OnDrawAnimationStepBackground(Rect rect, int index, bool isActive, bool isFocused)
         {
-            if (Event.current.type == EventType.Repaint)
-            {
-                Rect titleRect = new Rect(rect) { height = EditorGUIUtility.singleLineHeight };
+            if (index == -1)
+                return;
 
-                if (isActive)
+            if (Event.current.type != EventType.Repaint)
+                return;
+
+            //Title rect.
+            Rect titleRect = new Rect(rect) { height = EditorGUIUtility.singleLineHeight };
+            if (isActive)
+            {
+                ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, true, isFocused, false);
+            }
+            else
+            {
+                EditorGUI.DrawRect(new Rect(rect.x, rect.y, rect.width, 1), new Color(0.1f, 0.1f, 0.1f));
+                GUI.skin.box.Draw(titleRect, false, false, false, false);
+            }
+
+            //Animation progress preview.
+            if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo && DOTweenEditorPreview.isPreviewing)
+            {
+                rect.y += 1;
+                StepAnimationData animationData = stepsAnimationData[index];
+                Color barColor = new Color(0.4f, 0.4f, 0.1f, 1f);
+                Color progressColor = new Color(0.1f, 0.4f, 0.1f, 1f);
+                Rect barRect = new Rect(rect) { height = EditorGUIUtility.singleLineHeight };
+
+                if (animationData == null)
                 {
-                    ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, true, isFocused, false);
+                    barColor = new Color(0.4f, 0.1f, 0.1f, 1f);
+                    EditorGUI.DrawRect(barRect, barColor);
                 }
                 else
                 {
-                    EditorGUI.DrawRect(new Rect(rect.x, rect.y, rect.width, 1), new Color(0.1f, 0.1f, 0.1f));
-                    GUI.skin.box.Draw(titleRect, false, false, false, false);
+                    float startTime = animationData.startTime / mainSequenceDuration;
+                    float endTime = animationData.endTime / mainSequenceDuration;
+                    float extraWidth = (endTime - startTime < 0.01f) ? 1 : 0;
+
+                    barRect.xMin = Mathf.Lerp(rect.xMin, rect.xMax, startTime) - extraWidth;
+                    barRect.xMax = Mathf.Lerp(rect.xMin, rect.xMax, endTime) + extraWidth;
+
+                    bool isForward = sequencerController.PlayTypeDirection == AnimationSequencerController.PlayType.Forward;
+                    int loops = sequencerController.Loops;
+                    float progress = GetCurrentSequencerProgress();
+                    if (progress < 1 && loops > 1) progress = progress * loops % 1;
+                    bool showProgress = isForward ? progress >= startTime : progress <= endTime;
+                    Rect progressRect = new Rect(rect);
+                    if (showProgress)
+                    {
+                        float interpolation_xMin = isForward ? startTime : Mathf.Clamp(progress, startTime, endTime);
+                        float interpolation_xMax = isForward ? Mathf.Clamp(progress, startTime, endTime) : endTime;
+
+                        progressRect.xMin = Mathf.Lerp(rect.xMin, rect.xMax, interpolation_xMin) - extraWidth;
+                        progressRect.xMax = Mathf.Lerp(rect.xMin, rect.xMax, interpolation_xMax) + extraWidth;
+                        progressRect.height = EditorGUIUtility.singleLineHeight;
+                    }
+
+                    EditorGUI.DrawRect(barRect, barColor);
+                    if (showProgress) EditorGUI.DrawRect(progressRect, progressColor);
                 }
             }
         }
@@ -559,7 +611,16 @@ namespace BrunoMikoski.AnimationSequencer
             AnimationStepBase animationStepBase = null;
             try { animationStepBase = sequencerController.AnimationSteps[index]; } catch (Exception) { }
             if (animationStepBase != null)
-                guiContent = new GUIContent(animationStepBase.GetDisplayNameForEditor(index + 1));
+            {
+                string animationInfo = "";
+                if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo && DOTweenEditorPreview.isPreviewing)
+                {
+                    StepAnimationData stepAnimation = stepsAnimationData[index];
+                    animationInfo = stepAnimation == null ? "Unused Step" : stepAnimation.info;
+                }
+
+                guiContent = new GUIContent(animationStepBase.GetDisplayNameForEditor(index + 1), animationInfo);
+            }
 
             if (flowType == FlowType.Join)
                 EditorGUI.indentLevel = baseIdentLevel + 1;
@@ -717,6 +778,52 @@ namespace BrunoMikoski.AnimationSequencer
         }
         #endregion
 
+        #region Steps animation data
+        /// <summary>
+        /// Calculate the main sequence duration and "StartTime" of each step relative to the main sequence.
+        /// </summary>
+        private void CalculateStepsAnimationData()
+        {
+            //Calculate the main sequence duration and "StartTime" of each step.
+            mainSequenceDuration = 0;
+            float[] startTimeSteps = new float[sequencerController.AnimationSteps.Length];
+            float longestStepDuration = 0;
+
+            for (int i = 0; i < sequencerController.AnimationSteps.Length; i++)
+            {
+                AnimationStepBase step = sequencerController.AnimationSteps[i];
+                float stepDuration = step.GetDuration();
+                if (stepDuration == -1)
+                {
+                    startTimeSteps[i] = stepDuration;
+                    continue;
+                }
+
+                startTimeSteps[i] = mainSequenceDuration;
+
+                if (i == 0 || step.FlowType == FlowType.Append || stepDuration > longestStepDuration)
+                    longestStepDuration = step.GetDuration();
+
+                int nextStepIndex = i + 1;
+                if (nextStepIndex >= sequencerController.AnimationSteps.Length || sequencerController.AnimationSteps[nextStepIndex].FlowType == FlowType.Append)
+                    mainSequenceDuration += longestStepDuration;
+            }
+
+            stepsAnimationData = new StepAnimationData[sequencerController.AnimationSteps.Length];
+
+            //Assign the main sequence duration and "StartTime" to each step. 
+            for (int i = 0; i < sequencerController.AnimationSteps.Length; i++)
+            {
+                float startTime = startTimeSteps[i];
+                if (startTime == -1)
+                    continue;
+
+                float tweenDuration = sequencerController.AnimationSteps[i].GetDuration();
+                stepsAnimationData[i] = new StepAnimationData(tweenDuration / mainSequenceDuration * 100, startTime, startTime + tweenDuration);
+            }
+        }
+        #endregion
+
         #region Other callbacks
         private void OnEditorPlayModeChanged(PlayModeStateChange playModeState)
         {
@@ -730,5 +837,41 @@ namespace BrunoMikoski.AnimationSequencer
         }
         #endregion
     }
+
+    #region Step animation data
+    /// <summary>
+    /// Class used to show visual animation data for each step.
+    /// </summary>
+    public class StepAnimationData
+    {
+        /// <summary>
+        /// Percentage duration of this step relative to the main sequence.
+        /// </summary>
+        public float percentageDuration;
+        /// <summary>
+        /// The time this step starts relative to the main sequence.
+        /// </summary>
+        public float startTime;
+        /// <summary>
+        /// The time this step ends relative to the main sequence.
+        /// </summary>
+        public float endTime;
+        /// <summary>
+        /// Data summary.
+        /// </summary>
+        public string info;
+
+        public StepAnimationData(float percentageDuration, float startTime, float endTime)
+        {
+            this.percentageDuration = percentageDuration;
+            this.startTime = startTime;
+            this.endTime = endTime;
+
+            info = $"Duration: {endTime - startTime}s ({percentageDuration.ToString(percentageDuration % 1 == 0 ? "F0" : "F2")}%)\n" +
+                $"Start time: {startTime}s\n" +
+                $"End time: {endTime}s";
+        }
+    }
+    #endregion
 }
 #endif

@@ -20,22 +20,17 @@ namespace BrunoMikoski.AnimationSequencer
             set => callback = value;
         }
 
-        public override void AddTweenToSequence(Sequence animationSequence)
+        public override Sequence GenerateTweenSequence()
         {
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
-            sequence.AppendInterval(0.001f);    //Interval added for a bug when this tween runs in "Backwards" direction.
+            sequence.AppendInterval(extraInterval);    //Interval added for a bug when this tween runs in "Backwards" direction.
             sequence.AppendCallback(callback.Invoke);
             
-            if (FlowType == FlowType.Append)
-                animationSequence.Append(sequence);
-            else
-                animationSequence.Join(sequence);
+            return sequence;
         }
 
-        public override void ResetToInitialState()
-        {
-        }
+        public override void ResetToInitialState() { }
 
         public override string GetDisplayNameForEditor(int index)
         {
@@ -54,6 +49,16 @@ namespace BrunoMikoski.AnimationSequencer
             var persistentTargetNames = $"{string.Join(", ", persistentTargetNamesArray)}";
             
             return $"{index}. {DisplayName}: {persistentTargetNames}";
+        }
+
+        public override float GetDuration()
+        {
+            return sequence == null ? -1 : sequence.Duration() - extraInterval;
+        }
+
+        public override float GetExtraIntervalAdded()
+        {
+            return sequence == null ? 0 : extraInterval;
         }
     }
 }
