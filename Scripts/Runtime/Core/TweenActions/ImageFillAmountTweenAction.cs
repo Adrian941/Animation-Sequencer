@@ -40,7 +40,10 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             if (targetImage.type != Image.Type.Filled)
+            {
                 Debug.Log($"The <b>\"{target.name}\"</b> GameObject with an <b>{TargetComponentType.Name}</b> component must be of type \"Filled\" to work with <b>\"{DisplayName}\"</b> action.", target);
+                return null;
+            }
 
             originalFillAmount = targetImage.fillAmount;
 

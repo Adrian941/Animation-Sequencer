@@ -39,7 +39,10 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             if (targetCamera.orthographic)
+            {
                 Debug.Log($"The <b>\"{target.name}\"</b> GameObject with a <b>{TargetComponentType.Name}</b> component must be of type \"Perspective\" projection to work with <b>\"{DisplayName}\"</b> action.", target);
+                return null;
+            }
 
             originalFieldOfView = targetCamera.fieldOfView;
 
