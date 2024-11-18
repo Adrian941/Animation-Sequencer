@@ -1,5 +1,6 @@
 ﻿#if DOTWEEN_ENABLED
 using System;
+using System.Collections.Generic;
 using DG.DOTweenEditor;
 using DG.Tweening;
 using UnityEditor;
@@ -32,6 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
         private ReorderableList reorderableList;
         private GUIStyle topRightTextStyle;
         private StepAnimationData[] stepsAnimationData;
+        private Dictionary<int, bool> actionsExpandedDictionary = new Dictionary<int, bool>();
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
@@ -40,6 +42,7 @@ namespace BrunoMikoski.AnimationSequencer
         private bool wasShowingStepsPanel;
         private bool justStartPreviewing;
         private float mainSequenceDuration = 0;
+        private bool actionsValuesTaken = false;
         #endregion
 
         #region OnEnable/OnDisable settings
@@ -68,9 +71,11 @@ namespace BrunoMikoski.AnimationSequencer
             reorderableList.drawElementBackgroundCallback += OnDrawAnimationStepBackground;
             reorderableList.drawElementCallback += OnDrawAnimationStep;
             reorderableList.elementHeightCallback += GetAnimationStepHeight;
-            reorderableList.onAddDropdownCallback += OnClickToAddNew;
-            reorderableList.onRemoveCallback += OnClickToRemove;
-            reorderableList.onReorderCallbackWithDetails += OnListOrderChanged;
+            reorderableList.onAddDropdownCallback += OnClickToAddNewAnimationStep;
+            reorderableList.onRemoveCallback += OnClickToRemoveAnimationStep;
+            reorderableList.onReorderCallbackWithDetails += OnAnimationStepListOrderChanged;
+            reorderableList.onMouseDragCallback += OnMouseDragAnimationStep;
+            reorderableList.onMouseUpCallback += OnMouseUpAnimationStep;
         }
 
         private void SubscribeToEditorEvents()
@@ -86,12 +91,17 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void UnsubscribeFromEditorEvents()
         {
+            //Animation step reorderableList events.
             reorderableList.drawElementBackgroundCallback -= OnDrawAnimationStepBackground;
             reorderableList.drawElementCallback -= OnDrawAnimationStep;
             reorderableList.elementHeightCallback -= GetAnimationStepHeight;
-            reorderableList.onAddDropdownCallback -= OnClickToAddNew;
-            reorderableList.onRemoveCallback -= OnClickToRemove;
-            reorderableList.onReorderCallbackWithDetails -= OnListOrderChanged;
+            reorderableList.onAddDropdownCallback -= OnClickToAddNewAnimationStep;
+            reorderableList.onRemoveCallback -= OnClickToRemoveAnimationStep;
+            reorderableList.onReorderCallbackWithDetails -= OnAnimationStepListOrderChanged;
+            reorderableList.onMouseDragCallback -= OnMouseDragAnimationStep;
+            reorderableList.onMouseUpCallback -= OnMouseUpAnimationStep;
+
+            //Other events.
             EditorApplication.playModeStateChanged -= OnEditorPlayModeChanged;
 
 #if UNITY_2021_1_OR_NEWER
@@ -645,7 +655,7 @@ namespace BrunoMikoski.AnimationSequencer
             return element.GetPropertyDrawerHeight();
         }
 
-        private void OnClickToAddNew(Rect buttonRect, ReorderableList list)
+        private void OnClickToAddNewAnimationStep(Rect buttonRect, ReorderableList list)
         {
             AnimationStepAdvancedDropdown.Show(buttonRect, OnNewAnimationStepTypeSelected);
         }
@@ -672,7 +682,7 @@ namespace BrunoMikoski.AnimationSequencer
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void OnClickToRemove(ReorderableList list)
+        private void OnClickToRemoveAnimationStep(ReorderableList list)
         {
             SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(list.index);
             reorderableList.serializedProperty.DeleteArrayElementAtIndex(list.index);
@@ -680,7 +690,7 @@ namespace BrunoMikoski.AnimationSequencer
             SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
         }
 
-        private void OnListOrderChanged(ReorderableList list, int oldIndex, int newIndex)
+        private void OnAnimationStepListOrderChanged(ReorderableList list, int oldIndex, int newIndex)
         {
             bool isCyclicRotationRight = true;
             int greatestIndex = oldIndex;
@@ -695,29 +705,77 @@ namespace BrunoMikoski.AnimationSequencer
             int startIndex = isCyclicRotationRight ? greatestIndex : smallestIndex;
             int count = greatestIndex - smallestIndex + 1;
             float firstHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex).GetPropertyDrawerHeight();
+            bool isFirstExpanded = firstHeight > 18;
+            int currentIndex = startIndex;
+            int actionsIndex;
+
             for (int i = 0; i < count; i++)
             {
-                SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(startIndex);
+                SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(currentIndex);
 
                 if (i == count - 1)
                 {
                     element.SetPropertyDrawerHeight(firstHeight);
+                    element.isExpanded = isFirstExpanded;
+                    actionsIndex = startIndex;
                 }
                 else
                 {
-                    int nextIndex = isCyclicRotationRight ? startIndex - 1 : startIndex + 1;
+                    int nextIndex = isCyclicRotationRight ? currentIndex - 1 : currentIndex + 1;
                     float nextHeight = reorderableList.serializedProperty.GetArrayElementAtIndex(nextIndex).GetPropertyDrawerHeight();
                     element.SetPropertyDrawerHeight(nextHeight);
+                    element.isExpanded = nextHeight > 18;
+                    actionsIndex = nextIndex;
                 }
 
+                if (TryGetIsActionsExpanded(actionsIndex, out bool isActionsExpanded))
+                    element.FindPropertyRelative("actions").isExpanded = isActionsExpanded;
+
                 if (isCyclicRotationRight)
-                    startIndex--;
+                    currentIndex--;
                 else
-                    startIndex++;
+                    currentIndex++;
             }
+
+            actionsValuesTaken = false;
 
             SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
             list.serializedProperty.serializedObject.ApplyModifiedProperties();
+        }
+
+        private bool TryGetIsActionsExpanded(int index, out bool isExpanded)
+        {
+            if (actionsExpandedDictionary.ContainsKey(index))
+            {
+                isExpanded = actionsExpandedDictionary[index];
+                return true;
+            }
+
+            isExpanded = false;
+            return false;
+        }
+
+        private void OnMouseDragAnimationStep(ReorderableList list)
+        {
+            if (!actionsValuesTaken)
+            {
+                actionsExpandedDictionary.Clear();
+                for (int i = 0; i < reorderableList.serializedProperty.arraySize; i++)
+                {
+                    bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenAnimationStep);
+                    if (isTweenStep)
+                    {
+                        bool isTweenStepExpanded = reorderableList.serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("actions").isExpanded;
+                        actionsExpandedDictionary.Add(i, isTweenStepExpanded);
+                    }
+                }
+                actionsValuesTaken = true;
+            }
+        }
+
+        private void OnMouseUpAnimationStep(ReorderableList list)
+        {
+            actionsValuesTaken = false;
         }
 
         private void DrawContextInputOnItem(SerializedProperty element, int index, Rect rect1)
