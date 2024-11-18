@@ -34,6 +34,7 @@ namespace BrunoMikoski.AnimationSequencer
         private GUIStyle topRightTextStyle;
         private StepAnimationData[] stepsAnimationData;
         private Dictionary<int, bool> actionsExpandedDictionary = new Dictionary<int, bool>();
+        private SerializedProperty playbackSpeedProperty;
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
@@ -63,6 +64,7 @@ namespace BrunoMikoski.AnimationSequencer
         private void InitializeReferences()
         {
             sequencerController = target as AnimationSequencerController;
+            playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
         }
 
         private void InitializeReorderableList()
@@ -189,7 +191,10 @@ namespace BrunoMikoski.AnimationSequencer
         {
             //Draw sequence duration.
             if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
-                DrawTopRightText(rect, $"Duration: {sequencerController.PlayingSequence.Duration()}s", new Color(0f, 1f, 0f, 0.4f));
+            {
+                float duration = sequencerController.PlayingSequence.Duration() * (1 / playbackSpeedProperty.floatValue);
+                DrawTopRightText(rect, $"Duration: {duration.ToString(duration % 1 == 0 ? "F0" : "F2")}s", new Color(0f, 1f, 0f, 0.4f));
+            }
         }
 
         private Rect DrawTopRightText(Rect rect, string text, Color color)
@@ -484,7 +489,6 @@ namespace BrunoMikoski.AnimationSequencer
             GUILayout.FlexibleSpace();
             EditorGUI.BeginChangeCheck();
 
-            var playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
             GUIContent playbackSpeedLabel = new GUIContent("Playback Speed", "Speed of the animation playback.");
             playbackSpeedProperty.floatValue = EditorGUILayout.Slider(playbackSpeedLabel, playbackSpeedProperty.floatValue, 0, 2);
 
