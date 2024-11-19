@@ -193,7 +193,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
             {
                 float duration = sequencerController.PlayingSequence.Duration() * (1 / playbackSpeedProperty.floatValue);
-                DrawTopRightText(rect, $"Duration: {duration.ToString(duration % 1 == 0 ? "F0" : "F2")}s", new Color(0f, 1f, 0f, 0.4f));
+                DrawTopRightText(rect, $"Duration: {NumberFormatter.FormatDecimalPlaces(duration)}s", new Color(0f, 1f, 0f, 0.4f));
             }
         }
 
@@ -929,9 +929,10 @@ namespace BrunoMikoski.AnimationSequencer
             this.startTime = startTime;
             this.endTime = endTime;
 
-            info = $"Duration: {endTime - startTime}s ({percentageDuration.ToString(percentageDuration % 1 == 0 ? "F0" : "F2")}%)\n" +
-                $"Start time: {startTime}s\n" +
-                $"End time: {endTime}s";
+            float duration = endTime - startTime;
+            info = $"Duration: {NumberFormatter.FormatDecimalPlaces(duration)}s ({NumberFormatter.FormatDecimalPlaces(percentageDuration)}%)\n" +
+                $"Start time: {NumberFormatter.FormatDecimalPlaces(startTime)}s\n" +
+                $"End time: {NumberFormatter.FormatDecimalPlaces(endTime)}s";
         }
     }
     #endregion
