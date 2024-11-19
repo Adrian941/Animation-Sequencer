@@ -35,6 +35,8 @@ namespace BrunoMikoski.AnimationSequencer
         private StepAnimationData[] stepsAnimationData;
         private Dictionary<int, bool> actionsExpandedDictionary = new Dictionary<int, bool>();
         private SerializedProperty playbackSpeedProperty;
+        private SerializedProperty autoPlayModeSerializedProperty;
+        private SerializedProperty autoKillSerializedProperty;
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
@@ -65,6 +67,8 @@ namespace BrunoMikoski.AnimationSequencer
         {
             sequencerController = target as AnimationSequencerController;
             playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
+            autoPlayModeSerializedProperty = serializedObject.FindProperty("autoplayMode");
+            autoKillSerializedProperty = serializedObject.FindProperty("autoKill");
         }
 
         private void InitializeReorderableList()
@@ -141,7 +145,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             //Foldout areas.
             DrawFoldoutArea("Preview", ref showPreviewPanel, DrawPreviewControls, DrawExtraPreviewHeader);
-            DrawFoldoutArea("Settings", ref showSettingsPanel, DrawSettings);
+            DrawFoldoutArea("Settings", ref showSettingsPanel, DrawSettings, DrawExtraSettingsHeader);
             DrawFoldoutArea("Callbacks", ref showCallbacksPanel, DrawCallbacks);
             SerializedProperty animationStepsProperty = null;
             if (!DOTweenEditorPreview.isPreviewing)
@@ -193,7 +197,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
             {
                 float duration = sequencerController.PlayingSequence.Duration() * (1 / playbackSpeedProperty.floatValue);
-                DrawTopRightText(rect, $"Duration: {NumberFormatter.FormatDecimalPlaces(duration)}s", new Color(0f, 1f, 0f, 0.4f));
+                DrawTopRightText(rect, $"Duration: {NumberFormatter.FormatDecimalPlaces(duration)}s", new Color(0f, 1f, 0f, 0.5f));
             }
         }
 
@@ -444,18 +448,40 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Settings panel
+        private void DrawExtraSettingsHeader(Rect rect)
+        {
+            //Draw auto kill value.
+            rect = DrawTopRightText(rect, $"Auto kill: {autoKillSerializedProperty.boolValue}", new Color(1f, 0.2f, 0f, 0.5f));
+
+            //Draw auto play mode.
+            var autoplayMode = (AnimationSequencerController.AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
+            string label = "";
+            switch (autoplayMode)
+            {
+                case AnimationSequencerController.AutoplayType.Nothing:
+                    label = "Off";
+                    break;
+                case AnimationSequencerController.AutoplayType.Start:
+                    label = "on Start";
+                    break;
+                case AnimationSequencerController.AutoplayType.OnEnable:
+                    label = "on Enable";
+                    break;
+            }
+
+            DrawTopRightText(rect, $"Autoplay {label}", new Color(1f, 0.7f, 0f, 0.5f));
+        }
+
         private void DrawSettings()
         {
             bool wasEnabled = GUI.enabled;
             if (DOTweenEditorPreview.isPreviewing)
                 GUI.enabled = false;
 
-            SerializedProperty autoPlayModeSerializedProperty = serializedObject.FindProperty("autoplayMode");
             SerializedProperty pauseOnStartSerializedProperty = serializedObject.FindProperty("startPaused");
             SerializedProperty timeScaleIndependentSerializedProperty = serializedObject.FindProperty("timeScaleIndependent");
             SerializedProperty sequenceDirectionSerializedProperty = serializedObject.FindProperty("playType");
             SerializedProperty updateTypeSerializedProperty = serializedObject.FindProperty("updateType");
-            SerializedProperty autoKillSerializedProperty = serializedObject.FindProperty("autoKill");
             SerializedProperty loopsSerializedProperty = serializedObject.FindProperty("loops");
             SerializedProperty loopTypeSerializedProperty = serializedObject.FindProperty("loopType");
 
@@ -572,7 +598,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 rect.y += 1;
                 StepAnimationData animationData = stepsAnimationData[index];
-                Color barColor = new Color(0.4f, 0.4f, 0.1f, 1f);
+                Color barColor = new Color(0.4f, 0.38f, 0.1f, 1f);
                 Color progressColor = new Color(0.1f, 0.4f, 0.1f, 1f);
                 Rect barRect = new Rect(rect) { height = EditorGUIUtility.singleLineHeight };
 
