@@ -1,6 +1,7 @@
 ﻿#if DOTWEEN_ENABLED
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using DG.DOTweenEditor;
 using DG.Tweening;
 using UnityEditor;
@@ -34,9 +35,12 @@ namespace BrunoMikoski.AnimationSequencer
         private GUIStyle topRightTextStyle;
         private StepAnimationData[] stepsAnimationData;
         private Dictionary<int, bool> actionsExpandedDictionary = new Dictionary<int, bool>();
+        private Dictionary<int, float> collapsedStepsDictionary = new Dictionary<int, float>();
         private SerializedProperty playbackSpeedProperty;
         private SerializedProperty autoPlayModeSerializedProperty;
         private SerializedProperty autoKillSerializedProperty;
+        private MethodInfo reorderableListClearCacheMethod = null;
+        private bool cantFindReorderableListClearCacheMethod;
         private bool showPreviewPanel = true;
         private bool showSettingsPanel;
         private bool showCallbacksPanel;
@@ -286,9 +290,6 @@ namespace BrunoMikoski.AnimationSequencer
                 if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StopButtonGUIContent, previewButtonStyle))
                 {
                     StopSequence();
-
-                    if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
-                        showStepsPanel = wasShowingStepsPanel;
                 }
             }
 
@@ -328,8 +329,11 @@ namespace BrunoMikoski.AnimationSequencer
 
                     sequencerController.Play();
 
-                    if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo)
+                    if (AnimationSequencerSettings.GetInstance().VisualizeStepsProgressWhenPreviewing)
                         CalculateStepsAnimationData();
+
+                    if (AnimationSequencerSettings.GetInstance().CollapseStepsWhenPreviewing)
+                        CollapseSteps();
 
                     DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
                 }
@@ -374,7 +378,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (justStartPreviewing)
                 wasShowingStepsPanel = showStepsPanel;
 
-            if (AnimationSequencerSettings.GetInstance().AutoHideStepsWhenPreviewing)
+            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
                 showStepsPanel = false;
         }
 
@@ -382,9 +386,17 @@ namespace BrunoMikoski.AnimationSequencer
         {
             if (DOTweenEditorPreview.isPreviewing)
             {
+                // Reset sequencer state.
                 sequencerController.ResetToInitialState();
                 sequencerController.ClearPlayingSequence();
                 DOTweenEditorPreview.Stop();
+
+                // Reset steps state.
+                if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
+                    showStepsPanel = wasShowingStepsPanel;
+
+                if (AnimationSequencerSettings.GetInstance().CollapseStepsWhenPreviewing)
+                    ExpandCollapsedSteps();
             }
         }
 
@@ -593,8 +605,8 @@ namespace BrunoMikoski.AnimationSequencer
                 GUI.skin.box.Draw(titleRect, false, false, false, false);
             }
 
-            //Animation progress preview.
-            if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo && DOTweenEditorPreview.isPreviewing)
+            //Step progress preview.
+            if (AnimationSequencerSettings.GetInstance().VisualizeStepsProgressWhenPreviewing && DOTweenEditorPreview.isPreviewing)
             {
                 rect.y += 1;
                 StepAnimationData animationData = stepsAnimationData[index];
@@ -653,7 +665,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (animationStepBase != null)
             {
                 string animationInfo = "";
-                if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo && DOTweenEditorPreview.isPreviewing)
+                if (AnimationSequencerSettings.GetInstance().VisualizeStepsProgressWhenPreviewing && DOTweenEditorPreview.isPreviewing)
                 {
                     StepAnimationData stepAnimation = stepsAnimationData[index];
                     animationInfo = stepAnimation == null ? "Unused Step" : stepAnimation.info;
@@ -909,6 +921,82 @@ namespace BrunoMikoski.AnimationSequencer
                 float tweenDuration = sequencerController.AnimationSteps[i].GetDuration();
                 stepsAnimationData[i] = new StepAnimationData(tweenDuration / mainSequenceDuration * 100, startTime, startTime + tweenDuration);
             }
+        }
+        #endregion
+
+        #region Collapse Steps (Previewing)
+        private void CollapseSteps()
+        {
+            // Load ReorderableList "ClearCache" Method.
+            FindReorderableListClearCacheMethod();
+            if (cantFindReorderableListClearCacheMethod)
+                return;
+
+            // Collapse expanded steps.
+            collapsedStepsDictionary.Clear();
+            for (int i = 0; i < reorderableList.count; i++)
+            {
+                SerializedProperty stepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(i);
+                if (!stepProperty.isExpanded)
+                    continue;
+
+                collapsedStepsDictionary.Add(i, stepProperty.GetPropertyDrawerHeight());
+                stepProperty.isExpanded = false;
+                stepProperty.SetPropertyDrawerHeight(EditorGUIUtility.singleLineHeight);
+            }
+
+            // Repaint ReorderableList.
+            CallReorderableListClearCacheMethod();
+        }
+
+        private void ExpandCollapsedSteps()
+        {
+            if (collapsedStepsDictionary.Count == 0)
+                return;
+
+            if (cantFindReorderableListClearCacheMethod)
+                return;
+
+            // Expand collapsed steps.
+            foreach (var collapsedStepHeight in collapsedStepsDictionary)
+            {
+                SerializedProperty stepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(collapsedStepHeight.Key);
+                stepProperty.isExpanded = true;
+                stepProperty.SetPropertyDrawerHeight(collapsedStepHeight.Value);
+            }
+
+            // Repaint ReorderableList.
+            CallReorderableListClearCacheMethod();
+        }
+
+        private void FindReorderableListClearCacheMethod()
+        {
+            if (cantFindReorderableListClearCacheMethod)
+                return;
+
+            if (reorderableListClearCacheMethod != null)
+                return;
+
+            var listType = typeof(ReorderableList);
+            reorderableListClearCacheMethod = listType.GetMethod("InvalidateCache", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (reorderableListClearCacheMethod == null)
+            {
+                reorderableListClearCacheMethod = listType.GetMethod("ClearCache", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (reorderableListClearCacheMethod == null)
+                {
+                    Debug.LogWarning("The CollapseSteps feature is not available in this editor version. " +
+                        "To avoid seeing this warning, please deselect the option in Preferences > Animation Sequencer.");
+                    cantFindReorderableListClearCacheMethod = true;
+                }
+            }
+        }
+
+        private void CallReorderableListClearCacheMethod()
+        {
+            if (reorderableListClearCacheMethod == null)
+                return;
+
+            reorderableListClearCacheMethod.Invoke(reorderableList, null);
         }
         #endregion
 
