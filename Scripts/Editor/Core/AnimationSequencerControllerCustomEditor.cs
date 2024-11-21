@@ -50,6 +50,8 @@ namespace BrunoMikoski.AnimationSequencer
         private bool justStartPreviewing;
         private float mainSequenceDuration = 0;
         private bool actionsValuesTaken = false;
+        private int lastExpandedStepIndex = -1;
+        private bool lastExpandedStepChanged;
         #endregion
 
         #region OnEnable/OnDisable settings
@@ -160,6 +162,10 @@ namespace BrunoMikoski.AnimationSequencer
             DrawFoldoutArea("Steps", ref showStepsPanel, DrawAnimationSteps);
             if (animationStepsProperty != null && !DOTweenEditorPreview.isPreviewing)
                 animationStepsProperty.isExpanded = showStepsPanel;
+
+            // Verify only one step is expanded.
+            if (AnimationSequencerSettings.GetInstance().OneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
+                CheckOneStepExpanded();
         }
 
         private void InitializeStyles()
@@ -686,6 +692,13 @@ namespace BrunoMikoski.AnimationSequencer
 
             EditorGUI.indentLevel = baseIdentLevel;
             // DrawContextInputOnItem(element, index, rect);
+
+            // Verify if the last expanded step changed.
+            if (AnimationSequencerSettings.GetInstance().OneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
+            {
+                if (element.isExpanded && index != lastExpandedStepIndex)
+                    lastExpandedStepChanged = true;
+            }
         }
 
         private float GetAnimationStepHeight(int index)
@@ -715,6 +728,7 @@ namespace BrunoMikoski.AnimationSequencer
             SerializedProperty arrayElementAtIndex = animationStepsProperty.GetArrayElementAtIndex(targetIndex);
             object managedReferenceValue = Activator.CreateInstance(targetAnimationType);
             arrayElementAtIndex.managedReferenceValue = managedReferenceValue;
+            arrayElementAtIndex.isExpanded = true;
 
             //TODO copy from last step would be better here.
             SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
@@ -924,11 +938,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
         #endregion
 
-        #region Collapse Steps (Previewing)
+        #region Collapse steps (Previewing)
         private void CollapseSteps()
         {
             // Load ReorderableList "ClearCache" Method.
-            FindReorderableListClearCacheMethod();
+            FindReorderableListClearCacheMethod("Collapse Steps");
             if (cantFindReorderableListClearCacheMethod)
                 return;
 
@@ -968,8 +982,58 @@ namespace BrunoMikoski.AnimationSequencer
             // Repaint ReorderableList.
             CallReorderableListClearCacheMethod();
         }
+        #endregion
 
-        private void FindReorderableListClearCacheMethod()
+        #region One step expanded
+        private void CheckOneStepExpanded()
+        {
+            // Load ReorderableList "ClearCache" Method.
+            FindReorderableListClearCacheMethod("One Step Expanded");
+            if (cantFindReorderableListClearCacheMethod)
+                return;
+
+            if (!lastExpandedStepChanged)
+                return;
+
+            // Verify only one step is expanded.
+            int reorderableListCount = reorderableList.count;
+            for (int i = 0; i < reorderableListCount; i++)
+            {
+                SerializedProperty stepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(i);
+
+                if (stepProperty.isExpanded)
+                {
+                    if (lastExpandedStepIndex == i)
+                        continue;
+
+                    // Collapse the last expanded step.
+                    if (lastExpandedStepIndex != -1 && lastExpandedStepIndex < reorderableListCount)
+                    {
+                        SerializedProperty lastExpandedStepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(lastExpandedStepIndex);
+                        lastExpandedStepProperty.isExpanded = false;
+                        lastExpandedStepProperty.SetPropertyDrawerHeight(18);
+                    }
+
+                    // Update "lastExpandedStepIndex" value.
+                    lastExpandedStepIndex = i;
+                    lastExpandedStepChanged = false;
+
+                    // Repaint ReorderableList.
+                    CallReorderableListClearCacheMethod();
+                    return;
+                }
+                else
+                {
+                    // Reset "lastExpandedStepIndex" if the last expanded step is collapsed.
+                    if (lastExpandedStepIndex == i)
+                        lastExpandedStepIndex = -1;
+                }
+            }
+        }
+        #endregion
+
+        #region ReorderableList "ClearCache" Method
+        private void FindReorderableListClearCacheMethod(string featureCallFrom)
         {
             if (cantFindReorderableListClearCacheMethod)
                 return;
@@ -984,7 +1048,7 @@ namespace BrunoMikoski.AnimationSequencer
                 reorderableListClearCacheMethod = listType.GetMethod("ClearCache", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (reorderableListClearCacheMethod == null)
                 {
-                    Debug.LogWarning("The CollapseSteps feature is not available in this editor version. " +
+                    Debug.LogWarning($"The <b>\"{featureCallFrom}\"</b> feature is not available in this editor version. " +
                         "To avoid seeing this warning, please deselect the option in Preferences > Animation Sequencer.");
                     cantFindReorderableListClearCacheMethod = true;
                 }
