@@ -34,8 +34,8 @@ namespace BrunoMikoski.AnimationSequencer
         private ReorderableList reorderableList;
         private GUIStyle topRightTextStyle;
         private StepAnimationData[] stepsAnimationData;
-        private Dictionary<int, bool> actionsExpandedDictionary = new Dictionary<int, bool>();
-        private Dictionary<int, float> collapsedStepsDictionary = new Dictionary<int, float>();
+        private Dictionary<int, float> collapsedStepValues = new Dictionary<int, float>();
+        private Dictionary<int, List<bool>> expandedActionStates = new Dictionary<int, List<bool>>();
         private SerializedProperty playbackSpeedProperty;
         private SerializedProperty autoPlayModeSerializedProperty;
         private SerializedProperty autoKillSerializedProperty;
@@ -784,8 +784,20 @@ namespace BrunoMikoski.AnimationSequencer
                     actionsIndex = nextIndex;
                 }
 
-                if (TryGetIsActionsExpanded(actionsIndex, out bool isActionsExpanded))
-                    element.FindPropertyRelative("actions").isExpanded = isActionsExpanded;
+                if (TryGetActionsExpandedStates(actionsIndex, out List<bool> actionsExpandedStates))
+                {
+                    SerializedProperty actionsSerializedProperty = element.FindPropertyRelative("actions");
+                    bool isTweenStepExpanded = actionsExpandedStates[0];
+                    actionsSerializedProperty.isExpanded = isTweenStepExpanded;
+
+                    if (isTweenStepExpanded)
+                    {
+                        for (int actionIndex = 0; actionIndex < actionsSerializedProperty.arraySize; actionIndex++)
+                        {
+                            actionsSerializedProperty.GetArrayElementAtIndex(actionIndex).isExpanded = actionsExpandedStates[actionIndex + 1];
+                        }
+                    }
+                }
 
                 if (isCyclicRotationRight)
                     currentIndex--;
@@ -799,34 +811,54 @@ namespace BrunoMikoski.AnimationSequencer
             list.serializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
-        private bool TryGetIsActionsExpanded(int index, out bool isExpanded)
+        private bool TryGetActionsExpandedStates(int index, out List<bool> actionsExpandedStates)
         {
-            if (actionsExpandedDictionary.ContainsKey(index))
+            if (expandedActionStates.ContainsKey(index))
             {
-                isExpanded = actionsExpandedDictionary[index];
+                actionsExpandedStates = expandedActionStates[index];
                 return true;
             }
 
-            isExpanded = false;
+            actionsExpandedStates = null;
             return false;
         }
 
         private void OnMouseDragAnimationStep(ReorderableList list)
         {
-            if (!actionsValuesTaken)
+            SaveActionsExpandedStates();
+        }
+
+        private void SaveActionsExpandedStates()
+        {
+            if (actionsValuesTaken)
+                return;
+
+            expandedActionStates.Clear();
+            int reorderableListCount = reorderableList.serializedProperty.arraySize;
+            for (int i = 0; i < reorderableListCount; i++)
             {
-                actionsExpandedDictionary.Clear();
-                for (int i = 0; i < reorderableList.serializedProperty.arraySize; i++)
+                bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenAnimationStep);
+                if (isTweenStep)
                 {
-                    bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenAnimationStep);
-                    if (isTweenStep)
+                    List<bool> actionsExpandedStates = new List<bool>();
+                    SerializedProperty actionsSerializedProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("actions");
+                    bool isTweenStepExpanded = actionsSerializedProperty.isExpanded;
+                    actionsExpandedStates.Add(isTweenStepExpanded);
+
+                    if (isTweenStepExpanded)
                     {
-                        bool isTweenStepExpanded = reorderableList.serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("actions").isExpanded;
-                        actionsExpandedDictionary.Add(i, isTweenStepExpanded);
+                        int actionsCount = actionsSerializedProperty.arraySize;
+                        for (int actionIndex = 0; actionIndex < actionsCount; actionIndex++)
+                        {
+                            actionsExpandedStates.Add(actionsSerializedProperty.GetArrayElementAtIndex(actionIndex).isExpanded);
+                        }
                     }
+
+                    expandedActionStates.Add(i, actionsExpandedStates);
                 }
-                actionsValuesTaken = true;
             }
+
+            actionsValuesTaken = true;
         }
 
         private void OnMouseUpAnimationStep(ReorderableList list)
@@ -947,14 +979,14 @@ namespace BrunoMikoski.AnimationSequencer
                 return;
 
             // Collapse expanded steps.
-            collapsedStepsDictionary.Clear();
+            collapsedStepValues.Clear();
             for (int i = 0; i < reorderableList.count; i++)
             {
                 SerializedProperty stepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(i);
                 if (!stepProperty.isExpanded)
                     continue;
 
-                collapsedStepsDictionary.Add(i, stepProperty.GetPropertyDrawerHeight());
+                collapsedStepValues.Add(i, stepProperty.GetPropertyDrawerHeight());
                 stepProperty.isExpanded = false;
                 stepProperty.SetPropertyDrawerHeight(EditorGUIUtility.singleLineHeight);
             }
@@ -965,14 +997,14 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void ExpandCollapsedSteps()
         {
-            if (collapsedStepsDictionary.Count == 0)
+            if (collapsedStepValues.Count == 0)
                 return;
 
             if (cantFindReorderableListClearCacheMethod)
                 return;
 
             // Expand collapsed steps.
-            foreach (var collapsedStepHeight in collapsedStepsDictionary)
+            foreach (var collapsedStepHeight in collapsedStepValues)
             {
                 SerializedProperty stepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(collapsedStepHeight.Key);
                 stepProperty.isExpanded = true;

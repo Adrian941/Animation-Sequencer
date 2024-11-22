@@ -197,6 +197,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             actionsSerializedProperty.isExpanded = true;
+            newElement.isExpanded = true;
             actionsSerializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
@@ -214,7 +215,7 @@ namespace BrunoMikoski.AnimationSequencer
             Rect buttonPosition = position;
             buttonPosition.width = 24;
             buttonPosition.x += position.width - 34;
-            buttonPosition.y += 10;
+            buttonPosition.y += 4;
 
             if (GUI.Button(buttonPosition, "X", EditorStyles.miniButton))
             {
