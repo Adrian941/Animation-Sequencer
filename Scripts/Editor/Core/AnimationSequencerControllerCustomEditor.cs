@@ -164,8 +164,8 @@ namespace BrunoMikoski.AnimationSequencer
                 animationStepsProperty.isExpanded = showStepsPanel;
 
             // Verify only one step is expanded.
-            if (AnimationSequencerSettings.GetInstance().OneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
-                CheckOneStepExpanded();
+            if (AnimationSequencerSettings.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
+                CheckOnlyOneStepExpanded();
         }
 
         private void InitializeStyles()
@@ -694,7 +694,7 @@ namespace BrunoMikoski.AnimationSequencer
             // DrawContextInputOnItem(element, index, rect);
 
             // Verify if the last expanded step changed.
-            if (AnimationSequencerSettings.GetInstance().OneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
+            if (AnimationSequencerSettings.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
             {
                 if (element.isExpanded && index != lastExpandedStepIndex)
                     lastExpandedStepChanged = true;
@@ -984,8 +984,8 @@ namespace BrunoMikoski.AnimationSequencer
         }
         #endregion
 
-        #region One step expanded
-        private void CheckOneStepExpanded()
+        #region Only one step expanded
+        private void CheckOnlyOneStepExpanded()
         {
             // Load ReorderableList "ClearCache" Method.
             FindReorderableListClearCacheMethod("One Step Expanded");

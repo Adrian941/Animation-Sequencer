@@ -9,7 +9,9 @@ namespace BrunoMikoski.AnimationSequencer
         // Serialized fields
         [Header("While Editing")]
         [SerializeField]
-        private bool oneStepExpanded = true;
+        private bool onlyOneStepExpanded = true;
+        [SerializeField]
+        private bool onlyOneActionExpanded = true;
         [Header("When Previewing")]
         [SerializeField]
         private bool hideSteps;
@@ -19,7 +21,8 @@ namespace BrunoMikoski.AnimationSequencer
         private bool visualizeStepsProgress = true;
 
         // Public properties
-        public bool OneStepExpandedWhileEditing => oneStepExpanded;
+        public bool OnlyOneStepExpandedWhileEditing => onlyOneStepExpanded;
+        public bool OnlyOneActionExpandedWhileEditing => onlyOneActionExpanded;
         public bool HideStepsWhenPreviewing => hideSteps;
         public bool CollapseStepsWhenPreviewing { get { return hideSteps ? false : collapseSteps; } }
         public bool VisualizeStepsProgressWhenPreviewing { get { return hideSteps ? false : visualizeStepsProgress; } }
@@ -42,8 +45,10 @@ namespace BrunoMikoski.AnimationSequencer
             EditorGUIUtility.labelWidth = 190;
 
             // Draw properties.
-            SerializedProperty oneStepExpandeProperty = serializedObject.FindProperty("oneStepExpanded");
-            EditorGUILayout.PropertyField(oneStepExpandeProperty);
+            SerializedProperty onlyOneStepExpandeProperty = serializedObject.FindProperty("onlyOneStepExpanded");
+            EditorGUILayout.PropertyField(onlyOneStepExpandeProperty);
+            SerializedProperty onlyOneActionExpandeProperty = serializedObject.FindProperty("onlyOneActionExpanded");
+            EditorGUILayout.PropertyField(onlyOneActionExpandeProperty);
             SerializedProperty hideStepsProperty = serializedObject.FindProperty("hideSteps");
             EditorGUILayout.PropertyField(hideStepsProperty);
             if (!hideStepsProperty.boolValue)
