@@ -114,19 +114,6 @@ namespace BrunoMikoski.AnimationSequencer
         {
             return property.GetPropertyDrawerHeight();
         }
-
-        private int GetIndexOfProperty(SerializedProperty property)
-        {
-            // Extraer el índice del path de la propiedad
-            string path = property.propertyPath;
-            string[] parts = path.Split('[', ']');
-            if (parts.Length > 1 && int.TryParse(parts[3], out int index))
-            {
-                return index;
-            }
-
-            return -1; // En caso de error
-        }
     }
 }
 #endif
