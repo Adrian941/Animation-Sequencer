@@ -69,7 +69,9 @@ namespace BrunoMikoski.AnimationSequencer
                 position.width = originalWidth - EditorGUIUtility.labelWidth;
                 if (GUI.Button(position, "+"))
                 {
-                    AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
+                    try
+                    {
+                        AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
                         item =>
                         {
                             if (AnimationSequenceEditorGUIUtility.TweenActionsDropdown.IsTypeAlreadyInUse(actionsSerializedProperty, item.BaseTweenActionType))
@@ -77,6 +79,11 @@ namespace BrunoMikoski.AnimationSequencer
                             else
                                 AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
                         });
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log($"Unexpected error: {ex}");
+                    }
                 }
                 position.x -= EditorGUIUtility.labelWidth;
                 position.width = originalWidth;
