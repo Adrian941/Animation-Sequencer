@@ -1027,9 +1027,9 @@ namespace BrunoMikoski.AnimationSequencer
         private void CheckOnlyOneStepExpanded()
         {
             // Load ReorderableList "ClearCache" Method.
-            FindReorderableListClearCacheMethod("One Step Expanded");
-            if (cantFindReorderableListClearCacheMethod)
-                return;
+            //FindReorderableListClearCacheMethod("One Step Expanded");
+            //if (cantFindReorderableListClearCacheMethod)
+            //    return;
 
             if (!lastExpandedStepChanged)
                 return;
@@ -1058,7 +1058,7 @@ namespace BrunoMikoski.AnimationSequencer
                     lastExpandedStepChanged = false;
 
                     // Repaint ReorderableList.
-                    CallReorderableListClearCacheMethod();
+                    //CallReorderableListClearCacheMethod();
                     return;
                 }
                 else
