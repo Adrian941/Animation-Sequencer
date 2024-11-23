@@ -101,8 +101,34 @@ namespace BrunoMikoski.AnimationSequencer
                                 GUI.enabled = isValidTargetForRequiredComponent;
                             }
 
+                            bool wasExpanded = actionSerializedProperty.isExpanded;
+                            float heightToRest = 0;
                             EditorGUI.PropertyField(position, actionSerializedProperty);
-                            position.y += actionSerializedProperty.GetPropertyDrawerHeight();
+
+                            // Verify only one action is expanded.
+                            if (AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+                            {
+                                if (actionSerializedProperty.isExpanded && !wasExpanded)
+                                {
+                                    for (int actionIndex = 0; actionIndex < arraySize; actionIndex++)
+                                    {
+                                        if (actionIndex != i)
+                                        {
+                                            SerializedProperty actionProperty = actionsSerializedProperty.GetArrayElementAtIndex(actionIndex);
+                                            if (actionProperty.isExpanded)
+                                            {
+                                                if (i > actionIndex)
+                                                    heightToRest = actionProperty.GetPropertyDrawerHeight() - 26;
+
+                                                actionProperty.isExpanded = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            position.y += actionSerializedProperty.GetPropertyDrawerHeight() - heightToRest;
 
                             if (i < arraySize - 1)
                                 position.y += EditorGUIUtility.standardVerticalSpacing;
@@ -197,6 +223,14 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             actionsSerializedProperty.isExpanded = true;
+            if (AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+            {
+                int actionsCount = actionsSerializedProperty.arraySize;
+                for (int i = 0; i < actionsCount - 1; i++)
+                {
+                    actionsSerializedProperty.GetArrayElementAtIndex(i).isExpanded = false;
+                }
+            }
             newElement.isExpanded = true;
             actionsSerializedProperty.serializedObject.ApplyModifiedProperties();
         }

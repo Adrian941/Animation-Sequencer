@@ -52,6 +52,7 @@ namespace BrunoMikoski.AnimationSequencer
         private bool actionsValuesTaken = false;
         private int lastExpandedStepIndex = -1;
         private bool lastExpandedStepChanged;
+        private bool onlyOneActionExpandedEnable;
         #endregion
 
         #region OnEnable/OnDisable settings
@@ -166,6 +167,9 @@ namespace BrunoMikoski.AnimationSequencer
             // Verify only one step is expanded.
             if (AnimationSequencerSettings.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
                 CheckOnlyOneStepExpanded();
+
+            // Verify only one action is expanded when "OnlyOneActionExpandedWhileEditing" is enabled.
+            CollapseAllActions();
         }
 
         private void InitializeStyles()
@@ -1043,7 +1047,7 @@ namespace BrunoMikoski.AnimationSequencer
                     {
                         SerializedProperty lastExpandedStepProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(lastExpandedStepIndex);
                         lastExpandedStepProperty.isExpanded = false;
-                        lastExpandedStepProperty.SetPropertyDrawerHeight(18);
+                        lastExpandedStepProperty.SetPropertyDrawerHeight(EditorGUIUtility.singleLineHeight);
                     }
 
                     // Update "lastExpandedStepIndex" value.
@@ -1059,6 +1063,42 @@ namespace BrunoMikoski.AnimationSequencer
                     // Reset "lastExpandedStepIndex" if the last expanded step is collapsed.
                     if (lastExpandedStepIndex == i)
                         lastExpandedStepIndex = -1;
+                }
+            }
+        }
+        #endregion
+
+        #region Only one action expanded
+        private void CollapseAllActions()
+        {
+            if (onlyOneActionExpandedEnable == AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+                return;
+
+            onlyOneActionExpandedEnable = AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing;
+
+            if (!onlyOneActionExpandedEnable)
+                return;
+
+            int reorderableListCount = reorderableList.serializedProperty.arraySize;
+            for (int i = 0; i < reorderableListCount; i++)
+            {
+                bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenAnimationStep);
+                if (isTweenStep)
+                {
+                    SerializedProperty actionsSerializedProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("actions");
+                    int actionsCount = actionsSerializedProperty.arraySize;
+                    bool actionExpandedFounded = false;
+                    for (int actionIndex = 0; actionIndex < actionsCount; actionIndex++)
+                    {
+                        SerializedProperty actionProperty = actionsSerializedProperty.GetArrayElementAtIndex(actionIndex);
+                        if (!actionExpandedFounded && actionProperty.isExpanded)
+                        {
+                            actionExpandedFounded = true;
+                            continue;
+                        }
+
+                        actionProperty.isExpanded = false;
+                    }
                 }
             }
         }
