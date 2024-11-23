@@ -810,6 +810,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             actionsValuesTaken = false;
+            expandedActionStates.Clear();
 
             SerializedPropertyExtensions.ClearPropertyCache(list.serializedProperty.propertyPath);
             list.serializedProperty.serializedObject.ApplyModifiedProperties();
@@ -1014,6 +1015,8 @@ namespace BrunoMikoski.AnimationSequencer
                 stepProperty.isExpanded = true;
                 stepProperty.SetPropertyDrawerHeight(collapsedStepHeight.Value);
             }
+
+            collapsedStepValues.Clear();
 
             // Repaint ReorderableList.
             CallReorderableListClearCacheMethod();
