@@ -149,7 +149,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             playTypeInternal = playType;
 
-            Play_Internal(false, null);
+            Play_Internal(resetFirst, onCompleteCallback);
         }
 
         protected virtual void Play_Internal(bool resetFirst = false, Action onCompleteCallback = null)
