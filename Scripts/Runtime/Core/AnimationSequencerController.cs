@@ -94,11 +94,6 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Unity lifecycle methods
-        protected virtual void Awake()
-        {
-            playTypeInternal = playType;
-        }
-
         protected virtual void Start()
         {
             if (autoplayMode != AutoplayType.Start)
@@ -152,14 +147,13 @@ namespace BrunoMikoski.AnimationSequencer
 
         public virtual void Play(bool resetFirst = false, Action onCompleteCallback = null)
         {
-            //In editor mode, always take the "PlayType" assigned in the inspector.
-            if (!Application.isPlaying)
-                playTypeInternal = playType;
+            playTypeInternal = playType;
 
-            //"Backwards" does not work with "Loops", so play the "Forward" sequence.
-            if (playTypeInternal == PlayType.Backward && loops != 0)
-                playTypeInternal = PlayType.Forward;
+            Play_Internal(false, null);
+        }
 
+        protected virtual void Play_Internal(bool resetFirst = false, Action onCompleteCallback = null)
+        {
             //Clean and assign the "OnFinished" event.
             onFinishedEvent.RemoveAllListeners();
             if (onCompleteCallback != null)
@@ -209,7 +203,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             playTypeInternal = PlayType.Forward;
 
-            Play(resetFirst, onCompleteCallback);
+            Play_Internal(resetFirst, onCompleteCallback);
         }
 
         public virtual void PlayBackwards()
@@ -221,7 +215,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             playTypeInternal = PlayType.Backward;
 
-            Play(completeFirst, onCompleteCallback);
+            Play_Internal(completeFirst, onCompleteCallback);
         }
 
         public virtual IEnumerator PlayEnumerator()
