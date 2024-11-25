@@ -111,7 +111,7 @@ namespace BrunoMikoski.AnimationSequencer
             static bool IsValueInSet(float value) => value == 0f || value == 0.5f || value == 1f;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (targetRectTransform == null)
                 return;

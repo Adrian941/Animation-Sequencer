@@ -21,9 +21,9 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 EditorGUI.BeginChangeCheck();
 
-                EditorGUI.indentLevel++;
+                //EditorGUI.indentLevel++;
                 position = EditorGUI.IndentedRect(position);
-                EditorGUI.indentLevel--;
+                //EditorGUI.indentLevel--;
 
                 position.height = EditorGUIUtility.singleLineHeight;
                 position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -32,25 +32,6 @@ namespace BrunoMikoski.AnimationSequencer
                 {
                     if (animationStepBase.FlowType == FlowType.Join)
                         EditorGUI.indentLevel--;
-
-                    if (AnimationSequencerSettings.GetInstance().ShowStepAnimationInfo)
-                    {
-                        StepAnimationData animationData = animationStepBase.GetAnimationData();
-                        float percentageDuration = animationData.percentageDuration * 100;
-
-                        EditorGUIExtra.ProgressBar(new Rect(position.x, position.y, position.width, 54),
-                            animationData.startTime / animationData.mainSequenceDuration,
-                            animationData.endTime / animationData.mainSequenceDuration,
-                            $"Duration: {percentageDuration.ToString(percentageDuration % 1 == 0 ? "F0" : "F2")}%",
-                            "0s",
-                            $"{animationData.mainSequenceDuration.ToString(animationData.mainSequenceDuration % 1 == 0 ? "F0" : "F2")}s",
-                            $"{animationData.startTime.ToString(animationData.startTime % 1 == 0 ? "F0" : "F2")}s",
-                            $"{animationData.endTime.ToString(animationData.endTime % 1 == 0 ? "F0" : "F2")}s");
-
-                        position.y += 54 + EditorGUIUtility.standardVerticalSpacing;
-                        DrawHorizontalLine(position);
-                        position.y += EditorGUIUtility.standardVerticalSpacing * 3;
-                    }
 
                     string[] excludedFields = animationStepBase.ExcludedFields;
                     if (excludedFields != null && excludedFields.Length > 0)
@@ -109,11 +90,6 @@ namespace BrunoMikoski.AnimationSequencer
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return property.GetPropertyDrawerHeight();
-        }
-
-        private void DrawHorizontalLine(Rect position)
-        {
-            EditorGUI.DrawRect(new Rect(position.x, position.y, position.width, 1), Color.gray);
         }
     }
 }

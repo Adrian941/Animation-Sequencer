@@ -19,30 +19,20 @@ namespace BrunoMikoski.AnimationSequencer
             set => interval = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
-        public override void AddTweenToSequence(Sequence animationSequence)
+        public override Sequence GenerateTweenSequence()
         {
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
             sequence.AppendInterval(interval);
 
-            if (FlowType == FlowType.Join)
-                animationSequence.Join(sequence);
-            else
-                animationSequence.Append(sequence);
+            return sequence;
         }
 
-        public override void ResetToInitialState()
-        {
-        }
+        public override void ResetToInitialState() { }
 
         public override string GetDisplayNameForEditor(int index)
         {
-            return $"{index}. Wait {interval} seconds";
-        }
-
-        public override float GetDuration()
-        {
-            return base.GetDuration() + interval;
+            return $"{index}. Wait {Delay + interval} seconds";
         }
     }
 }

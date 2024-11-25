@@ -37,6 +37,8 @@ namespace BrunoMikoski.AnimationSequencer
         // Public properties
         public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
         public float PlaybackSpeed => playbackSpeed;
+        public PlayType PlayTypeDirection => playType;
+        public int Loops => loops;
         public UnityEvent OnStartEvent { get { return onStartEvent; } protected set { onStartEvent = value; } }
         public UnityEvent OnProgressEvent { get { return onProgressEvent; } protected set { onProgressEvent = value; } }
         public UnityEvent OnFinishedEvent { get { return onFinishedEvent; } protected set { onFinishedEvent = value; } }
@@ -331,9 +333,12 @@ namespace BrunoMikoski.AnimationSequencer
                 }
             });
             
+            float extraIntervalAdded = 0f;
             for (int i = 0; i < animationSteps.Length; i++)
             {
-                animationSteps[i].AddTweenToSequence(sequence);
+                AnimationStepBase animationStepBase = animationSteps[i];
+                animationStepBase.AddTweenToSequence(sequence);
+                extraIntervalAdded += animationStepBase.GetExtraIntervalAdded();
             }
 
             sequence.SetTarget(this);
@@ -361,6 +366,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
             sequence.SetLoops(targetLoops, loopType);
             sequence.timeScale = playbackSpeed;
+            sequence.SetDelay(-extraIntervalAdded); //Remove extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
 
             return sequence;
         }
@@ -438,12 +444,6 @@ namespace BrunoMikoski.AnimationSequencer
         {
             requiresReset = false;
         }
-
-        // Unity Event Function called when component is added or modified.
-        private void OnValidate()
-        {
-            CalculateStepsDuration();
-        }
 #endif
         #endregion
 
@@ -458,40 +458,6 @@ namespace BrunoMikoski.AnimationSequencer
 
             result = animationSteps[index] as T;
             return result != null;
-        }
-
-        /// <summary>
-        /// Called by the Editor to calculate the main sequence duration and "StartTime" of each step relative to the main sequence.
-        /// </summary>
-        private void CalculateStepsDuration()
-        {
-            //Calculate the main sequence duration and "StartTime" of each step.
-            float mainSequenceDuration = 0;
-            float[] startTimeSteps = new float[animationSteps.Length];
-            AnimationStepBase longestDurationStep = null;
-
-            for (int i = 0; i < animationSteps.Length; i++)
-            {
-                AnimationStepBase step = animationSteps[i];
-                startTimeSteps[i] = mainSequenceDuration;
-
-                if (i == 0 || step.FlowType == FlowType.Append || step.GetDuration() > longestDurationStep.GetDuration())
-                    longestDurationStep = step;
-
-                int nextStepIndex = i + 1;
-                if (nextStepIndex >= animationSteps.Length || animationSteps[nextStepIndex].FlowType == FlowType.Append)
-                    mainSequenceDuration += longestDurationStep.GetDuration();
-            }
-
-            if (loops > 1)
-                mainSequenceDuration *= loops;
-
-            //Assign the main sequence duration and "StartTime" to each step. 
-            for (int i = 0; i < animationSteps.Length; i++)
-            {
-                AnimationStepBase step = animationSteps[i];
-                step.SetAnimationData(mainSequenceDuration, startTimeSteps[i]);
-            }
         }
         #endregion
     }

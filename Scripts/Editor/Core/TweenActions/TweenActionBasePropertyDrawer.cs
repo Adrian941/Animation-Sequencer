@@ -13,79 +13,90 @@ namespace BrunoMikoski.AnimationSequencer
         {
             float originY = position.y;
 
-            Type type = property.GetTypeFromManagedFullTypeName();
-
-            GUIContent displayName = AnimationSequenceEditorGUIUtility.GetTypeDisplayName(type);
-
+            //Margin start.
             position.x += 10;
             position.width -= 20;
-            position.y += 10;
+            position.y += 4;
+            position.height = EditorGUIUtility.singleLineHeight;
 
-            EditorGUI.BeginProperty(position, GUIContent.none, property);
+            //Foldout.
+            property.isExpanded = EditorGUI.Foldout(new Rect(position.x + 10, position.y, position.width, position.height), property.isExpanded, "", true);
 
-            //-26 = "X" button size.
-            EditorGUI.LabelField(new Rect(position.x, position.y, position.width - 26, position.height), displayName, EditorStyles.boldLabel);
+            //Action name.
+            Type type = property.GetTypeFromManagedFullTypeName();
+            GUIContent displayName = AnimationSequenceEditorGUIUtility.GetTypeDisplayName(type);
+            //-36 = ("X" button width size + foldout´s arrow width size).
+            EditorGUI.LabelField(new Rect(position.x + 10, position.y, position.width - 36, position.height), displayName, EditorStyles.boldLabel);
+            position.y += EditorGUIUtility.singleLineHeight;
 
-            position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            EditorGUI.BeginChangeCheck();
-
-            if (property.TryGetTargetObjectOfProperty(out TweenActionBase tweenActionBase))
+            //Draw fields.
+            if (property.isExpanded)
             {
-                string[] excludedFields = tweenActionBase.ExcludedFields;
-                if (excludedFields != null && excludedFields.Length > 0)
-                {
-                    if (excludedPropertiesNames.Length > 0)
-                    {
-                        string[] tempPropertiesNames = new string[excludedPropertiesNames.Length + excludedFields.Length];
-                        excludedPropertiesNames.CopyTo(tempPropertiesNames, 0);
-                        excludedFields.CopyTo(tempPropertiesNames, excludedPropertiesNames.Length);
-                        excludedPropertiesNames = tempPropertiesNames;
-                    }
-                    else
-                    {
-                        excludedPropertiesNames = excludedFields;
-                    }
-                }
-            }
+                position.y += EditorGUIUtility.standardVerticalSpacing;
+                //EditorGUI.BeginProperty(position, GUIContent.none, property);
+                EditorGUI.BeginChangeCheck();
 
-            foreach (SerializedProperty serializedProperty in property.GetChildren())
-            {
-                bool shouldDraw = true;
-                for (int i = 0; i < excludedPropertiesNames.Length; i++)
+                if (property.TryGetTargetObjectOfProperty(out TweenActionBase tweenActionBase))
                 {
-                    string excludedPropertyName = excludedPropertiesNames[i];
-                    if (serializedProperty.name.Equals(excludedPropertyName, StringComparison.Ordinal))
+                    string[] excludedFields = tweenActionBase.ExcludedFields;
+                    if (excludedFields != null && excludedFields.Length > 0)
                     {
-                        shouldDraw = false;
-                        break;
+                        if (excludedPropertiesNames.Length > 0)
+                        {
+                            string[] tempPropertiesNames = new string[excludedPropertiesNames.Length + excludedFields.Length];
+                            excludedPropertiesNames.CopyTo(tempPropertiesNames, 0);
+                            excludedFields.CopyTo(tempPropertiesNames, excludedPropertiesNames.Length);
+                            excludedPropertiesNames = tempPropertiesNames;
+                        }
+                        else
+                        {
+                            excludedPropertiesNames = excludedFields;
+                        }
                     }
                 }
 
-                if (!shouldDraw)
-                    continue;
+                foreach (SerializedProperty serializedProperty in property.GetChildren())
+                {
+                    bool shouldDraw = true;
+                    for (int i = 0; i < excludedPropertiesNames.Length; i++)
+                    {
+                        string excludedPropertyName = excludedPropertiesNames[i];
+                        if (serializedProperty.name.Equals(excludedPropertyName, StringComparison.Ordinal))
+                        {
+                            shouldDraw = false;
+                            break;
+                        }
+                    }
 
-                if (!ShouldShowProperty(serializedProperty, property))
-                    continue;
+                    if (!shouldDraw)
+                        continue;
 
-                Rect propertyRect = position;
-                EditorGUI.PropertyField(propertyRect, serializedProperty, true);
+                    if (!ShouldShowProperty(serializedProperty, property))
+                        continue;
 
-                position.y += EditorGUI.GetPropertyHeight(serializedProperty, true) + EditorGUIUtility.standardVerticalSpacing;
+                    Rect propertyRect = position;
+                    EditorGUI.PropertyField(propertyRect, serializedProperty, true);
+
+                    position.y += EditorGUI.GetPropertyHeight(serializedProperty, true) + EditorGUIUtility.standardVerticalSpacing;
+                }
+
+                //EditorGUI.EndProperty();
+                if (EditorGUI.EndChangeCheck())
+                    property.serializedObject.ApplyModifiedProperties();
             }
 
+            //Margin end.
             position.x -= 10;
             position.width += 20;
-            position.y += 10;
+            position.y += 4;
 
+            //Background.
             Rect boxPosition = position;
             boxPosition.y = originY;
             boxPosition.height = position.y - originY;
             GUI.Box(boxPosition, GUIContent.none, EditorStyles.helpBox);
 
-            EditorGUI.EndProperty();
-            if (EditorGUI.EndChangeCheck())
-                property.serializedObject.ApplyModifiedProperties();
-
+            //Property´s height.
             property.SetPropertyDrawerHeight(position.y - originY);
         }
 

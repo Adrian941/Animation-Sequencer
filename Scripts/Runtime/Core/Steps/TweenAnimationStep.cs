@@ -37,12 +37,15 @@ namespace BrunoMikoski.AnimationSequencer
             set => actions = value;
         }
 
-        public override void AddTweenToSequence(Sequence animationSequence)
+        private bool isTweenSequenceGenerated;
+
+        public override Sequence GenerateTweenSequence()
         {
+            isTweenSequenceGenerated = false;
             if (target == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
-                return;
+                return null;
             }
 
             Sequence sequence = DOTween.Sequence();
@@ -61,18 +64,23 @@ namespace BrunoMikoski.AnimationSequencer
                 sequence.Join(tween);
             }
 
+            if (!isDelayAssigned)
+                return null;
+
             sequence.SetLoops(loopCount, loopType);
 
-            if (FlowType == FlowType.Join)
-                animationSequence.Join(sequence);
-            else
-                animationSequence.Append(sequence);
-
             RefreshEditorOnSequenceUpdate(sequence, target.transform);
+
+            isTweenSequenceGenerated = true;
+
+            return sequence;
         }
 
         public override void ResetToInitialState()
         {
+            if (!isTweenSequenceGenerated)
+                return;
+
             if (target == null)
                 return;
 
@@ -92,15 +100,6 @@ namespace BrunoMikoski.AnimationSequencer
                 targetName = target.name;
 
             return $"{index}. Tween \"{targetName}\": {string.Join(", ", actions.Select(action => action.DisplayName))}";
-        }
-
-        public override float GetDuration()
-        {
-            if (loopCount > 1)
-                return base.GetDuration() + duration * loopCount;
-
-            else
-                return base.GetDuration() + duration;
         }
 
         public bool TryGetActionAtIndex<T>(int index, out T result) where T : TweenActionBase

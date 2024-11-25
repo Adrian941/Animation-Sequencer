@@ -18,21 +18,18 @@ namespace BrunoMikoski.AnimationSequencer
             set => sequencer = value;
         }
 
-        public override void AddTweenToSequence(Sequence animationSequence)
+        public override Sequence GenerateTweenSequence()
         {
             if (sequencer == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
-                return;
+                return null;
             }
 
             Sequence sequence = sequencer.GenerateSequence();
             sequence.SetDelay(Delay);
 
-            if (FlowType == FlowType.Join)
-                animationSequence.Join(sequence);
-            else
-                animationSequence.Append(sequence);
+            return sequence;
         }
 
         public override void ResetToInitialState()

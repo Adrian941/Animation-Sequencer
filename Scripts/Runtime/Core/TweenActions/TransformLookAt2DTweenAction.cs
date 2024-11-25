@@ -88,7 +88,7 @@ namespace BrunoMikoski.AnimationSequencer
             return Vector3.zero;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (targetTransform == null)
                 return;

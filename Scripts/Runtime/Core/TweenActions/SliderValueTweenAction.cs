@@ -56,7 +56,7 @@ namespace BrunoMikoski.AnimationSequencer
             return tween;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (targetSlider == null)
                 return;

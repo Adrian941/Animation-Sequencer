@@ -20,9 +20,9 @@ namespace BrunoMikoski.AnimationSequencer
                 if (EditorGUI.indentLevel > 0)
                     position = EditorGUI.IndentedRect(position);
 
-                EditorGUI.indentLevel++;
-                position = EditorGUI.IndentedRect(position);
-                EditorGUI.indentLevel--;
+                //EditorGUI.indentLevel++;
+                //position = EditorGUI.IndentedRect(position);
+                //EditorGUI.indentLevel--;
 
                 SerializedProperty flowTypeSerializedProperty = property.FindPropertyRelative("flowType");
                 FlowType flowType = (FlowType)flowTypeSerializedProperty.enumValueIndex;
@@ -69,7 +69,9 @@ namespace BrunoMikoski.AnimationSequencer
                 position.width = originalWidth - EditorGUIUtility.labelWidth;
                 if (GUI.Button(position, "+"))
                 {
-                    AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
+                    try
+                    {
+                        AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
                         item =>
                         {
                             if (AnimationSequenceEditorGUIUtility.TweenActionsDropdown.IsTypeAlreadyInUse(actionsSerializedProperty, item.BaseTweenActionType))
@@ -77,11 +79,18 @@ namespace BrunoMikoski.AnimationSequencer
                             else
                                 AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
                         });
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log($"Unexpected error: {ex}");
+                    }
                 }
                 position.x -= EditorGUIUtility.labelWidth;
                 position.width = originalWidth;
                 position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
 
+                float normalLabelWidth = EditorGUIUtility.labelWidth;
+                EditorGUIUtility.labelWidth = 112;
                 if (actionsSerializedProperty.isExpanded)
                 {
                     int arraySize = actionsSerializedProperty.arraySize;
@@ -99,8 +108,34 @@ namespace BrunoMikoski.AnimationSequencer
                                 GUI.enabled = isValidTargetForRequiredComponent;
                             }
 
+                            bool wasExpanded = actionSerializedProperty.isExpanded;
+                            float heightToRest = 0;
                             EditorGUI.PropertyField(position, actionSerializedProperty);
-                            position.y += actionSerializedProperty.GetPropertyDrawerHeight();
+
+                            // Verify only one action is expanded.
+                            if (AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+                            {
+                                if (actionSerializedProperty.isExpanded && !wasExpanded)
+                                {
+                                    for (int actionIndex = 0; actionIndex < arraySize; actionIndex++)
+                                    {
+                                        if (actionIndex != i)
+                                        {
+                                            SerializedProperty actionProperty = actionsSerializedProperty.GetArrayElementAtIndex(actionIndex);
+                                            if (actionProperty.isExpanded)
+                                            {
+                                                if (i > actionIndex)
+                                                    heightToRest = actionProperty.GetPropertyDrawerHeight() - 26;
+
+                                                actionProperty.isExpanded = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            position.y += actionSerializedProperty.GetPropertyDrawerHeight() - heightToRest;
 
                             if (i < arraySize - 1)
                                 position.y += EditorGUIUtility.standardVerticalSpacing;
@@ -114,10 +149,11 @@ namespace BrunoMikoski.AnimationSequencer
                         }
                     }
                 }
+                EditorGUIUtility.labelWidth = normalLabelWidth;
 
-                EditorGUI.indentLevel--;
-                position = EditorGUI.IndentedRect(position);
-                EditorGUI.indentLevel++;
+                //EditorGUI.indentLevel--;
+                //position = EditorGUI.IndentedRect(position);
+                //EditorGUI.indentLevel++;
 
                 if (EditorGUI.EndChangeCheck())
                     property.serializedObject.ApplyModifiedProperties();
@@ -194,6 +230,15 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             actionsSerializedProperty.isExpanded = true;
+            if (AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+            {
+                int actionsCount = actionsSerializedProperty.arraySize;
+                for (int i = 0; i < actionsCount - 1; i++)
+                {
+                    actionsSerializedProperty.GetArrayElementAtIndex(i).isExpanded = false;
+                }
+            }
+            newElement.isExpanded = true;
             actionsSerializedProperty.serializedObject.ApplyModifiedProperties();
         }
 
@@ -211,7 +256,7 @@ namespace BrunoMikoski.AnimationSequencer
             Rect buttonPosition = position;
             buttonPosition.width = 24;
             buttonPosition.x += position.width - 34;
-            buttonPosition.y += 10;
+            buttonPosition.y += 4;
 
             if (GUI.Button(buttonPosition, "X", EditorStyles.miniButton))
             {

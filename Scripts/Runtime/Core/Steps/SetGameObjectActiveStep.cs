@@ -29,12 +29,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         private bool? originalActive;
 
-        public override void AddTweenToSequence(Sequence animationSequence)
+        public override Sequence GenerateTweenSequence()
         {
             if (target == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
-                return;
+                return null;
             }
 
             if (!originalActive.HasValue)
@@ -42,13 +42,10 @@ namespace BrunoMikoski.AnimationSequencer
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
-            sequence.AppendInterval(0.001f);    //Interval added for a bug when this tween runs in "Backwards" direction.
+            sequence.AppendInterval(extraInterval);    //Interval added for a bug when this tween runs in "Backwards" direction.
             sequence.AppendCallback(() => target.SetActive(active));
 
-            if (FlowType == FlowType.Join)
-                animationSequence.Join(sequence);
-            else
-                animationSequence.Append(sequence);
+            return sequence;
         }
 
         public override void ResetToInitialState()
@@ -69,6 +66,16 @@ namespace BrunoMikoski.AnimationSequencer
                 display = target.name;
             
             return $"{index}. Set \"{display}\" Active: {active}";
+        }
+
+        public override float GetDuration()
+        {
+            return sequence == null ? -1 : sequence.Duration() - extraInterval;
+        }
+
+        public override float GetExtraIntervalAdded()
+        {
+            return sequence == null ? 0 : extraInterval;
         }
     }
 }
