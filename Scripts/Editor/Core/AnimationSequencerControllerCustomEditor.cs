@@ -210,7 +210,8 @@ namespace BrunoMikoski.AnimationSequencer
             //Draw sequence duration.
             if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
             {
-                float duration = sequencerController.PlayingSequence.Duration() * (1 / playbackSpeedProperty.floatValue);
+                //float duration = sequencerController.PlayingSequence.Duration() * (1 / playbackSpeedProperty.floatValue);
+                float duration = (sequencerController.PlayingSequence.Duration() - sequencerController.ExtraIntervalAdded) * (1 / playbackSpeedProperty.floatValue);
                 DrawTopRightText(rect, $"Duration: {NumberFormatter.FormatDecimalPlaces(duration)}s", new Color(0f, 1f, 0f, 0.5f));
             }
         }

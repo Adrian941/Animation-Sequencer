@@ -45,6 +45,10 @@ namespace BrunoMikoski.AnimationSequencer
         public Sequence PlayingSequence => playingSequence;
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
         public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
+        /// <summary>
+        /// Extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
+        /// </summary>
+        public float ExtraIntervalAdded { get { return extraIntervalAdded; } }
 
         // Serialized fields
         [SerializeReference]
@@ -86,6 +90,7 @@ namespace BrunoMikoski.AnimationSequencer
         private PlayType playTypeInternal = PlayType.Forward;       
         private bool isSequenceGenerated;
         private bool resetWhenCreateSequence;
+        private float extraIntervalAdded;
 
 #if UNITY_EDITOR
         // Editor-only variables
@@ -326,8 +331,8 @@ namespace BrunoMikoski.AnimationSequencer
                         ClearPlayingSequence();
                 }
             });
-            
-            float extraIntervalAdded = 0f;
+
+            extraIntervalAdded = 0;
             for (int i = 0; i < animationSteps.Length; i++)
             {
                 AnimationStepBase animationStepBase = animationSteps[i];
@@ -360,7 +365,12 @@ namespace BrunoMikoski.AnimationSequencer
             }
             sequence.SetLoops(targetLoops, loopType);
             sequence.timeScale = playbackSpeed;
-            sequence.SetDelay(-extraIntervalAdded); //Remove extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
+            //sequence.SetDelay(-extraIntervalAdded); //Remove extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
+
+            if (loops == -1)
+                extraIntervalAdded = !Application.isPlaying ? extraIntervalAdded * targetLoops : extraIntervalAdded;
+            else if (loops > 1)
+                extraIntervalAdded *= loops;
 
             return sequence;
         }
