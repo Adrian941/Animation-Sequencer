@@ -48,9 +48,16 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             }
 
+            int actionsCount = actions.Length;
+            if (actionsCount == 0)
+            {
+                Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have any <b>\"Actions\"</b>. Please consider assigning at least one <b>\"Action\"</b> or removing the step.");
+                return null;
+            }
+
             Sequence sequence = DOTween.Sequence();
             bool isDelayAssigned = false;
-            for (int i = 0; i < actions.Length; i++)
+            for (int i = 0; i < actionsCount; i++)
             {
                 Tween tween = actions[i].GenerateTween(target, duration, this);
                 if (tween == null)
