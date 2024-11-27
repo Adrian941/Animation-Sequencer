@@ -44,7 +44,6 @@ namespace BrunoMikoski.AnimationSequencer
         public UnityEvent OnFinishedEvent { get { return onFinishedEvent; } protected set { onFinishedEvent = value; } }
         public Sequence PlayingSequence => playingSequence;
         public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
-        public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
         /// <summary>
         /// Extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
         /// </summary>
@@ -177,19 +176,19 @@ namespace BrunoMikoski.AnimationSequencer
 
             switch (playTypeInternal)
             {
-                case PlayType.Backward:
-                    //Reset the animation if "resetFirst" = true, the sequence has just been generated or the sequence is complete.
-                    if (resetFirst || isSequenceGenerated || (!playingSequence.IsComplete() && !IsPlaying))
-                        playingSequence.Goto(playingSequence.Duration());
-
-                    playingSequence.PlayBackwards();
-                    break;
                 case PlayType.Forward:
                     //Reset the animation if "resetFirst" = true or the sequence is complete.
                     if (resetFirst || (!autoKill && playingSequence.IsComplete()))
                         playingSequence.Goto(0);
 
                     playingSequence.PlayForward();
+                    break;
+                case PlayType.Backward:
+                    //Reset the animation if "resetFirst" = true, the sequence has just been generated or the sequence is complete.
+                    if (resetFirst || isSequenceGenerated || (!autoKill && !playingSequence.IsComplete() && !IsPlaying))
+                        playingSequence.Goto(playingSequence.Duration());
+
+                    playingSequence.PlayBackwards();
                     break;
                 default:
                     playingSequence.Play();
