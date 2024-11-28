@@ -299,8 +299,10 @@ namespace BrunoMikoski.AnimationSequencer
             if (!sequencerController.IsPlaying)
                 PlaySequence();
 
-            sequencerController.PlayingSequence.Goto((sequencerController.PlayingSequence.ElapsedPercentage() -
-                                                      0.01f) * sequencerController.PlayingSequence.Duration());
+            float progress = sequencerController.PlayingSequence.ElapsedPercentage() - 0.01f;
+            float time = (progress >= 0 ? progress : (1 - 0.01f)) * sequencerController.PlayingSequence.Duration();
+
+            sequencerController.PlayingSequence.Goto(time);
         }
 
         private void StepNext()
@@ -308,8 +310,10 @@ namespace BrunoMikoski.AnimationSequencer
             if (!sequencerController.IsPlaying)
                 PlaySequence();
 
-            sequencerController.PlayingSequence.Goto((sequencerController.PlayingSequence.ElapsedPercentage() +
-                                                      0.01f) * sequencerController.PlayingSequence.Duration());
+            float progress = sequencerController.PlayingSequence.ElapsedPercentage() + 0.01f;
+            float time = (progress <= 1 ? progress : 0.01f) * sequencerController.PlayingSequence.Duration();
+
+            sequencerController.PlayingSequence.Goto(time);
         }
 
         private void CompleteForward()
