@@ -178,14 +178,14 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 case PlayType.Forward:
                     //Reset the animation if "resetFirst" = true or the sequence is complete.
-                    if (resetFirst || (!autoKill && playingSequence.IsComplete()))
-                        playingSequence.Goto(0);
+                    if (resetFirst || (!autoKill && playingSequence.fullPosition >= playingSequence.Duration()))
+                        playingSequence.Rewind();
 
                     playingSequence.PlayForward();
                     break;
                 case PlayType.Backward:
                     //Reset the animation if "resetFirst" = true, the sequence has just been generated or the sequence is complete.
-                    if (resetFirst || isSequenceGenerated || (!autoKill && !playingSequence.IsComplete() && !IsPlaying))
+                    if (resetFirst || isSequenceGenerated || (!autoKill && playingSequence.fullPosition <= 0f))
                         playingSequence.Goto(playingSequence.Duration());
 
                     playingSequence.PlayBackwards();
@@ -276,7 +276,7 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Play();
         }
 
-        public virtual void Complete(bool withCallbacks = true)
+        public virtual void Complete(bool withCallbacks = false)
         {
             if (playingSequence == null)
                 return;
@@ -316,7 +316,7 @@ namespace BrunoMikoski.AnimationSequencer
             // a Start and Finish callback is always fired.
             sequence.AppendCallback(() =>
             {
-                if (playTypeInternal == PlayType.Forward)
+                if (!sequence.IsBackwards())
                 {
                     onStartEvent.Invoke();
                 }
@@ -347,7 +347,7 @@ namespace BrunoMikoski.AnimationSequencer
             // See comment above regarding bookending via AppendCallback.
             sequence.AppendCallback(() =>
             {
-                if (playTypeInternal == PlayType.Forward)
+                if (!sequence.IsBackwards())
                     onFinishedEvent.Invoke();
                 else
                     onStartEvent.Invoke();
@@ -364,7 +364,6 @@ namespace BrunoMikoski.AnimationSequencer
             }
             sequence.SetLoops(targetLoops, loopType);
             sequence.timeScale = playbackSpeed;
-            //sequence.SetDelay(-extraIntervalAdded); //Remove extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
 
             if (loops == -1)
                 extraIntervalAdded = !Application.isPlaying ? extraIntervalAdded * targetLoops : extraIntervalAdded;
