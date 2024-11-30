@@ -208,9 +208,8 @@ namespace BrunoMikoski.AnimationSequencer
         private void DrawExtraPreviewHeader(Rect rect)
         {
             //Draw sequence duration.
-            if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
+            if (sequencerController.PlayingSequence != null)
             {
-                //float duration = sequencerController.PlayingSequence.Duration() * (1 / playbackSpeedProperty.floatValue);
                 float duration = (sequencerController.PlayingSequence.Duration() - sequencerController.ExtraIntervalAdded) * (1 / playbackSpeedProperty.floatValue);
                 DrawTopRightText(rect, $"Duration: {NumberFormatter.FormatDecimalPlaces(duration)}s", new Color(0f, 1f, 0f, 0.5f));
             }
@@ -455,19 +454,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private float GetCurrentSequencerProgress()
         {
-            float tweenProgress;
-            if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
-                tweenProgress = sequencerController.PlayingSequence.ElapsedPercentage();
-            else
-                tweenProgress = 0;
-
-            return tweenProgress;
-        }
-
-        private void DrawDurationInfo()
-        {
-            if (sequencerController.PlayingSequence != null && sequencerController.PlayingSequence.IsActive())
-                EditorGUILayout.HelpBox($"Sequence duration: {sequencerController.PlayingSequence.Duration()} seconds.", MessageType.Info);
+            return sequencerController.PlayingSequence != null ? sequencerController.PlayingSequence.ElapsedPercentage() : 0;
         }
         #endregion
 

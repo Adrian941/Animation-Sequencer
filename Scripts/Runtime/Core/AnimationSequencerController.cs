@@ -42,7 +42,7 @@ namespace BrunoMikoski.AnimationSequencer
         public UnityEvent OnAnimationProgress { get { return onAnimationProgress; } protected set { onAnimationProgress = value; } }
         public UnityEvent OnAnimationFinish { get { return onAnimationFinish; } protected set { onAnimationFinish = value; } }
         public Sequence PlayingSequence => playingSequence;
-        public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
+        public bool IsPlaying => playingSequence != null && playingSequence.IsPlaying();
         /// <summary>
         /// Extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
         /// </summary>
