@@ -567,15 +567,15 @@ namespace BrunoMikoski.AnimationSequencer
             if (DOTweenEditorPreview.isPreviewing)
                 GUI.enabled = false;
 
-            SerializedProperty onStartEventSerializedProperty = serializedObject.FindProperty("onStartEvent");
-            SerializedProperty onProgressEventSerializedProperty = serializedObject.FindProperty("onProgressEvent");
-            SerializedProperty onFinishedEventSerializedProperty = serializedObject.FindProperty("onFinishedEvent");
+            SerializedProperty onAnimationStartSerializedProperty = serializedObject.FindProperty("onAnimationStart");
+            SerializedProperty onAnimationProgressSerializedProperty = serializedObject.FindProperty("onAnimationProgress");
+            SerializedProperty onAnimationFinishSerializedProperty = serializedObject.FindProperty("onAnimationFinish");
 
             using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
             {
-                EditorGUILayout.PropertyField(onStartEventSerializedProperty);
-                EditorGUILayout.PropertyField(onProgressEventSerializedProperty);
-                EditorGUILayout.PropertyField(onFinishedEventSerializedProperty);
+                EditorGUILayout.PropertyField(onAnimationStartSerializedProperty);
+                EditorGUILayout.PropertyField(onAnimationProgressSerializedProperty);
+                EditorGUILayout.PropertyField(onAnimationFinishSerializedProperty);
 
                 if (changedCheck.changed)
                     serializedObject.ApplyModifiedProperties();
