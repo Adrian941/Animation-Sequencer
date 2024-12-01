@@ -172,14 +172,14 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 case PlayType.Forward:
                     //Reset the animation if "resetFirst" = true or the sequence is complete.
-                    if (resetFirst || (!autoKill && playingSequence.fullPosition >= playingSequence.Duration()))
+                    if (resetFirst || playingSequence.fullPosition >= playingSequence.Duration())
                         playingSequence.Rewind();
 
                     playingSequence.PlayForward();
                     break;
                 case PlayType.Backward:
                     //Reset the animation if "resetFirst" = true, the sequence has just been generated or the sequence is complete.
-                    if (resetFirst || isSequenceJustGenerated || (!autoKill && playingSequence.fullPosition <= 0f))
+                    if (resetFirst || isSequenceJustGenerated || playingSequence.fullPosition <= 0f)
                         playingSequence.Goto(playingSequence.Duration());
 
                     playingSequence.PlayBackwards();
@@ -211,21 +211,27 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Time and Progress Management
-        public virtual void Goto(float timePosition, bool andPlay = false)
+        public virtual void Goto(float timePosition, bool WithCallbacks = true, bool andPlay = false)
         {
             if (playingSequence == null)
                 Play();
 
-            playingSequence.Goto(timePosition, andPlay);
+            if (WithCallbacks)
+                playingSequence.GotoWithCallbacks(timePosition, andPlay);
+            else
+                playingSequence.Goto(timePosition, andPlay);
         }
         
-        public virtual void SetProgress(float progress, bool andPlay = false)
+        public virtual void SetProgress(float progress, bool WithCallbacks = true, bool andPlay = false)
         {
             if (playingSequence == null)
                 Play();
 
             progress = Mathf.Clamp01(progress);
-            playingSequence.Goto(progress * playingSequence.Duration(), andPlay);
+            if (WithCallbacks)
+                playingSequence.GotoWithCallbacks(progress * playingSequence.Duration(), andPlay);
+            else
+                playingSequence.Goto(progress * playingSequence.Duration(), andPlay);
         }
         #endregion
 
@@ -254,6 +260,39 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Play();
         }
 
+        /// <summary>
+        /// Rewinds the sequence to its starting position.
+        /// </summary>
+        /// <param name="includeDelay"></param>
+        public virtual void Rewind(bool includeDelay = true)
+        {
+            if (playingSequence == null)
+                return;
+
+            playingSequence.Rewind(includeDelay);
+        }
+
+        /// <summary>
+        /// Rewinds the sequence based on its current play direction.
+        /// For forward playback, it rewinds to the start. 
+        /// For backward playback, it rewinds to the end of the sequence.
+        /// </summary>
+        /// <param name="includeDelay"></param>
+        public virtual void RewindCurrentPlayDirection(bool includeDelay = true)
+        {
+            if (playingSequence == null)
+                return;
+
+            if (!playingSequence.IsBackwards())
+                playingSequence.Rewind(includeDelay);
+            else
+                playingSequence.Goto(playingSequence.Duration());
+        }
+
+        /// <summary>
+        /// Completes the sequence immediately, moving it to its final position.
+        /// </summary>
+        /// <param name="withCallbacks"></param>
         public virtual void Complete(bool withCallbacks = false)
         {
             if (playingSequence == null)
@@ -262,12 +301,28 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Complete(withCallbacks);
         }
 
-        public virtual void Rewind(bool includeDelay = true)
+        /// <summary>
+        /// Completes the sequence based on its current play direction.
+        /// For forward playback, moves to the end of the sequence.
+        /// For backward playback, moves to the start of the sequence.
+        /// </summary>
+        /// <param name="withCallbacks"></param>
+        public virtual void CompleteCurrentPlayDirection(bool withCallbacks = false)
         {
             if (playingSequence == null)
                 return;
 
-            playingSequence.Rewind(includeDelay);
+            if (!playingSequence.IsBackwards())
+            {
+                playingSequence.Complete(withCallbacks);
+            }
+            else
+            {
+                if (withCallbacks)
+                    playingSequence.GotoWithCallbacks(0);
+                else
+                    playingSequence.Goto(0);
+            }
         }
 
         public virtual void Kill(KillType killType = KillType.Reset)
