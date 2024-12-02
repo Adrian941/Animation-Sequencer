@@ -215,30 +215,11 @@ namespace BrunoMikoski.AnimationSequencer
             }
         }
 
-        private Rect DrawTopRightText(Rect rect, string text, Color color)
-        {
-            if (!string.IsNullOrEmpty(text))
-            {
-                Vector2 textSize = topRightTextStyle.CalcSize(new GUIContent(text));
-                Rect backgroundRect = new Rect(rect.x + rect.width - textSize.x - 4,
-                    rect.y + 2,
-                    textSize.x + 4,
-                    textSize.y);
-                EditorGUI.DrawRect(backgroundRect, color);
-                GUI.Label(new Rect(backgroundRect.x + 2, backgroundRect.y, textSize.x, textSize.y), text, topRightTextStyle);
-
-                rect.width -= textSize.x + 6;
-            }
-
-            return rect;
-        }
-
         private void DrawPreviewControls()
         {
             DrawMediaPlayerControlButtons();
             DrawTimeScaleSlider();
             DrawProgressSlider();
-            //DrawDurationInfo();
         }
 
         private void DrawMediaPlayerControlButtons()
@@ -285,132 +266,6 @@ namespace BrunoMikoski.AnimationSequencer
             EditorGUILayout.EndHorizontal();
         }
 
-        private void Rewind()
-        {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            sequencerController.Rewind();
-        }
-
-        private void StepBack()
-        {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            float progress = sequencerController.PlayingSequence.ElapsedPercentage() - 0.01f;
-            float time = (progress >= 0 ? progress : (1 - 0.01f)) * sequencerController.PlayingSequence.Duration();
-
-            sequencerController.PlayingSequence.Goto(time);
-        }
-
-        private void StepNext()
-        {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            float progress = sequencerController.PlayingSequence.ElapsedPercentage() + 0.01f;
-            float time = (progress <= 1 ? progress : 0.01f) * sequencerController.PlayingSequence.Duration();
-
-            sequencerController.PlayingSequence.Goto(time);
-        }
-
-        private void CompleteForward()
-        {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            sequencerController.Complete();
-        }
-
-        private void PlaySequence()
-        {
-            justStartPreviewing = false;
-
-            // Handle sequence.
-            if (!Application.isPlaying)
-                HandleEditorPreviewSequence();
-            else
-                HandleRuntimeSequence();
-
-            // Update steps panel visibility.
-            if (justStartPreviewing)
-                wasShowingStepsPanel = showStepsPanel;
-
-            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
-                showStepsPanel = false;
-        }
-
-        private void HandleEditorPreviewSequence()
-        {
-            if (!DOTweenEditorPreview.isPreviewing)
-            {
-                // Start preview.
-                justStartPreviewing = true;
-                DOTweenEditorPreview.Start();
-                sequencerController.Play();
-
-                AnimationSequencerSettings settings = AnimationSequencerSettings.GetInstance();
-
-                if (settings.VisualizeStepsProgressWhenPreviewing)
-                    CalculateStepsAnimationData();
-
-                if (settings.CollapseStepsWhenPreviewing)
-                    CollapseSteps();
-
-                DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
-            }
-            else
-            {
-                // Manage sequence playback.
-                if (sequencerController.PlayingSequence == null)
-                {
-                    sequencerController.Play();
-                }
-                else
-                {
-                    bool isBackwards = sequencerController.PlayingSequence.IsBackwards();
-                    float position = sequencerController.PlayingSequence.fullPosition;
-                    float duration = sequencerController.PlayingSequence.Duration();
-
-                    if (!isBackwards && position >= duration)
-                        sequencerController.Rewind();
-                    else if (isBackwards && position <= 0f)
-                        sequencerController.Complete();
-
-                    sequencerController.TogglePause();
-                }
-            }
-        }
-
-        private void HandleRuntimeSequence()
-        {
-            if (sequencerController.PlayingSequence == null)
-                sequencerController.Play();
-            else if (sequencerController.PlayingSequence.IsActive())
-                sequencerController.TogglePause();
-            else
-                sequencerController.Play();
-        }
-
-        private void StopSequence()
-        {
-            if (!DOTweenEditorPreview.isPreviewing)
-                return;
-
-            // Reset sequencer state.
-            sequencerController.ResetToInitialState();
-            sequencerController.ClearPlayingSequence();
-            DOTweenEditorPreview.Stop();
-
-            // Reset steps state.
-            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
-                showStepsPanel = wasShowingStepsPanel;
-
-            if (AnimationSequencerSettings.GetInstance().CollapseStepsWhenPreviewing)
-                ExpandCollapsedSteps();
-        }
-
         private void DrawTimeScaleSlider()
         {
             GUILayout.FlexibleSpace();
@@ -431,7 +286,7 @@ namespace BrunoMikoski.AnimationSequencer
             GUILayout.FlexibleSpace();
             EditorGUI.BeginChangeCheck();
 
-            float tweenProgress = GetCurrentSequencerProgress();
+            float tweenProgress = GetProgress();
 
             float normalLabelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 65;
@@ -442,19 +297,6 @@ namespace BrunoMikoski.AnimationSequencer
                 SetProgress(tweenProgress);
 
             GUILayout.FlexibleSpace();
-        }
-
-        private void SetProgress(float tweenProgress)
-        {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            sequencerController.PlayingSequence.Goto(tweenProgress * sequencerController.PlayingSequence.Duration());
-        }
-
-        private float GetCurrentSequencerProgress()
-        {
-            return sequencerController.PlayingSequence != null ? sequencerController.PlayingSequence.ElapsedPercentage() : 0;
         }
         #endregion
 
@@ -629,7 +471,7 @@ namespace BrunoMikoski.AnimationSequencer
 
                     bool isForward = sequencerController.PlayTypeDirection == AnimationSequencerController.PlayType.Forward;
                     int loops = sequencerController.Loops;
-                    float progress = GetCurrentSequencerProgress();
+                    float progress = GetProgress();
                     if (progress < 1 && loops > 1) progress = progress * loops % 1;
                     bool showProgress = isForward ? progress >= startTime : progress <= endTime;
                     Rect progressRect = new Rect(rect);
@@ -915,6 +757,167 @@ namespace BrunoMikoski.AnimationSequencer
                 if (foldout)
                     additionalInspectorGUI.Invoke();
             }
+        }
+        #endregion
+
+        #region Top right text header
+        private Rect DrawTopRightText(Rect rect, string text, Color color)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                Vector2 textSize = topRightTextStyle.CalcSize(new GUIContent(text));
+                Rect backgroundRect = new Rect(rect.x + rect.width - textSize.x - 4,
+                    rect.y + 2,
+                    textSize.x + 4,
+                    textSize.y);
+                EditorGUI.DrawRect(backgroundRect, color);
+                GUI.Label(new Rect(backgroundRect.x + 2, backgroundRect.y, textSize.x, textSize.y), text, topRightTextStyle);
+
+                rect.width -= textSize.x + 6;
+            }
+
+            return rect;
+        }
+        #endregion
+
+        #region Sequencer control
+        private void Rewind()
+        {
+            if (!sequencerController.IsPlaying)
+                PlaySequence();
+
+            sequencerController.Rewind();
+        }
+
+        private void StepBack()
+        {
+            if (!sequencerController.IsPlaying)
+                PlaySequence();
+
+            float progress = sequencerController.PlayingSequence.ElapsedPercentage() - 0.01f;
+            float time = (progress >= 0 ? progress : (1 - 0.01f)) * sequencerController.PlayingSequence.Duration();
+
+            sequencerController.PlayingSequence.Goto(time);
+        }
+
+        private void StepNext()
+        {
+            if (!sequencerController.IsPlaying)
+                PlaySequence();
+
+            float progress = sequencerController.PlayingSequence.ElapsedPercentage() + 0.01f;
+            float time = (progress <= 1 ? progress : 0.01f) * sequencerController.PlayingSequence.Duration();
+
+            sequencerController.PlayingSequence.Goto(time);
+        }
+
+        private void SetProgress(float tweenProgress)
+        {
+            if (!sequencerController.IsPlaying)
+                PlaySequence();
+
+            sequencerController.PlayingSequence.Goto(tweenProgress * sequencerController.PlayingSequence.Duration());
+        }
+
+        private float GetProgress()
+        {
+            return sequencerController.PlayingSequence != null ? sequencerController.PlayingSequence.ElapsedPercentage() : 0;
+        }
+
+        private void CompleteForward()
+        {
+            if (!sequencerController.IsPlaying)
+                PlaySequence();
+
+            sequencerController.Complete();
+        }
+
+        private void PlaySequence()
+        {
+            justStartPreviewing = false;
+
+            // Handle sequence.
+            if (!Application.isPlaying)
+                HandleEditorPreviewSequence();
+            else
+                HandleRuntimeSequence();
+
+            // Update steps panel visibility.
+            if (justStartPreviewing)
+                wasShowingStepsPanel = showStepsPanel;
+
+            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
+                showStepsPanel = false;
+        }
+
+        private void HandleEditorPreviewSequence()
+        {
+            if (!DOTweenEditorPreview.isPreviewing)
+            {
+                // Start preview.
+                justStartPreviewing = true;
+                DOTweenEditorPreview.Start();
+                sequencerController.Play();
+
+                AnimationSequencerSettings settings = AnimationSequencerSettings.GetInstance();
+
+                if (settings.VisualizeStepsProgressWhenPreviewing)
+                    CalculateStepsAnimationData();
+
+                if (settings.CollapseStepsWhenPreviewing)
+                    CollapseSteps();
+
+                DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
+            }
+            else
+            {
+                // Manage sequence playback.
+                if (sequencerController.PlayingSequence == null)
+                {
+                    sequencerController.Play();
+                }
+                else
+                {
+                    bool isBackwards = sequencerController.PlayingSequence.IsBackwards();
+                    float position = sequencerController.PlayingSequence.fullPosition;
+                    float duration = sequencerController.PlayingSequence.Duration();
+
+                    if (!isBackwards && position >= duration)
+                        sequencerController.Rewind();
+                    else if (isBackwards && position <= 0f)
+                        sequencerController.Complete();
+
+                    sequencerController.TogglePause();
+                }
+            }
+        }
+
+        private void HandleRuntimeSequence()
+        {
+            if (sequencerController.PlayingSequence == null)
+                sequencerController.Play();
+            else if (sequencerController.PlayingSequence.IsActive())
+                sequencerController.TogglePause();
+            else
+                sequencerController.Play();
+        }
+
+        private void StopSequence()
+        {
+            if (!DOTweenEditorPreview.isPreviewing)
+                return;
+
+            // Reset sequencer state.
+            sequencerController.ResetToInitialState();
+            sequencerController.ClearPlayingSequence();
+            DOTweenEditorPreview.Stop();
+
+            // Reset steps state.
+            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
+                showStepsPanel = wasShowingStepsPanel;
+
+            if (AnimationSequencerSettings.GetInstance().CollapseStepsWhenPreviewing)
+                ExpandCollapsedSteps();
         }
         #endregion
 
