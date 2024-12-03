@@ -117,18 +117,18 @@ namespace BrunoMikoski.AnimationSequencer
             return false;
         }
 
-        private static GUIContent cachedBackButtonGUIContent;
-        internal static GUIContent BackButtonGUIContent
+        private static GUIContent cachedRewindButtonGUIContent;
+        internal static GUIContent RewindButtonGUIContent
         {
             get
             {
-                if (cachedBackButtonGUIContent == null)
+                if (cachedRewindButtonGUIContent == null)
                 {
-                    cachedBackButtonGUIContent = EditorGUIUtility.IconContent("d_beginButton");
-                    cachedBackButtonGUIContent.tooltip = "Rewind";
+                    cachedRewindButtonGUIContent = EditorGUIUtility.IconContent("Animation.FirstKey");
+                    cachedRewindButtonGUIContent.tooltip = "Rewind";
                 }
 
-                return cachedBackButtonGUIContent;
+                return cachedRewindButtonGUIContent;
             }
         }
         
@@ -183,7 +183,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 if (cachedForwardButtonGUIContent == null)
                 {
-                    cachedForwardButtonGUIContent = EditorGUIUtility.IconContent("d_endButton");
+                    cachedForwardButtonGUIContent = EditorGUIUtility.IconContent("Animation.LastKey");
                     cachedForwardButtonGUIContent.tooltip = "Fast Forward";
                 }
                 return cachedForwardButtonGUIContent;
@@ -197,27 +197,42 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 if (cachedPauseButtonGUIContent == null)
                 {
-                    cachedPauseButtonGUIContent = EditorGUIUtility.IconContent("PauseButton On");
+                    cachedPauseButtonGUIContent = EditorGUIUtility.IconContent("PauseButton");
                     cachedPauseButtonGUIContent.tooltip = "Pause";
                 }
                 return cachedPauseButtonGUIContent;
             }
         }
         
-        private static GUIContent cachedPlayButtonGUIContent;
-        internal static GUIContent PlayButtonGUIContent
+        private static GUIContent cachedPlayForwardButtonGUIContent;
+        internal static GUIContent PlayForwardButtonGUIContent
         {
             get
             {
-                if (cachedPlayButtonGUIContent == null)
+                if (cachedPlayForwardButtonGUIContent == null)
                 {
-                    cachedPlayButtonGUIContent = EditorGUIUtility.IconContent("PlayButton On");
-                    cachedPlayButtonGUIContent.tooltip = "Play";
+                    cachedPlayForwardButtonGUIContent = EditorGUIUtility.IconContent("Animation.Play");
+                    cachedPlayForwardButtonGUIContent.tooltip = "Play Forward";
                 }
-                return cachedPlayButtonGUIContent;
+                return cachedPlayForwardButtonGUIContent;
             }
         }
-        
+
+        private static GUIContent cachedPlayBackwardsButtonGUIContent;
+        internal static GUIContent PlayBackwardsButtonGUIContent
+        {
+            get
+            {
+                if (cachedPlayBackwardsButtonGUIContent == null)
+                {
+                    string iconName = $"{(EditorGUIUtility.isProSkin ? "d_" : "")}PlayBackward";
+                    Debug.Log(iconName);
+                    cachedPlayBackwardsButtonGUIContent = new GUIContent(IconLoader.LoadIcon(iconName), "Play Backwards");
+                }
+                return cachedPlayBackwardsButtonGUIContent;
+            }
+        }
+
         private static GUIContent cachedSaveAsDefaultGUIContent;
         internal static GUIContent SaveAsDefaultButtonGUIContent
         {

@@ -53,6 +53,8 @@ namespace BrunoMikoski.AnimationSequencer
         private int lastExpandedStepIndex = -1;
         private bool lastExpandedStepChanged;
         private bool onlyOneActionExpandedEnable;
+        private bool isPlayDirectionSet;
+        private bool isPlayDirectionForward;
         #endregion
 
         #region OnEnable/OnDisable settings
@@ -231,21 +233,34 @@ namespace BrunoMikoski.AnimationSequencer
             GUIStyle previewButtonStyle = new GUIStyle(GUI.skin.button);
             previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 36;
 
-            if (GUILayout.Button(AnimationSequenceEditorGUIUtility.BackButtonGUIContent, previewButtonStyle))
+            if (GUILayout.Button(AnimationSequenceEditorGUIUtility.RewindButtonGUIContent, previewButtonStyle))
                 Rewind();
 
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StepBackGUIContent, previewButtonStyle))
                 StepBack();
 
-            if (sequencerController.IsPlaying)
+            // Play forward button
+            if (sequencerController.IsPlaying && !sequencerController.PlayingSequence.IsBackwards())
             {
                 if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
-                    sequencerController.Pause();
+                    sequencerController.PlayingSequence.Pause();
             }
             else
             {
-                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PlayButtonGUIContent, previewButtonStyle))
-                    PlaySequence();
+                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PlayForwardButtonGUIContent, previewButtonStyle))
+                    PlaySequenceForward();
+            }
+
+            // Play backward button
+            if (sequencerController.IsPlaying && sequencerController.PlayingSequence.IsBackwards())
+            {
+                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
+                    sequencerController.PlayingSequence.Pause();
+            }
+            else
+            {
+                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PlayBackwardsButtonGUIContent, previewButtonStyle))
+                    PlaySequenceBackwards();
             }
 
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StepNextGUIContent, previewButtonStyle))
@@ -783,40 +798,33 @@ namespace BrunoMikoski.AnimationSequencer
         #region Sequencer control
         private void Rewind()
         {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            sequencerController.Rewind();
+            EnsureSequencePlaying();
+            sequencerController.PlayingSequence.Rewind();
         }
 
         private void StepBack()
         {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            float progress = sequencerController.PlayingSequence.ElapsedPercentage() - 0.01f;
-            float time = (progress >= 0 ? progress : (1 - 0.01f)) * sequencerController.PlayingSequence.Duration();
-
-            sequencerController.PlayingSequence.Goto(time);
+            AdjustSequenceProgress(-0.01f);
         }
 
         private void StepNext()
         {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
+            AdjustSequenceProgress(0.01f);
+        }
 
-            float progress = sequencerController.PlayingSequence.ElapsedPercentage() + 0.01f;
-            float time = (progress <= 1 ? progress : 0.01f) * sequencerController.PlayingSequence.Duration();
+        private void AdjustSequenceProgress(float adjustment)
+        {
+            EnsureSequencePlaying();
 
-            sequencerController.PlayingSequence.Goto(time);
+            float progress = Mathf.Clamp01(sequencerController.PlayingSequence.ElapsedPercentage() + adjustment);
+            float time = progress * sequencerController.PlayingSequence.Duration();
+            sequencerController.PlayingSequence.GotoWithCallbacks(time);
         }
 
         private void SetProgress(float tweenProgress)
         {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
-
-            sequencerController.PlayingSequence.Goto(tweenProgress * sequencerController.PlayingSequence.Duration());
+            EnsureSequencePlaying();
+            sequencerController.PlayingSequence.GotoWithCallbacks(tweenProgress * sequencerController.PlayingSequence.Duration());
         }
 
         private float GetProgress()
@@ -826,10 +834,42 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void CompleteForward()
         {
-            if (!sequencerController.IsPlaying)
-                PlaySequence();
+            EnsureSequencePlaying();
+            sequencerController.PlayingSequence.Complete(true);
+        }
 
-            sequencerController.Complete();
+        private void EnsureSequencePlaying()
+        {
+            if (sequencerController.PlayingSequence == null)
+                PlaySequence();
+        }
+
+        private void PlaySequenceForward()
+        {
+            PlaySequenceWithDirection(true);
+        }
+
+        private void PlaySequenceBackwards()
+        {
+            PlaySequenceWithDirection(false);
+        }
+
+        private void PlaySequenceWithDirection(bool forward)
+        {
+            if (sequencerController.PlayingSequence == null)
+            {
+                isPlayDirectionSet = true;
+                isPlayDirectionForward = forward;
+
+                PlaySequence();
+            }
+            else
+            {
+                if (forward)
+                    sequencerController.PlayForward();
+                else
+                    sequencerController.PlayBackwards();
+            }
         }
 
         private void PlaySequence()
@@ -852,54 +892,46 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void HandleEditorPreviewSequence()
         {
-            if (!DOTweenEditorPreview.isPreviewing)
-            {
-                // Start preview.
-                justStartPreviewing = true;
-                DOTweenEditorPreview.Start();
-                sequencerController.Play();
+            if (DOTweenEditorPreview.isPreviewing)
+                return;
 
-                AnimationSequencerSettings settings = AnimationSequencerSettings.GetInstance();
+            // Start preview.
+            justStartPreviewing = true;
+            DOTweenEditorPreview.Start();
+            PlaySequenceWithDirectionSettings();
 
-                if (settings.VisualizeStepsProgressWhenPreviewing)
-                    CalculateStepsAnimationData();
+            AnimationSequencerSettings settings = AnimationSequencerSettings.GetInstance();
 
-                if (settings.CollapseStepsWhenPreviewing)
-                    CollapseSteps();
+            if (settings.VisualizeStepsProgressWhenPreviewing)
+                CalculateStepsAnimationData();
 
-                DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
-            }
-            else
-            {
-                // Manage sequence playback.
-                if (sequencerController.PlayingSequence == null)
-                {
-                    sequencerController.Play();
-                }
-                else
-                {
-                    bool isBackwards = sequencerController.PlayingSequence.IsBackwards();
-                    float position = sequencerController.PlayingSequence.fullPosition;
-                    float duration = sequencerController.PlayingSequence.Duration();
+            if (settings.CollapseStepsWhenPreviewing)
+                CollapseSteps();
 
-                    if (!isBackwards && position >= duration)
-                        sequencerController.Rewind();
-                    else if (isBackwards && position <= 0f)
-                        sequencerController.Complete();
-
-                    sequencerController.TogglePause();
-                }
-            }
+            DOTweenEditorPreview.PrepareTweenForPreview(sequencerController.PlayingSequence);
         }
 
         private void HandleRuntimeSequence()
         {
-            if (sequencerController.PlayingSequence == null)
+            PlaySequenceWithDirectionSettings();
+        }
+
+        private void PlaySequenceWithDirectionSettings()
+        {
+            if (!isPlayDirectionSet)
+            {
                 sequencerController.Play();
-            else if (sequencerController.PlayingSequence.IsActive())
-                sequencerController.TogglePause();
+            }
             else
-                sequencerController.Play();
+            {
+                if (isPlayDirectionForward)
+                    sequencerController.PlayForward();
+                else
+                    sequencerController.PlayBackwards();
+            }
+
+            isPlayDirectionSet = false;
+            isPlayDirectionForward = false;
         }
 
         private void StopSequence()
