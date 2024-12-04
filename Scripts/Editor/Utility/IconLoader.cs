@@ -1,44 +1,25 @@
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
-public static class IconLoader
+namespace BrunoMikoski.AnimationSequencer
 {
-    public static Texture2D LoadIcon(string iconName)
+    // Created by Pablo Huaxteco
+    public static class IconLoader
     {
-        Texture2D icon = LoadIconFromPackage(iconName);
-
-        if (icon == null)
-            icon = LoadIconFromAssets(iconName);
-
-        return icon;
-    }
-
-    private static Texture2D LoadIconFromPackage(string iconName)
-    {
-        string packagePath = $"Packages/com.brunomikoski.animationsequencer/Scripts/Editor/Icons/{iconName}.png";
-        Texture2D icon = (Texture2D)EditorGUIUtility.Load(packagePath);
-
-        return icon;
-    }
-
-    private static Texture2D LoadIconFromAssets(string iconName)
-    {
-        string[] assetGuids = AssetDatabase.FindAssets(iconName);
-
-        foreach (string guid in assetGuids)
+        public static Texture2D LoadIcon(string iconName)
         {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+            string iconPath = $"{GetEditorPath()}/Icons/{iconName}.png";
 
-            if (fileName == iconName)
-            {
-                Texture2D icon = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-
-                if (icon != null)
-                    return icon;
-            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(iconPath);
         }
 
-        return null;
+        public static string GetEditorPath()
+        {
+            string assemblyName = "BrunoMikoski.AnimationSequencer.Editor";
+            string assemblyPath = CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName(assemblyName);
+            string directoryPath = System.IO.Path.GetDirectoryName(assemblyPath);
+            return directoryPath.Replace("\\", "/");
+        }
     }
 }

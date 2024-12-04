@@ -231,7 +231,7 @@ namespace BrunoMikoski.AnimationSequencer
             bool guiEnabled = GUI.enabled;
 
             GUIStyle previewButtonStyle = new GUIStyle(GUI.skin.button);
-            previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 36;
+            previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 32;
 
             if (GUILayout.Button(AnimationSequenceEditorGUIUtility.RewindButtonGUIContent, previewButtonStyle))
                 Rewind();
