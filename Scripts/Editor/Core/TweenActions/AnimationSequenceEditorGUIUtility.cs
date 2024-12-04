@@ -226,7 +226,6 @@ namespace BrunoMikoski.AnimationSequencer
                 if (cachedPlayBackwardsButtonGUIContent == null)
                 {
                     string iconName = $"{(EditorGUIUtility.isProSkin ? "d_" : "")}PlayBackward";
-                    Debug.Log(iconName);
                     cachedPlayBackwardsButtonGUIContent = new GUIContent(IconLoader.LoadIcon(iconName), "Play Backwards");
                 }
                 return cachedPlayBackwardsButtonGUIContent;
