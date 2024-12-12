@@ -115,16 +115,10 @@ namespace BrunoMikoski.AnimationSequencer
         
         protected virtual void OnDisable()
         {
-            if (autoplayMode != AutoplayType.OnEnable)
-                return;
-            
             if (playingSequence == null)
                 return;
 
             ClearPlayingSequence();
-            // Reset the object to its initial state so that if it is re-enabled the start values are correct for
-            // regenerating the Sequence.
-            ResetToInitialState();
         }
 
         protected virtual void OnDestroy()
@@ -155,12 +149,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected virtual void Play_Internal(PlayType playDirection, bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
+            if (!isActiveAndEnabled)
+                return;
+
             this.onCompleteCallback = onCompleteCallback;
 
             //Create the sequence if it does not exist.
             if (playingSequence == null)
             {
-                if (Application.isPlaying && autoKill && resetStateWhenCreateSequence)
+                if (Application.isPlaying && resetStateWhenCreateSequence)
                     ResetToInitialState();
 
                 playingSequence = GenerateSequence();
@@ -327,14 +324,20 @@ namespace BrunoMikoski.AnimationSequencer
 
         public virtual void Kill(KillType killType = KillType.Reset)
         {
-            DOTween.Kill(this, killType == KillType.Complete);
-            DOTween.Kill(playingSequence, killType == KillType.Complete);
+            if (playingSequence == null)
+                return;
 
-            if (killType == KillType.Reset)
-                ResetToInitialState();
+            switch (killType)
+            {
+                case KillType.Reset:
+                    SetProgress(0);
+                    break;
+                case KillType.Complete:
+                    SetProgress(1);
+                    break;
+            }
 
-            playingSequence = null;
-            resetStateWhenCreateSequence = false;
+            ClearPlayingSequence();
         }
         #endregion
 
@@ -413,7 +416,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             //Kill the sequence manually if autokill = true when "Backwards" sequence is completed.
             //The reason: DoTween does not kill the sequence even though kill = true only in the case of "Backwards".
-            if (playingSequence.IsBackwards() && Application.isPlaying && autoKill)
+            if (playingSequence != null && playingSequence.IsBackwards() && Application.isPlaying && autoKill)
                 ClearPlayingSequence();
         }
 

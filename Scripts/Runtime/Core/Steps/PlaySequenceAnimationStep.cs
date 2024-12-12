@@ -26,7 +26,13 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             }
 
-            Sequence sequence = sequencer.GenerateSequence();
+            if(!sequencer.isActiveAndEnabled)
+                return null;
+
+            //Sequence sequence = sequencer.GenerateSequence();
+            sequencer.PlayForward(true);
+            sequencer.PlayingSequence.Pause();
+            Sequence sequence = sequencer.PlayingSequence;
             sequence.SetDelay(Delay);
 
             return sequence;
