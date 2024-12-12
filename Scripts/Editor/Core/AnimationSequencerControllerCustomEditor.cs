@@ -484,7 +484,7 @@ namespace BrunoMikoski.AnimationSequencer
                     barRect.xMin = Mathf.Lerp(rect.xMin, rect.xMax, startTime) - extraWidth;
                     barRect.xMax = Mathf.Lerp(rect.xMin, rect.xMax, endTime) + extraWidth;
 
-                    bool isForward = sequencerController.PlayTypeDirection == AnimationSequencerController.PlayType.Forward;
+                    bool isForward = !sequencerController.PlayingSequence.IsBackwards();
                     int loops = sequencerController.Loops;
                     float progress = GetProgress();
                     if (progress < 1 && loops > 1) progress = progress * loops % 1;
