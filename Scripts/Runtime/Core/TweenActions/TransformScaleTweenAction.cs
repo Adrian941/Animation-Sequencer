@@ -52,14 +52,14 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         private Transform targetTransform;
-        private Vector3? originalScale;
+        private Vector3 originalScale;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
             originalScale = targetTransform.localScale;
 
-            Vector3 endValue = percentage ? Vector3.Scale(originalScale.Value, scale / 100) : scale;
+            Vector3 endValue = percentage ? Vector3.Scale(originalScale, scale / 100) : scale;
             TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration, axisConstraint, snapping);
             //TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration);
             //tween.SetOptions(axisConstraint, snapping);
@@ -78,10 +78,10 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override void ResetToInitialState_Internal()
         {
-            if (!originalScale.HasValue)
+            if (targetTransform == null)
                 return;
 
-            targetTransform.localScale = originalScale.Value;
+            targetTransform.localScale = originalScale;
         }
     }
 }
