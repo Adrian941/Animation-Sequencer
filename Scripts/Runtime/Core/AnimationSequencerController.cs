@@ -224,6 +224,9 @@ namespace BrunoMikoski.AnimationSequencer
             if (playingSequence == null)
                 Play();
 
+            if (playingSequence == null)
+                return;
+
             progress = Mathf.Clamp01(progress);
             if (WithCallbacks)
                 playingSequence.GotoWithCallbacks(progress * playingSequence.Duration(), andPlay);
