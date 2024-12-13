@@ -30,7 +30,7 @@ namespace BrunoMikoski.AnimationSequencer
             return sequence;
         }
 
-        public override void ResetToInitialState() { }
+        protected override void ResetToInitialState_Internal() { }
 
         public override string GetDisplayNameForEditor(int index)
         {

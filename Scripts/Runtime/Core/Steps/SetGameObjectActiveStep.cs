@@ -27,7 +27,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => active = value;
         }
 
-        private bool? originalActive;
+        private bool originalActiveSelf;
 
         public override Sequence GenerateTweenSequence()
         {
@@ -37,8 +37,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             }
 
-            if (!originalActive.HasValue)
-                originalActive = target.activeSelf;
+            originalActiveSelf = target.activeSelf;
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
@@ -48,15 +47,12 @@ namespace BrunoMikoski.AnimationSequencer
             return sequence;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (target == null)
                 return;
 
-            if (!originalActive.HasValue)
-                return;
-
-            target.SetActive(originalActive.Value);
+            target.SetActive(originalActiveSelf);
         }
 
         public override string GetDisplayNameForEditor(int index)

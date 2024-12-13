@@ -44,7 +44,15 @@ namespace BrunoMikoski.AnimationSequencer
                 animationSequence.Append(sequence);
         }
 
-        public abstract void ResetToInitialState();
+        protected abstract void ResetToInitialState_Internal();
+
+        public void ResetToInitialState()
+        {
+            if (sequence == null)
+                return;
+
+            ResetToInitialState_Internal();
+        }
 
         public virtual string GetDisplayNameForEditor(int index)
         {

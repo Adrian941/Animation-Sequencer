@@ -37,11 +37,8 @@ namespace BrunoMikoski.AnimationSequencer
             set => actions = value;
         }
 
-        private bool isTweenSequenceGenerated;
-
         public override Sequence GenerateTweenSequence()
         {
-            isTweenSequenceGenerated = false;
             if (target == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
@@ -78,16 +75,11 @@ namespace BrunoMikoski.AnimationSequencer
 
             RefreshEditorOnSequenceUpdate(sequence, target.transform);
 
-            isTweenSequenceGenerated = true;
-
             return sequence;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
-            if (!isTweenSequenceGenerated)
-                return;
-
             if (target == null)
                 return;
 
@@ -96,8 +88,7 @@ namespace BrunoMikoski.AnimationSequencer
                 actions[i].ResetToInitialState();
             }
 
-            if (target != null)
-                RefreshEditor(target.transform);
+            RefreshEditor(target.transform);
         }
 
         public override string GetDisplayNameForEditor(int index)
