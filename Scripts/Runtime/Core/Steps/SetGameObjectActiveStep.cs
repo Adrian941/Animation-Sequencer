@@ -27,6 +27,15 @@ namespace BrunoMikoski.AnimationSequencer
             set => active = value;
         }
 
+        [Tooltip("Restores the GameObject to its previous active state when the animation is reversed.")]
+        [SerializeField]
+        private bool restoreStateOnBack = true;
+        public bool RestoreStateOnBack
+        {
+            get => restoreStateOnBack;
+            set => restoreStateOnBack = value;
+        }
+
         private bool originalActiveSelf;
 
         public override Sequence GenerateTweenSequence()
@@ -41,10 +50,25 @@ namespace BrunoMikoski.AnimationSequencer
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
-            sequence.AppendInterval(extraInterval);    //Interval added for a bug when this tween runs in "Backwards" direction.
-            sequence.AppendCallback(() => target.SetActive(active));
+
+            float duration = GetExtraInterval();
+            var tween = DOTween.To(() => target.activeSelf ? 1f : 0f, x =>
+            {
+                if (x == 0f)
+                    target.SetActive(false);
+                else if (x == 1f)
+                    target.SetActive(true);
+            }
+            , active ? 1f : 0f, duration);
+
+            sequence.Append(tween);
 
             return sequence;
+        }
+
+        private float GetExtraInterval()
+        {
+            return restoreStateOnBack ? extraInterval : 0f;
         }
 
         protected override void ResetToInitialState_Internal()
@@ -66,12 +90,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override float GetDuration()
         {
-            return sequence == null ? -1 : sequence.Duration() - extraInterval;
+            return sequence == null ? -1 : sequence.Duration() - GetExtraInterval();
         }
 
         public override float GetExtraIntervalAdded()
         {
-            return sequence == null ? 0 : extraInterval;
+            return sequence == null ? 0 : GetExtraInterval();
         }
     }
 }
