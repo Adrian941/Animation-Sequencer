@@ -38,6 +38,7 @@ namespace BrunoMikoski.AnimationSequencer
         public float PlaybackSpeed => playbackSpeed;
         public PlayType PlayTypeDirection => playType;
         public int Loops => loops;
+        public bool DynamicStartValues { get { return dynamicStartValues; } set { dynamicStartValues = value; } }
         public UnityEvent OnAnimationStart { get { return onAnimationStart; } protected set { onAnimationStart = value; } }
         public UnityEvent OnAnimationProgress { get { return onAnimationProgress; } protected set { onAnimationProgress = value; } }
         public UnityEvent OnAnimationFinish { get { return onAnimationFinish; } protected set { onAnimationFinish = value; } }
@@ -65,6 +66,10 @@ namespace BrunoMikoski.AnimationSequencer
         [Tooltip("Direction of the animation (Forward or Backward).")]
         [SerializeField]
         protected PlayType playType;
+        [Tooltip("If true, when replaying the animation, the current object values are used as the new start values. " +
+         "If false, the original start values are reused. This only takes effect after the animation has been killed.")]
+        [SerializeField]
+        private bool dynamicStartValues;
         [Tooltip("Number of loops for the animation (0 for no loops).")]
         [SerializeField]
         private int loops;
@@ -157,7 +162,7 @@ namespace BrunoMikoski.AnimationSequencer
             //Create the sequence if it does not exist.
             if (playingSequence == null)
             {
-                if (Application.isPlaying && resetStateWhenCreateSequence)
+                if (Application.isPlaying && !dynamicStartValues && resetStateWhenCreateSequence)
                     ResetToInitialState();
 
                 playingSequence = GenerateSequence();
