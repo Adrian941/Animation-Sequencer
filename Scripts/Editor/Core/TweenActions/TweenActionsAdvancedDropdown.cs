@@ -78,8 +78,15 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override void ItemSelected(AdvancedDropdownItem item)
         {
-            base.ItemSelected(item);
-            callback?.Invoke(item as TweenActionAdvancedDropdownItem);
+            try
+            {
+                base.ItemSelected(item);
+                callback?.Invoke(item as TweenActionAdvancedDropdownItem);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log($"Unexpected error when selected new action: {ex}");
+            }
         }
 
         public void Show(Rect rect, SerializedProperty actionsListSerializedProperty, Object targetGameObject, Action<TweenActionAdvancedDropdownItem>

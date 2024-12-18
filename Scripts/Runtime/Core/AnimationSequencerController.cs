@@ -1,6 +1,5 @@
 ﻿#if DOTWEEN_ENABLED
 using System;
-using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
@@ -39,21 +38,24 @@ namespace BrunoMikoski.AnimationSequencer
         public float PlaybackSpeed => playbackSpeed;
         public PlayType PlayTypeDirection => playType;
         public int Loops => loops;
-        public UnityEvent OnStartEvent { get { return onStartEvent; } protected set { onStartEvent = value; } }
-        public UnityEvent OnProgressEvent { get { return onProgressEvent; } protected set { onProgressEvent = value; } }
-        public UnityEvent OnFinishedEvent { get { return onFinishedEvent; } protected set { onFinishedEvent = value; } }
+        public UnityEvent OnAnimationStart { get { return onAnimationStart; } protected set { onAnimationStart = value; } }
+        public UnityEvent OnAnimationProgress { get { return onAnimationProgress; } protected set { onAnimationProgress = value; } }
+        public UnityEvent OnAnimationFinish { get { return onAnimationFinish; } protected set { onAnimationFinish = value; } }
         public Sequence PlayingSequence => playingSequence;
-        public bool IsPlaying => playingSequence != null && playingSequence.IsActive() && playingSequence.IsPlaying();
-        public bool IsPaused => playingSequence != null && playingSequence.IsActive() && !playingSequence.IsPlaying();
+        public bool IsPlaying => playingSequence != null && playingSequence.IsPlaying();
+        /// <summary>
+        /// Extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
+        /// </summary>
+        public float ExtraIntervalAdded { get { return extraIntervalAdded; } }
 
         // Serialized fields
         [SerializeReference]
         private AnimationStepBase[] animationSteps = Array.Empty<AnimationStepBase>();
         [SerializeField]
-        private UpdateType updateType = UpdateType.Normal;
+        private UpdateType updateType;
         [Tooltip("If true, the animation is independent of the Time Scale.")]
         [SerializeField]
-        private bool timeScaleIndependent = false;
+        private bool timeScaleIndependent;
         [SerializeField]
         private AutoplayType autoplayMode = AutoplayType.Start;
         [SerializeField]
@@ -62,12 +64,12 @@ namespace BrunoMikoski.AnimationSequencer
         private float playbackSpeed = 1f;
         [Tooltip("Direction of the animation (Forward or Backward).")]
         [SerializeField]
-        protected PlayType playType = PlayType.Forward;
+        protected PlayType playType;
         [Tooltip("Number of loops for the animation (0 for no loops).")]
         [SerializeField]
-        private int loops = 0;
+        private int loops;
         [SerializeField]
-        private LoopType loopType = LoopType.Restart;
+        private LoopType loopType;
         [Tooltip("If true, the animation is automatically killed (released) after completion, which is useful for animations that are occasional. " +
             "If false, the animation persists, ideal for frequently recurring animations.")]
         [SerializeField]
@@ -75,30 +77,26 @@ namespace BrunoMikoski.AnimationSequencer
 
         // Serialized events
         [SerializeField]
-        private UnityEvent onStartEvent = new UnityEvent();
+        private UnityEvent onAnimationStart = new UnityEvent();
         [SerializeField]
-        private UnityEvent onProgressEvent = new UnityEvent();
+        private UnityEvent onAnimationProgress = new UnityEvent();
         [SerializeField]
-        private UnityEvent onFinishedEvent = new UnityEvent();
+        private UnityEvent onAnimationFinish = new UnityEvent();
 
         // Private variables
-        private Sequence playingSequence;       
-        private PlayType playTypeInternal = PlayType.Forward;       
-        private bool isSequenceGenerated;
-        private bool resetWhenCreateSequence;
+        private Sequence playingSequence;
+        private UnityAction onCompleteCallback;
+        private bool isSequenceJustGenerated;
+        private bool resetStateWhenCreateSequence;
+        private float extraIntervalAdded;
 
 #if UNITY_EDITOR
         // Editor-only variables
-        private bool requiresReset = false;
+        private bool requiresReset;
 #endif
         #endregion
 
         #region Unity lifecycle methods
-        protected virtual void Awake()
-        {
-            playTypeInternal = playType;
-        }
-
         protected virtual void Start()
         {
             if (autoplayMode != AutoplayType.Start)
@@ -117,16 +115,10 @@ namespace BrunoMikoski.AnimationSequencer
         
         protected virtual void OnDisable()
         {
-            if (autoplayMode != AutoplayType.OnEnable)
-                return;
-            
             if (playingSequence == null)
                 return;
 
             ClearPlayingSequence();
-            // Reset the object to its initial state so that if it is re-enabled the start values are correct for
-            // regenerating the Sequence.
-            ResetToInitialState();
         }
 
         protected virtual void OnDestroy()
@@ -150,54 +142,48 @@ namespace BrunoMikoski.AnimationSequencer
             Play(false, null);
         }
 
-        public virtual void Play(bool resetFirst = false, Action onCompleteCallback = null)
+        public virtual void Play(bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
-            //In editor mode, always take the "PlayType" assigned in the inspector.
-            if (!Application.isPlaying)
-                playTypeInternal = playType;
+            Play_Internal(playType, resetFirst, onCompleteCallback);
+        }
 
-            //"Backwards" does not work with "Loops", so play the "Forward" sequence.
-            if (playTypeInternal == PlayType.Backward && loops != 0)
-                playTypeInternal = PlayType.Forward;
+        protected virtual void Play_Internal(PlayType playDirection, bool resetFirst = false, UnityAction onCompleteCallback = null)
+        {
+            if (!isActiveAndEnabled)
+                return;
 
-            //Clean and assign the "OnFinished" event.
-            onFinishedEvent.RemoveAllListeners();
-            if (onCompleteCallback != null)
-                onFinishedEvent.AddListener(onCompleteCallback.Invoke);
+            this.onCompleteCallback = onCompleteCallback;
 
             //Create the sequence if it does not exist.
             if (playingSequence == null)
             {
-                if (Application.isPlaying && autoKill && resetWhenCreateSequence)
+                if (Application.isPlaying && resetStateWhenCreateSequence)
                     ResetToInitialState();
 
                 playingSequence = GenerateSequence();
-                isSequenceGenerated = true;
-                resetWhenCreateSequence = true;
+                isSequenceJustGenerated = true;
+                resetStateWhenCreateSequence = true;
             }
 
-            switch (playTypeInternal)
+            switch (playDirection)
             {
+                case PlayType.Forward:
+                    //Reset the animation if "resetFirst" = true or the sequence is complete.
+                    if (resetFirst || playingSequence.fullPosition >= playingSequence.Duration())
+                        playingSequence.Rewind();
+
+                    playingSequence.PlayForward();
+                    break;
                 case PlayType.Backward:
                     //Reset the animation if "resetFirst" = true, the sequence has just been generated or the sequence is complete.
-                    if (resetFirst || isSequenceGenerated || (!playingSequence.IsComplete() && !IsPlaying))
+                    if (resetFirst || isSequenceJustGenerated || playingSequence.fullPosition <= 0f)
                         playingSequence.Goto(playingSequence.Duration());
 
                     playingSequence.PlayBackwards();
                     break;
-                case PlayType.Forward:
-                    //Reset the animation if "resetFirst" = true or the sequence is complete.
-                    if (resetFirst || (!autoKill && playingSequence.IsComplete()))
-                        playingSequence.Goto(0);
-
-                    playingSequence.PlayForward();
-                    break;
-                default:
-                    playingSequence.Play();
-                    break;
             }
 
-            isSequenceGenerated = false;
+            isSequenceJustGenerated = false;
         }
 
         public virtual void PlayForward()
@@ -205,11 +191,9 @@ namespace BrunoMikoski.AnimationSequencer
             PlayForward(false, null);
         }
 
-        public virtual void PlayForward(bool resetFirst = false, Action onCompleteCallback = null)
+        public virtual void PlayForward(bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
-            playTypeInternal = PlayType.Forward;
-
-            Play(resetFirst, onCompleteCallback);
+            Play_Internal(PlayType.Forward, resetFirst, onCompleteCallback);
         }
 
         public virtual void PlayBackwards()
@@ -217,39 +201,37 @@ namespace BrunoMikoski.AnimationSequencer
             PlayBackwards(false, null);
         }
 
-        public virtual void PlayBackwards(bool completeFirst = false, Action onCompleteCallback = null)
+        public virtual void PlayBackwards(bool completeFirst = false, UnityAction onCompleteCallback = null)
         {
-            playTypeInternal = PlayType.Backward;
-
-            Play(completeFirst, onCompleteCallback);
-        }
-
-        public virtual IEnumerator PlayEnumerator()
-        {
-            Play();
-            yield return playingSequence.WaitForCompletion();
+            Play_Internal(PlayType.Backward, completeFirst, onCompleteCallback);
         }
         #endregion
 
         #region Time and Progress Management
-        public virtual void SetTime(float seconds, bool andPlay = true)
+        public virtual void Goto(float timePosition, bool WithCallbacks = true, bool andPlay = false)
         {
             if (playingSequence == null)
                 Play();
 
-            float duration = playingSequence.Duration();
-            float progress = Mathf.Clamp01(seconds / duration);
-            SetProgress(progress, andPlay);
+            if (WithCallbacks)
+                playingSequence.GotoWithCallbacks(timePosition, andPlay);
+            else
+                playingSequence.Goto(timePosition, andPlay);
         }
         
-        public virtual void SetProgress(float progress, bool andPlay = true)
+        public virtual void SetProgress(float progress, bool WithCallbacks = true, bool andPlay = false)
         {
-            progress = Mathf.Clamp01(progress);
-            
             if (playingSequence == null)
                 Play();
 
-            playingSequence.Goto(progress * playingSequence.Duration(), andPlay);
+            if (playingSequence == null)
+                return;
+
+            progress = Mathf.Clamp01(progress);
+            if (WithCallbacks)
+                playingSequence.GotoWithCallbacks(progress * playingSequence.Duration(), andPlay);
+            else
+                playingSequence.Goto(progress * playingSequence.Duration(), andPlay);
         }
         #endregion
 
@@ -278,14 +260,10 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Play();
         }
 
-        public virtual void Complete(bool withCallbacks = true)
-        {
-            if (playingSequence == null)
-                return;
-
-            playingSequence.Complete(withCallbacks);
-        }
-
+        /// <summary>
+        /// Rewinds the sequence to its starting position.
+        /// </summary>
+        /// <param name="includeDelay"></param>
         public virtual void Rewind(bool includeDelay = true)
         {
             if (playingSequence == null)
@@ -294,16 +272,75 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Rewind(includeDelay);
         }
 
+        /// <summary>
+        /// Rewinds the sequence based on its current play direction.
+        /// For forward playback, it rewinds to the start. 
+        /// For backward playback, it rewinds to the end of the sequence.
+        /// </summary>
+        /// <param name="includeDelay"></param>
+        public virtual void RewindCurrentPlayDirection(bool includeDelay = true)
+        {
+            if (playingSequence == null)
+                return;
+
+            if (!playingSequence.IsBackwards())
+                playingSequence.Rewind(includeDelay);
+            else
+                playingSequence.Goto(playingSequence.Duration());
+        }
+
+        /// <summary>
+        /// Completes the sequence immediately, moving it to its final position.
+        /// </summary>
+        /// <param name="withCallbacks"></param>
+        public virtual void Complete(bool withCallbacks = false)
+        {
+            if (playingSequence == null)
+                return;
+
+            playingSequence.Complete(withCallbacks);
+        }
+
+        /// <summary>
+        /// Completes the sequence based on its current play direction.
+        /// For forward playback, moves to the end of the sequence.
+        /// For backward playback, moves to the start of the sequence.
+        /// </summary>
+        /// <param name="withCallbacks"></param>
+        public virtual void CompleteCurrentPlayDirection(bool withCallbacks = false)
+        {
+            if (playingSequence == null)
+                return;
+
+            if (!playingSequence.IsBackwards())
+            {
+                playingSequence.Complete(withCallbacks);
+            }
+            else
+            {
+                if (withCallbacks)
+                    playingSequence.GotoWithCallbacks(0);
+                else
+                    playingSequence.Goto(0);
+            }
+        }
+
         public virtual void Kill(KillType killType = KillType.Reset)
         {
-            DOTween.Kill(this, killType == KillType.Complete);
-            DOTween.Kill(playingSequence, killType == KillType.Complete);
+            if (playingSequence == null)
+                return;
 
-            if (killType == KillType.Reset)
-                ResetToInitialState();
+            switch (killType)
+            {
+                case KillType.Reset:
+                    SetProgress(0);
+                    break;
+                case KillType.Complete:
+                    SetProgress(1);
+                    break;
+            }
 
-            playingSequence = null;
-            resetWhenCreateSequence = false;
+            ClearPlayingSequence();
         }
         #endregion
 
@@ -318,22 +355,13 @@ namespace BrunoMikoski.AnimationSequencer
             // a Start and Finish callback is always fired.
             sequence.AppendCallback(() =>
             {
-                if (playTypeInternal == PlayType.Forward)
-                {
-                    onStartEvent.Invoke();
-                }
+                if (!sequence.IsBackwards())
+                    AnimationStarted();
                 else
-                {
-                    onFinishedEvent.Invoke();
-
-                    //Kill the sequence manually if autokill = true when "Backwards" sequence is completed.
-                    //The reason: DoTween does not kill the sequence even though kill = true only in the case of "Backwards".
-                    if (Application.isPlaying && autoKill)
-                        ClearPlayingSequence();
-                }
+                    AnimationFinished();
             });
-            
-            float extraIntervalAdded = 0f;
+
+            extraIntervalAdded = 0;
             for (int i = 0; i < animationSteps.Length; i++)
             {
                 AnimationStepBase animationStepBase = animationSteps[i];
@@ -344,15 +372,15 @@ namespace BrunoMikoski.AnimationSequencer
             sequence.SetTarget(this);
             sequence.SetAutoKill(autoKill);
             sequence.SetUpdate(updateType, timeScaleIndependent);
-            sequence.OnUpdate(() => onProgressEvent.Invoke());
+            sequence.OnUpdate(() => onAnimationProgress.Invoke());
             sequence.OnKill(() => playingSequence = null);
             // See comment above regarding bookending via AppendCallback.
             sequence.AppendCallback(() =>
             {
-                if (playTypeInternal == PlayType.Forward)
-                    onFinishedEvent.Invoke();
+                if (!sequence.IsBackwards())
+                    AnimationFinished();
                 else
-                    onStartEvent.Invoke();
+                    AnimationStarted();
             });
 
             int targetLoops = loops;
@@ -366,9 +394,33 @@ namespace BrunoMikoski.AnimationSequencer
             }
             sequence.SetLoops(targetLoops, loopType);
             sequence.timeScale = playbackSpeed;
-            sequence.SetDelay(-extraIntervalAdded); //Remove extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
+
+            if (loops == -1)
+                extraIntervalAdded = !Application.isPlaying ? extraIntervalAdded * targetLoops : extraIntervalAdded;
+            else if (loops > 1)
+                extraIntervalAdded *= loops;
 
             return sequence;
+        }
+
+        private void AnimationStarted()
+        {
+            onAnimationStart.Invoke();
+        }
+
+        private void AnimationFinished()
+        {
+            onAnimationFinish.Invoke();
+            if (onCompleteCallback != null)
+            {
+                onCompleteCallback.Invoke();
+                onCompleteCallback = null;
+            }
+
+            //Kill the sequence manually if autokill = true when "Backwards" sequence is completed.
+            //The reason: DoTween does not kill the sequence even though kill = true only in the case of "Backwards".
+            if (playingSequence != null && playingSequence.IsBackwards() && Application.isPlaying && autoKill)
+                ClearPlayingSequence();
         }
 
         public virtual void ResetToInitialState()

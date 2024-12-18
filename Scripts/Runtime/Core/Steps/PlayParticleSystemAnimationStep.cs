@@ -20,24 +20,24 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        [Tooltip("Particles will stop emitting when the duration is over.")]
-        private bool setLifetime;
-        public bool SetLifetime
+        private bool play = true;
+        public bool Play
         {
-            get => setLifetime;
-            set => setLifetime = value;
+            get => play;
+            set => play = value;
         }
 
-        [ShowIf("setLifetime")]
-        [SerializeField, Min(0)]
-        private float duration = 1;
-        public float Duration
+        [Tooltip("Restores the GameObject to its previous active state when the animation is reversed.")]
+        [SerializeField]
+        private bool restoreStateOnBack = true;
+        public bool RestoreStateOnBack
         {
-            get => duration;
-            set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
+            get => restoreStateOnBack;
+            set => restoreStateOnBack = value;
         }
 
         private Sequence mainSequence;
+        private bool originalIsEmitting;
 
         protected override void SetMainSequence(Sequence mainSequence)
         {
@@ -52,40 +52,39 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             }
 
+            originalIsEmitting = particleSystem.isEmitting;
+
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(Delay);
-            sequence.AppendInterval(extraInterval);    //Interval added for a bug when this tween runs in "Backwards" direction.
-            sequence.AppendCallback(()=>
-            {
-                if (!mainSequence.IsBackwards())
-                    StartParticles();
-                else
-                    FinishParticles();
-            });
 
-            if (setLifetime) sequence.AppendInterval(duration);
-
-            sequence.AppendCallback(()=>
+            float duration = GetExtraInterval();
+            var tween = DOTween.To(() => particleSystem.isEmitting ? 1f : 0f, x =>
             {
-                if (!mainSequence.IsBackwards())
-                    FinishParticles();
-                else
-                    StartParticles();
-            });
+                if (x == 0f)
+                    particleSystem.Stop();
+                else if (x == 1f)
+                    particleSystem.Play();
+            }
+            , play ? 1f : 0f, duration);
+
+            sequence.Append(tween);
 
             return sequence;
         }
 
-        public override void ResetToInitialState() { }
-
-        private void StartParticles()
+        private float GetExtraInterval()
         {
-            particleSystem.Play();
+            return restoreStateOnBack ? extraInterval : 0f;
         }
 
-        private void FinishParticles()
+        protected override void ResetToInitialState_Internal() 
         {
-            if (setLifetime)
+            if (particleSystem == null)
+                return;
+
+            if (originalIsEmitting)
+                particleSystem.Play();
+            else
                 particleSystem.Stop();
         }
 
@@ -105,12 +104,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override float GetDuration()
         {
-            return sequence == null ? -1 : sequence.Duration() - extraInterval;
+            return sequence == null ? -1 : sequence.Duration() - GetExtraInterval();
         }
 
         public override float GetExtraIntervalAdded()
         {
-            return sequence == null ? 0 : extraInterval;
+            return sequence == null ? 0 : GetExtraInterval();
         }
     }
 }

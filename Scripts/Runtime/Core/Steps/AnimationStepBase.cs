@@ -18,7 +18,7 @@ namespace BrunoMikoski.AnimationSequencer
         private FlowType flowType;
         public FlowType FlowType => flowType;
         protected Sequence sequence;
-        protected readonly float extraInterval = 0.001f; //Interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
+        protected readonly float extraInterval = 0.0001f; //Interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
 
         public abstract string DisplayName { get; }
 
@@ -44,7 +44,15 @@ namespace BrunoMikoski.AnimationSequencer
                 animationSequence.Append(sequence);
         }
 
-        public abstract void ResetToInitialState();
+        protected abstract void ResetToInitialState_Internal();
+
+        public void ResetToInitialState()
+        {
+            if (sequence == null)
+                return;
+
+            ResetToInitialState_Internal();
+        }
 
         public virtual string GetDisplayNameForEditor(int index)
         {

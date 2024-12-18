@@ -63,9 +63,6 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetText == null)
                 return;
 
-            if (string.IsNullOrEmpty(originalText))
-                return;
-
             targetText.text = originalText;
         }
     }

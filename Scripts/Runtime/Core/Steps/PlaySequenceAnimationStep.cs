@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
+    // Modified by Pablo Huaxteco
     [Serializable]
     public sealed class PlaySequenceAnimationStep : AnimationStepBase
     {
@@ -26,13 +27,19 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             }
 
-            Sequence sequence = sequencer.GenerateSequence();
+            if(!sequencer.isActiveAndEnabled)
+                return null;
+
+            //Sequence sequence = sequencer.GenerateSequence();
+            sequencer.PlayForward(true);
+            sequencer.PlayingSequence.Pause();
+            Sequence sequence = sequencer.PlayingSequence;
             sequence.SetDelay(Delay);
 
             return sequence;
         }
 
-        public override void ResetToInitialState()
+        protected override void ResetToInitialState_Internal()
         {
             if (sequencer == null)
                 return;
@@ -52,6 +59,16 @@ namespace BrunoMikoski.AnimationSequencer
         public void SetTarget(AnimationSequencerController newTarget)
         {
             sequencer = newTarget;
+        }
+
+        public override float GetDuration()
+        {
+            return sequence == null ? -1 : sequence.Duration() - sequencer.ExtraIntervalAdded;
+        }
+
+        public override float GetExtraIntervalAdded()
+        {
+            return sequence == null ? 0 : sequencer.ExtraIntervalAdded;
         }
     }
 }
