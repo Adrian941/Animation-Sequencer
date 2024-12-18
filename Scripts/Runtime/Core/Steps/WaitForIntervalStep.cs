@@ -41,7 +41,8 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override string GetDisplayNameForEditor(int index)
         {
-            return $"{index}. Wait {Delay + interval} seconds";
+            float seconds = Delay + interval;
+            return $"{index}. Wait {seconds} second{(seconds != 1 ? "s" : "")}";
         }
 
         public override float GetDuration()
