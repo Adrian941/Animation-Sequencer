@@ -350,6 +350,7 @@ namespace BrunoMikoski.AnimationSequencer
             SerializedProperty timeScaleIndependentSerializedProperty = serializedObject.FindProperty("timeScaleIndependent");
             SerializedProperty sequenceDirectionSerializedProperty = serializedObject.FindProperty("playType");
             SerializedProperty updateTypeSerializedProperty = serializedObject.FindProperty("updateType");
+            SerializedProperty dynamicStartValuesSerializedProperty = serializedObject.FindProperty("dynamicStartValues");
             SerializedProperty loopsSerializedProperty = serializedObject.FindProperty("loops");
             SerializedProperty loopTypeSerializedProperty = serializedObject.FindProperty("loopType");
 
@@ -363,6 +364,7 @@ namespace BrunoMikoski.AnimationSequencer
                 EditorGUILayout.PropertyField(updateTypeSerializedProperty);
                 DrawPlaybackSpeedSlider();
                 EditorGUILayout.PropertyField(timeScaleIndependentSerializedProperty);
+                EditorGUILayout.PropertyField(dynamicStartValuesSerializedProperty);
                 EditorGUILayout.PropertyField(loopsSerializedProperty);
                 if (loopsSerializedProperty.intValue != 0)
                     EditorGUILayout.PropertyField(loopTypeSerializedProperty);
