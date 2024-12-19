@@ -48,20 +48,21 @@ MonoBehaviour:
   - id: 0
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 2
+  autoplayMode: 0
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:

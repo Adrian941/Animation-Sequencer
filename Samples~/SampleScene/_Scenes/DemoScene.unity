@@ -1315,20 +1315,21 @@ MonoBehaviour:
   - id: 9
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 2
+  autoplayMode: 0
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -1361,6 +1362,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1235708203}
         active: 1
+        restoreStateOnBack: 1
     00000002:
       type: {class: WaitForIntervalStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1374,6 +1376,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1356541810}
         active: 0
+        restoreStateOnBack: 1
     00000004:
       type: {class: SetGameObjectActiveStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1381,6 +1384,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1900503635}
         active: 0
+        restoreStateOnBack: 1
     00000005:
       type: {class: InvokeCallbackAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1415,6 +1419,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1692255325}
         active: 1
+        restoreStateOnBack: 1
     00000008:
       type: {class: WaitForIntervalStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1428,6 +1433,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1235708203}
         active: 0
+        restoreStateOnBack: 1
 --- !u!1 &477918465
 GameObject:
   m_ObjectHideFlags: 0
@@ -1560,20 +1566,21 @@ MonoBehaviour:
   - id: 10
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 2
+  autoplayMode: 0
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -1606,6 +1613,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1235708203}
         active: 1
+        restoreStateOnBack: 1
     00000002:
       type: {class: WaitForIntervalStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1619,6 +1627,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1692255325}
         active: 0
+        restoreStateOnBack: 1
     00000004:
       type: {class: SetGameObjectActiveStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1626,6 +1635,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1159133714}
         active: 0
+        restoreStateOnBack: 1
     00000005:
       type: {class: SetGameObjectActiveStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1633,6 +1643,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1356541810}
         active: 1
+        restoreStateOnBack: 1
     00000006:
       type: {class: InvokeCallbackAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1667,6 +1678,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1900503635}
         active: 1
+        restoreStateOnBack: 1
     00000009:
       type: {class: WaitForIntervalStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -1680,6 +1692,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1235708203}
         active: 0
+        restoreStateOnBack: 1
 --- !u!1 &533309673
 GameObject:
   m_ObjectHideFlags: 0
@@ -1731,20 +1744,21 @@ MonoBehaviour:
   - id: 0
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 2
+  autoplayMode: 0
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -2914,20 +2928,21 @@ MonoBehaviour:
   - id: 9
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 1
+  autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -3514,20 +3529,21 @@ MonoBehaviour:
   - id: 0
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 1
+  autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -4541,20 +4557,21 @@ MonoBehaviour:
   - id: 10
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 1
+  autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -4636,6 +4653,7 @@ MonoBehaviour:
         flowType: 0
         target: {fileID: 1159133714}
         active: 1
+        restoreStateOnBack: 1
     0000000B:
       type: {class: TransformScaleTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
@@ -5216,20 +5234,21 @@ MonoBehaviour:
   - id: 0
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 1
+  autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: -1
   loopType: 1
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
@@ -5373,20 +5392,21 @@ MonoBehaviour:
   - id: 2
   updateType: 0
   timeScaleIndependent: 0
-  autoplayMode: 1
+  autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
   playType: 0
+  dynamicStartValues: 0
   loops: 0
   loopType: 0
   autoKill: 1
-  onStartEvent:
+  onAnimationStart:
     m_PersistentCalls:
       m_Calls: []
-  onFinishedEvent:
+  onAnimationProgress:
     m_PersistentCalls:
       m_Calls: []
-  onProgressEvent:
+  onAnimationFinish:
     m_PersistentCalls:
       m_Calls: []
   references:
