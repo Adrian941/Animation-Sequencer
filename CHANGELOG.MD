@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 
+## [1.5.0]
+### Changed
+- Fixed issues with "SampleScene" values (AutoplayType).
+- Added "dynamicStartValues" option in inspector. If true, replayed animations use current object values as the new start values; otherwise, the original start values are reused.
+- Updated "PlayParticleSystemAnimationStep" and "SetGameObjectActiveStep" logic.
+- Fixed reset behavior for text tweens.
+- Fixed bug where a paused tween in backward mode reset its position upon resuming.
+- Added "PlayBackwards" button to editor view.
+- Fixed functionality of "StepBack" and "StepNext" editor buttons.
+- Enhanced editor usability:
+    - Added "OnlyOneActionExpandedWhileEditing" feature.
+    - Added "Action" foldout for better space management.
+    - Added "OneStepExpandedWhileEditing" feature.
+    - Added "CollapseStepsWhenPreviewing" feature.
+- Improved visuals in the editor:
+    - Customized "AnimationSequencer" preferences window.
+    - Updated animation step visualization in the editor.
+    - Refined "Preview" panel layout.
+    - Adjusted styles for steps in editor view.
+- Improved functionality and options:
+    - Added "LookAt(3D/2D)" and "RectTransformPath" tween actions.
+    - Fixed AxisConstraint for "position" and "scale" tween actions, allowing axis combinations like X and Y.
+    - Added default value for action ease.
+    - Added descriptive tooltips to relevant variables.
+    - Reordered settings and events properties in the editor.
+    - Reorganized "AutoplayType" enum values.
+- Enhanced coding quality:
+    - Added regions to the "AnimationSequencerController" class.
+    - Cleaned up "AnimationSequencerControllerCustomEditor."
+- Resolved editor-specific issues:
+    - Fixed "Progress" slider refresh when entering play mode.
+    - Saved "Steps" foldout state (extended or collapsed).
+    - Fixed glitch when deleting actions in editor view.
+    - Addressed issues when reordering the steps list.
+    - Added "ShowIf" attribute to conditionally hide certain properties.
+    - Added descriptive "LogWarnings" for steps and actions.
+    - Polished editor visuals (removed extra spaces, adjusted containers, reduced margins).
+
 ## [1.0.1]
 ### Changed
 - Added a sample scene that demonstrate the usage of the Animation Sequencer.
@@ -241,6 +279,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
+[1.5.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.5.0
 [1.0.1]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.1
 [1.0.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.0
 [0.5.6]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v0.5.6
