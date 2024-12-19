@@ -27,7 +27,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
             }
 
-            if(!sequencer.isActiveAndEnabled)
+            if (!sequencer.IsActiveAndEnabled)
                 return null;
 
             //Sequence sequence = sequencer.GenerateSequence();

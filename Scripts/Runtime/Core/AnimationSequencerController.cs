@@ -45,6 +45,10 @@ namespace BrunoMikoski.AnimationSequencer
         public Sequence PlayingSequence => playingSequence;
         public bool IsPlaying => playingSequence != null && playingSequence.IsPlaying();
         /// <summary>
+        /// Checks if this script is enabled and its GameObject is active.
+        /// </summary>
+        public bool IsActiveAndEnabled => gameObject.activeSelf && enabled;
+        /// <summary>
         /// Extra interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
         /// </summary>
         public float ExtraIntervalAdded { get { return extraIntervalAdded; } }
@@ -154,7 +158,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected virtual void Play_Internal(PlayType playDirection, bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
-            if (!isActiveAndEnabled)
+            if (!IsActiveAndEnabled)
                 return;
 
             this.onCompleteCallback = onCompleteCallback;
