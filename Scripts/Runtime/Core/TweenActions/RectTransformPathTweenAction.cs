@@ -10,7 +10,6 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class RectTransformPathTweenAction : TransformPathTweenAction
     {
         public override Type TargetComponentType => typeof(RectTransform);
-        protected override bool UseLocalPath { get { return Local || relative; } }
 
         private RectTransform targetRectTransform;
         private RectTransform rootCanvasRectTransform;
@@ -50,7 +49,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 Vector2 pos = Positions[i];
 
-                if (Local || relative)
+                if (Local)
                     targetsWorldPosition[i] = pos;
                 else
                     targetsWorldPosition[i] = RootCanvasRectTransform.TransformPoint(pos);

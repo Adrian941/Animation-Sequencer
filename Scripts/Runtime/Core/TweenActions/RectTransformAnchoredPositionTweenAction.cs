@@ -39,7 +39,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("inputType == InputTypeWithAnchor.Vector && relative == false")]
+        [ShowIf("inputType == InputTypeWithAnchor.Vector")]
         [SerializeField]
         private bool local = true;
         public bool Local
@@ -160,7 +160,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPositionFromVectorInput()
         {
-            if (local || relative)
+            if (local)
                 return position;
             
             Vector3 targetWorldPosition = RootCanvasRectTransform.TransformPoint(position);

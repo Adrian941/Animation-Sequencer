@@ -70,8 +70,6 @@ namespace BrunoMikoski.AnimationSequencer
         public Vector3 GetEndValue(GameObject target)
         {
             Vector3 endValue = percentage ? Vector3.Scale(target.transform.localScale, scale / 100) : scale;
-            if (relative)
-                endValue += target.transform.localScale;
 
             return endValue;
         }

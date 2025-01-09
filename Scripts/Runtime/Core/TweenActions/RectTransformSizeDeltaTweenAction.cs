@@ -69,7 +69,7 @@ namespace BrunoMikoski.AnimationSequencer
             originalSize = targetRectTransform.sizeDelta;
 
             Vector2 endValue = percentage ? Vector2.Scale(targetRectTransform.rect.size, sizeDelta / 100) : sizeDelta;
-            if (!relative && IsRectTransformStretched(targetRectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched))
+            if (IsRectTransformStretched(targetRectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched))
             {
                 Vector2 strechValue = -(targetRectTransform.rect.size - (endValue + targetRectTransform.sizeDelta));
                 if (isHorizontallyStretched) endValue.x = strechValue.x;
@@ -86,9 +86,6 @@ namespace BrunoMikoski.AnimationSequencer
         {
             RectTransform rectTransform = target.transform as RectTransform;
             Vector2 endValue = percentage ? Vector2.Scale(rectTransform.rect.size, sizeDelta / 100) : sizeDelta;
-            
-            if (relative)
-                endValue += rectTransform.rect.size;
 
             return endValue;
         }
