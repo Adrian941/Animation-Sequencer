@@ -15,20 +15,20 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Scale";
 
         [SerializeField]
-        [Tooltip("If TRUE the input value will be used as a percentage (e.g. 50%, 100%, 200%...)")]
-        private bool percentage;
-        public bool Percentage
+        private Vector3 toScale;
+        public Vector3 ToScale
         {
-            get => percentage;
-            set => percentage = value;
+            get => toScale;
+            set => toScale = value;
         }
 
         [SerializeField]
-        private Vector3 scale;
-        public Vector3 Scale
+        [Tooltip("Enable this to interpret the input value as a percentage. Examples: 50% scales the size to half, 100% keeps it unchanged, and 200% doubles it.")]
+        private bool toUseAsPercentage;
+        public bool ToUseAsPercentage
         {
-            get => scale;
-            set => scale = value;
+            get => toUseAsPercentage;
+            set => toUseAsPercentage = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -59,7 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
             originalScale = targetTransform.localScale;
 
-            Vector3 endValue = percentage ? Vector3.Scale(originalScale, scale / 100) : scale;
+            Vector3 endValue = toUseAsPercentage ? Vector3.Scale(originalScale, toScale / 100) : toScale;
             TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration, axisConstraint, snapping);
             //TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration);
             //tween.SetOptions(axisConstraint, snapping);
@@ -69,9 +69,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Vector3 GetEndValue(GameObject target)
         {
-            Vector3 endValue = percentage ? Vector3.Scale(target.transform.localScale, scale / 100) : scale;
-            if (relative)
-                endValue += target.transform.localScale;
+            Vector3 endValue = toUseAsPercentage ? Vector3.Scale(target.transform.localScale, toScale / 100) : toScale;
 
             return endValue;
         }

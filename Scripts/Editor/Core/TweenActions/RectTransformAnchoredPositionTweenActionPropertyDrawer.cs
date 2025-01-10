@@ -9,9 +9,9 @@ namespace BrunoMikoski.AnimationSequencer
     {
         protected override bool ShouldShowProperty(SerializedProperty currentProperty, SerializedProperty property)
         {
-            if (currentProperty.name == "moveDirection")
+            if (currentProperty.name == "toAnchorPosition")
             {
-                SerializedProperty inputTypeSerializedProperty = property.FindPropertyRelative("inputType");
+                SerializedProperty inputTypeSerializedProperty = property.FindPropertyRelative("toInputType");
                 InputTypeWithAnchor inputType = (InputTypeWithAnchor)inputTypeSerializedProperty.enumValueIndex;
 
                 return inputType == InputTypeWithAnchor.Anchor;

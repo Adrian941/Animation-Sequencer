@@ -75,7 +75,7 @@ namespace BrunoMikoski.AnimationSequencer
                         continue;
 
                     Rect propertyRect = position;
-                    EditorGUI.PropertyField(propertyRect, serializedProperty, true);
+                    EditorGUI.PropertyField(propertyRect, serializedProperty, ModifyLabel(serializedProperty), true);
 
                     position.y += EditorGUI.GetPropertyHeight(serializedProperty, true) + EditorGUIUtility.standardVerticalSpacing;
                 }
@@ -113,6 +113,15 @@ namespace BrunoMikoski.AnimationSequencer
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return property.GetPropertyDrawerHeight();
+        }
+
+        private GUIContent ModifyLabel(SerializedProperty property)
+        {
+            string label = property.displayName;
+            if (label.Contains("To "))
+                label = label.Replace("To ", "");
+
+            return new GUIContent(label, property.tooltip);
         }
     }
 }

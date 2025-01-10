@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Intensity";
 
         [SerializeField, Min(0)]
-        private float intensity;
-        public float Intensity
+        private float toIntensity;
+        public float ToIntensity
         {
-            get => intensity;
-            set => intensity = Mathf.Clamp(value, 0, Mathf.Infinity);
+            get => toIntensity;
+            set => toIntensity = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
 
         private Light targetLight;
@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalIntensity = targetLight.intensity;
 
-            TweenerCore<float, float, FloatOptions> tween = targetLight.DOIntensity(intensity, duration);
+            TweenerCore<float, float, FloatOptions> tween = targetLight.DOIntensity(toIntensity, duration);
 
             return tween;
         }

@@ -15,49 +15,49 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Position";
 
         [SerializeField]
-        private InputType inputType;
-        public InputType InputType
+        private InputType toInputType;
+        public InputType ToInputType
         {
-            get => inputType;
-            set => inputType = value;
+            get => toInputType;
+            set => toInputType = value;
         }
 
-        [ShowIf("inputType", InputType.Vector)]
+        [ShowIf("toInputType", InputType.Vector)]
         [SerializeField]
-        private Vector3 position;
-        public Vector3 Position
+        private Vector3 toPosition;
+        public Vector3 ToPosition
         {
-            get => position;
-            set => position = value;
+            get => toPosition;
+            set => toPosition = value;
         }
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("inputType == InputType.Vector && relative == false")]
+        [ShowIf("toInputType == InputType.Vector")]
         [SerializeField]
-        private bool local;
-        public bool Local
+        private bool toLocal;
+        public bool ToLocal
         {
-            get => local;
-            set => local = value;
+            get => toLocal;
+            set => toLocal = value;
         }
 
-        [ShowIf("inputType", InputType.Object)]
+        [ShowIf("toInputType", InputType.Object)]
         [SerializeField]
-        private Transform target;
-        public Transform Target
+        private Transform toTarget;
+        public Transform ToTarget
         {
-            get => target;
-            set => target = value;
+            get => toTarget;
+            set => toTarget = value;
         }
 
-        [ShowIf("inputType", InputType.Object)]
+        [ShowIf("toInputType", InputType.Object)]
         [SerializeField]
-        private Vector3 offset;
-        public Vector3 Offset
+        private Vector3 toOffset;
+        public Vector3 ToOffset
         {
-            get => offset;
-            set => offset = value;
+            get => toOffset;
+            set => toOffset = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -87,7 +87,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             targetTransform = target.transform;
 
-            if (inputType == InputType.Object && this.target == null)
+            if (toInputType == InputType.Object && this.toTarget == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
                     $"selecting another <b>\"Input Type\"</b> or removing the action.");
@@ -95,7 +95,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             TweenerCore<Vector3, Vector3, VectorOptions> tween;
-            if (inputType == InputType.Vector && local)
+            if (toInputType == InputType.Vector && toLocal)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalMove(GetPosition(), duration, axisConstraint, snapping);
@@ -114,12 +114,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector3 GetPosition()
         {
-            switch (inputType)
+            switch (toInputType)
             {
                 case InputType.Vector:
-                    return position;
+                    return toPosition;
                 case InputType.Object:
-                    return target.position + offset;
+                    return toTarget.position + toOffset;
             }
 
             return Vector3.zero;
@@ -130,7 +130,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (inputType == InputType.Vector && local)
+            if (toInputType == InputType.Vector && toLocal)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;

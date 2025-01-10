@@ -13,31 +13,31 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "LookAt";
 
         [SerializeField]
-        private InputType inputType = InputType.Object;
-        public InputType InputType
+        private InputType toInputType = InputType.Object;
+        public InputType ToInputType
         {
-            get => inputType;
-            set => inputType = value;
+            get => toInputType;
+            set => toInputType = value;
         }
 
         [Tooltip("Position to point towards.")]
-        [ShowIf("inputType", InputType.Vector)]
+        [ShowIf("toInputType", InputType.Vector)]
         [SerializeField]
-        private Vector3 position;
-        public Vector3 Position
+        private Vector3 toPosition;
+        public Vector3 ToPosition
         {
-            get => position;
-            set => position = value;
+            get => toPosition;
+            set => toPosition = value;
         }
 
         [Tooltip("Object to point towards.")]
-        [ShowIf("inputType", InputType.Object)]
+        [ShowIf("toInputType", InputType.Object)]
         [SerializeField]
-        private Transform target;
-        public Transform Target
+        private Transform toTarget;
+        public Transform ToTarget
         {
-            get => target;
-            set => target = value;
+            get => toTarget;
+            set => toTarget = value;
         }
 
         [Tooltip("The vector direction considered as 'up' (default: Vector3.up)")]
@@ -66,7 +66,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             targetTransform = target.transform;
 
-            if (inputType == InputType.Object && this.target == null)
+            if (toInputType == InputType.Object && this.toTarget == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
                     $"selecting another <b>\"Input Type\"</b> or removing the action.");
@@ -81,12 +81,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector3 GetPosition()
         {
-            switch (inputType)
+            switch (toInputType)
             {
                 case InputType.Vector:
-                    return position;
+                    return toPosition;
                 case InputType.Object:
-                    return target.position;
+                    return toTarget.position;
             }
 
             return Vector3.zero;

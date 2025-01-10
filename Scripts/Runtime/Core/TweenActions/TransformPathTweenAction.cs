@@ -14,7 +14,6 @@ namespace BrunoMikoski.AnimationSequencer
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Path";
-        protected virtual bool UseLocalPath { get { return local; } }
 
         [SerializeField]
         private InputType inputType = InputType.Object;
@@ -34,7 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("inputType == InputType.Vector && relative == false")]
+        [ShowIf("inputType == InputType.Vector")]
         [SerializeField]
         private bool local;
         public bool Local
@@ -106,7 +105,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             TweenerCore<Vector3, Path, PathOptions> tween;
-            if (inputType == InputType.Vector && UseLocalPath)
+            if (inputType == InputType.Vector && local)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalPath(GetPositions(), duration, pathType, pathMode, resolution, gizmoColor);
@@ -157,7 +156,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (UseLocalPath)
+            if (local)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;

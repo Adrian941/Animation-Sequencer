@@ -16,11 +16,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Value";
 
         [SerializeField]
-        private float value;
-        public float Value
+        private float toValue;
+        public float ToValue
         {
-            get => value;
-            set => this.value = value;
+            get => toValue;
+            set => this.toValue = value;
         }
 
         [Tooltip("If true, the animated position values will snap to integer values, creating a more grid-like movement. " +
@@ -51,7 +51,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalValue = targetSlider.value;
 
-            TweenerCore<float, float, FloatOptions> tween = targetSlider.DOValue(value, duration, snapping);
+            TweenerCore<float, float, FloatOptions> tween = targetSlider.DOValue(toValue, duration, snapping);
 
             return tween;
         }

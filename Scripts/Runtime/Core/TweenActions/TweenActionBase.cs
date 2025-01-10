@@ -32,15 +32,6 @@ namespace BrunoMikoski.AnimationSequencer
             set => ease = value;
         }
 
-        [SerializeField]
-        [Tooltip("If true the end value will be calculated as (startValue + endValue) instead than being used directly.")]
-        protected bool relative;
-        public bool Relative
-        {
-            get => relative;
-            set => relative = value;
-        }
-
         protected bool isTweenGenerated;
 
         public virtual Type TargetComponentType { get; }
@@ -56,19 +47,16 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Tween GenerateTween(GameObject target, float duration, TweenAnimationStep tweenAnimationStep = null)
         {
-            SetTweenAnimationStep (tweenAnimationStep);
+            SetTweenAnimationStep(tweenAnimationStep);
             Tweener tween = GenerateTween_Internal(target, duration);
             isTweenGenerated = tween != null;
             if (!isTweenGenerated)
                 return null;
 
             if (direction == AnimationDirection.From)
-                // tween.SetRelative() does not work for From variant of "Move To Anchored Position", it must be set
-                // here instead. Not sure if this is a bug in DOTween or expected behaviour...
-                tween.From(isRelative: relative);
+                tween.From();
 
             tween.SetEase(ease);
-            tween.SetRelative(relative);
             return tween;
         }
 
@@ -96,7 +84,7 @@ namespace BrunoMikoski.AnimationSequencer
         Anchor
     }
 
-    public enum MovementDirection
+    public enum AnchorPosition
     {
         TopLeft,
         TopCenter,

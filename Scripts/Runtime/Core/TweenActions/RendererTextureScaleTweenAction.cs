@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Texture Scale";
 
         [SerializeField]
-        private Vector2 scale;
-        public Vector2 Scale
+        private Vector2 toScale;
+        public Vector2 ToScale
         {
-            get => scale;
-            set => scale = value;
+            get => toScale;
+            set => toScale = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -54,7 +54,7 @@ namespace BrunoMikoski.AnimationSequencer
             TweenerCore<Vector2, Vector2, VectorOptions> tween = null;
             if (Application.isPlaying)
             {
-                tween = targetRenderer.material.DOTiling(scale, duration);
+                tween = targetRenderer.material.DOTiling(toScale, duration);
             }
             else
             {

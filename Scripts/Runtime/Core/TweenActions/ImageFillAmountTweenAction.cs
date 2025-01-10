@@ -16,11 +16,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Fill Amount";
 
         [SerializeField, Range(0, 1)]
-        private float fillAmount;
-        public float FillAmount
+        private float toFillAmount;
+        public float ToFillAmount
         {
-            get => fillAmount;
-            set => fillAmount = Mathf.Clamp01(value);
+            get => toFillAmount;
+            set => toFillAmount = Mathf.Clamp01(value);
         }
 
         private Image targetImage;
@@ -47,7 +47,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalFillAmount = targetImage.fillAmount;
 
-            TweenerCore<float, float, FloatOptions> tween = targetImage.DOFillAmount(fillAmount, duration);
+            TweenerCore<float, float, FloatOptions> tween = targetImage.DOFillAmount(toFillAmount, duration);
 
             return tween;
         }

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Renamed "MovementDirection" enum to "AnchorPosition" and its corresponding classes.
+- Renamed "toPercentage" variable to "toUseAsPercentage" and added a more descriptive tooltip.
+- Renamed "End values" variables from steps and tween actions.
+- Removed "Relative" property from tween actions.
 
 ## [1.5.0]
 ### Changed

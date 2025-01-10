@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Rotation";
 
         [SerializeField]
-        private Vector3 eulerAngles;
-        public Vector3 EulerAngles
+        private Vector3 toEulerAngles;
+        public Vector3 ToEulerAngles
         {
-            get => eulerAngles;
-            set => eulerAngles = value;
+            get => toEulerAngles;
+            set => toEulerAngles = value;
         }
 
         [Tooltip("If true, the tween will use local coordinates of the object, rotating it relative to its parent's rotation. " +
@@ -51,12 +51,12 @@ namespace BrunoMikoski.AnimationSequencer
             if (local)
             {
                 originalRotation = targetTransform.localRotation;
-                tween = targetTransform.DOLocalRotate(eulerAngles, duration, rotationMode);
+                tween = targetTransform.DOLocalRotate(toEulerAngles, duration, rotationMode);
             }
             else
             {
                 originalRotation = targetTransform.rotation;
-                tween = targetTransform.DORotate(eulerAngles, duration, rotationMode);
+                tween = targetTransform.DORotate(toEulerAngles, duration, rotationMode);
             }
 
             return tween;

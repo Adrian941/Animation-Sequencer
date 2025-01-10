@@ -16,11 +16,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Texture Offset";
 
         [SerializeField]
-        private Vector2 offset = Vector2.one;
-        public Vector2 Offset
+        private Vector2 toOffset = Vector2.one;
+        public Vector2 ToOffset
         {
-            get => offset;
-            set => offset = value;
+            get => toOffset;
+            set => toOffset = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -59,7 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
             TweenerCore<Vector2, Vector2, VectorOptions> tween = null;
             if (Application.isPlaying)
             {
-                tween = targetGraphic.material.DOOffset(offset, duration);
+                tween = targetGraphic.material.DOOffset(toOffset, duration);
             }
             else
             {

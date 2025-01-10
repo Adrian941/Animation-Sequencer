@@ -16,11 +16,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Counter";
 
         [SerializeField]
-        private int counter;
-        public int Counter
+        private int toCounter;
+        public int ToCounter
         {
-            get => counter;
-            set => counter = value;
+            get => toCounter;
+            set => toCounter = value;
         }
 
         [SerializeField]
@@ -53,7 +53,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (int.TryParse(targetText.text, out int result))
                 startCounter = result;
 
-            TweenerCore<int, int, NoOptions> tween = targetText.DOCounter(startCounter, counter, duration, addThousandsSeparator);
+            TweenerCore<int, int, NoOptions> tween = targetText.DOCounter(startCounter, toCounter, duration, addThousandsSeparator);
 
             return tween;
         }
