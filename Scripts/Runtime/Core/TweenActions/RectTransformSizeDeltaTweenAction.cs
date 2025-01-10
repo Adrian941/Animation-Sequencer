@@ -14,19 +14,19 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         [Tooltip("If TRUE the input value will be used as a percentage (e.g. 50%, 100%, 200%...)")]
-        private bool percentage;
-        public bool Percentage
+        private bool toPercentage;
+        public bool ToPercentage
         {
-            get => percentage;
-            set => percentage = value;
+            get => toPercentage;
+            set => toPercentage = value;
         }
 
         [SerializeField]
-        private Vector2 sizeDelta;
-        public Vector2 SizeDelta
+        private Vector2 toSizeDelta;
+        public Vector2 ToSizeDelta
         {
-            get => sizeDelta;
-            set => sizeDelta = value;
+            get => toSizeDelta;
+            set => toSizeDelta = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -68,7 +68,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalSize = targetRectTransform.sizeDelta;
 
-            Vector2 endValue = percentage ? Vector2.Scale(targetRectTransform.rect.size, sizeDelta / 100) : sizeDelta;
+            Vector2 endValue = toPercentage ? Vector2.Scale(targetRectTransform.rect.size, toSizeDelta / 100) : toSizeDelta;
             if (IsRectTransformStretched(targetRectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched))
             {
                 Vector2 strechValue = -(targetRectTransform.rect.size - (endValue + targetRectTransform.sizeDelta));
@@ -85,7 +85,7 @@ namespace BrunoMikoski.AnimationSequencer
         public Vector2 GetEndValue(GameObject target)
         {
             RectTransform rectTransform = target.transform as RectTransform;
-            Vector2 endValue = percentage ? Vector2.Scale(rectTransform.rect.size, sizeDelta / 100) : sizeDelta;
+            Vector2 endValue = toPercentage ? Vector2.Scale(rectTransform.rect.size, toSizeDelta / 100) : toSizeDelta;
 
             return endValue;
         }

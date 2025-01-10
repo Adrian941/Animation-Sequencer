@@ -16,11 +16,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Color";
 
         [SerializeField]
-        private Color color = Color.white;
-        public Color Color
+        private Color toColor = Color.white;
+        public Color ToColor
         {
-            get => color;
-            set => color = value;
+            get => toColor;
+            set => toColor = value;
         }
 
         private Graphic targetGraphic;
@@ -41,7 +41,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalColor = targetGraphic.color;
 
-            TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOColor(color, duration);
+            TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOColor(toColor, duration);
 
             return tween;
         }

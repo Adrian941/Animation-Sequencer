@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Pitch";
 
         [SerializeField, Range(-3f, 3f)]
-        private float pitch = 1.5f;
-        public float Pitch
+        private float toPitch = 1.5f;
+        public float ToPitch
         {
-            get => pitch;
-            set => pitch = Mathf.Clamp(value, -3f, 3f);
+            get => toPitch;
+            set => toPitch = Mathf.Clamp(value, -3f, 3f);
         }
 
         private AudioSource targetAudioSource;
@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalPitch = targetAudioSource.pitch;
 
-            TweenerCore<float, float, FloatOptions> tween = targetAudioSource.DOPitch(pitch, duration);
+            TweenerCore<float, float, FloatOptions> tween = targetAudioSource.DOPitch(toPitch, duration);
 
             return tween;
         }

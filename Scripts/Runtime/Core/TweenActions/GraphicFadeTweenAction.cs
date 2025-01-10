@@ -16,11 +16,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Fade";
 
         [SerializeField, Range(0, 1)]
-        private float alpha;
-        public float Alpha
+        private float toAlpha;
+        public float ToAlpha
         {
-            get => alpha;
-            set => alpha = Mathf.Clamp01(value);
+            get => toAlpha;
+            set => toAlpha = Mathf.Clamp01(value);
         }
 
         private Graphic targetGraphic;
@@ -41,7 +41,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalAlpha = targetGraphic.color.a;
 
-            TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOFade(alpha, duration);
+            TweenerCore<Color, Color, ColorOptions> tween = targetGraphic.DOFade(toAlpha, duration);
 
             return tween;
         }

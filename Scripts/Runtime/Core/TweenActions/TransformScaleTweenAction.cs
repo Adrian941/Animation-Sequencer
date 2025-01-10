@@ -16,19 +16,19 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         [Tooltip("If TRUE the input value will be used as a percentage (e.g. 50%, 100%, 200%...)")]
-        private bool percentage;
-        public bool Percentage
+        private bool toPercentage;
+        public bool ToPercentage
         {
-            get => percentage;
-            set => percentage = value;
+            get => toPercentage;
+            set => toPercentage = value;
         }
 
         [SerializeField]
-        private Vector3 scale;
-        public Vector3 Scale
+        private Vector3 toScale;
+        public Vector3 ToScale
         {
-            get => scale;
-            set => scale = value;
+            get => toScale;
+            set => toScale = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -59,7 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
             originalScale = targetTransform.localScale;
 
-            Vector3 endValue = percentage ? Vector3.Scale(originalScale, scale / 100) : scale;
+            Vector3 endValue = toPercentage ? Vector3.Scale(originalScale, toScale / 100) : toScale;
             TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration, axisConstraint, snapping);
             //TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration);
             //tween.SetOptions(axisConstraint, snapping);
@@ -69,7 +69,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public Vector3 GetEndValue(GameObject target)
         {
-            Vector3 endValue = percentage ? Vector3.Scale(target.transform.localScale, scale / 100) : scale;
+            Vector3 endValue = toPercentage ? Vector3.Scale(target.transform.localScale, toScale / 100) : toScale;
 
             return endValue;
         }

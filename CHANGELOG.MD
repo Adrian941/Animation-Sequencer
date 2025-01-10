@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Renamed "End values" variables from steps and tween actions.
 - Removed "Relative" property from tween actions.
 
 ## [1.5.0]

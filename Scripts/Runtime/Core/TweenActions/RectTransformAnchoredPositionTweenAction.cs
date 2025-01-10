@@ -16,62 +16,62 @@ namespace BrunoMikoski.AnimationSequencer
 
         public RectTransformAnchoredPositionTweenAction()
         {
-            inputType = InputTypeWithAnchor.Anchor;
-            moveDirection = MovementDirection.MiddleCenter;
+            toInputType = InputTypeWithAnchor.Anchor;
+            toMoveDirection = MovementDirection.MiddleCenter;
         }
 
         [SerializeField]
-        private InputTypeWithAnchor inputType;
-        public InputTypeWithAnchor InputType
+        private InputTypeWithAnchor toInputType;
+        public InputTypeWithAnchor ToInputType
         {
-            get => inputType;
-            set => inputType = value;
+            get => toInputType;
+            set => toInputType = value;
         }
 
-        [ShowIf("inputType", InputTypeWithAnchor.Vector)]
+        [ShowIf("toInputType", InputTypeWithAnchor.Vector)]
         [SerializeField]
-        private Vector2 position;
-        public Vector2 Position
+        private Vector2 toPosition;
+        public Vector2 ToPosition
         {
-            get => position;
-            set => position = value;
+            get => toPosition;
+            set => toPosition = value;
         }
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("inputType == InputTypeWithAnchor.Vector")]
+        [ShowIf("toInputType == InputTypeWithAnchor.Vector")]
         [SerializeField]
-        private bool local = true;
-        public bool Local
+        private bool toLocal = true;
+        public bool ToLocal
         {
-            get => local;
-            set => local = value;
+            get => toLocal;
+            set => toLocal = value;
         }
 
-        [ShowIf("inputType", InputTypeWithAnchor.Object)]
+        [ShowIf("toInputType", InputTypeWithAnchor.Object)]
         [SerializeField]
-        private RectTransform target;
-        public RectTransform Target
+        private RectTransform toTarget;
+        public RectTransform ToTarget
         {
-            get => target;
-            set => target = value;
+            get => toTarget;
+            set => toTarget = value;
         }
 
         [SerializeField]
-        private MovementDirection moveDirection;
-        public MovementDirection MoveDirection
+        private MovementDirection toMoveDirection;
+        public MovementDirection ToMoveDirection
         {
-            get => moveDirection;
-            set => moveDirection = value;
+            get => toMoveDirection;
+            set => toMoveDirection = value;
         }
 
-        [ShowIf("inputType != InputTypeWithAnchor.Vector")]
+        [ShowIf("toInputType != InputTypeWithAnchor.Vector")]
         [SerializeField]
-        private Vector2 offset;
-        public Vector2 Offset
+        private Vector2 toOffset;
+        public Vector2 ToOffset
         {
-            get => offset;
-            set => offset = value;
+            get => toOffset;
+            set => toOffset = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -128,7 +128,7 @@ namespace BrunoMikoski.AnimationSequencer
                 }
             }
 
-            if (inputType == InputTypeWithAnchor.Object && this.target == null)
+            if (toInputType == InputTypeWithAnchor.Object && this.toTarget == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
                     $"selecting another <b>\"Input Type\"</b> or removing the action.");
@@ -145,7 +145,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPosition()
         {
-            switch (inputType)
+            switch (toInputType)
             {
                 case InputTypeWithAnchor.Vector:
                     return GetPositionFromVectorInput();
@@ -160,17 +160,17 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPositionFromVectorInput()
         {
-            if (local)
-                return position;
+            if (toLocal)
+                return toPosition;
             
-            Vector3 targetWorldPosition = RootCanvasRectTransform.TransformPoint(position);
+            Vector3 targetWorldPosition = RootCanvasRectTransform.TransformPoint(toPosition);
 
             return targetRectTransform.anchoredPosition + ConvertPositionFromWorldToCanvasSpace(targetWorldPosition);
         }
 
         private Vector2 GetPositionFromObjectInput()
         {
-            return targetRectTransform.anchoredPosition + ConvertPositionFromWorldToCanvasSpace(target.position) + offset;
+            return targetRectTransform.anchoredPosition + ConvertPositionFromWorldToCanvasSpace(toTarget.position) + toOffset;
         }
 
         private Vector2 GetPositionFromAnchorInput()
@@ -184,7 +184,7 @@ namespace BrunoMikoski.AnimationSequencer
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
             Vector2 rectMiddleSize = new Vector2(sizeDelta.x / 2, sizeDelta.y / 2) * localScale;
 
-            switch (moveDirection)
+            switch (toMoveDirection)
             {
                 case MovementDirection.TopLeft:
                     anchorPosition = parentCorners[1];
@@ -224,7 +224,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
             Vector2 cornerPosition = ConvertPositionFromWorldToCanvasSpace(anchorPosition) + anchorOffset;
 
-            return targetRectTransform.anchoredPosition + cornerPosition + offset;
+            return targetRectTransform.anchoredPosition + cornerPosition + toOffset;
         }
 
         /// <summary>

@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Fade (Canvas Group)";
 
         [SerializeField, Range(0, 1)]
-        private float alpha;
-        public float Alpha
+        private float toAlpha;
+        public float ToAlpha
         {
-            get => alpha;
-            set => alpha = Mathf.Clamp01(value);
+            get => toAlpha;
+            set => toAlpha = Mathf.Clamp01(value);
         }
 
         private CanvasGroup targetCanvasGroup;
@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalAlpha = targetCanvasGroup.alpha;
 
-            TweenerCore<float, float, FloatOptions> tween = targetCanvasGroup.DOFade(alpha, duration);
+            TweenerCore<float, float, FloatOptions> tween = targetCanvasGroup.DOFade(toAlpha, duration);
 
             return tween;
         }

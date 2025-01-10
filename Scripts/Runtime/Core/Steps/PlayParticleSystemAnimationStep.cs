@@ -20,11 +20,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private bool play = true;
-        public bool Play
+        private bool toPlay = true;
+        public bool ToPlay
         {
-            get => play;
-            set => play = value;
+            get => toPlay;
+            set => toPlay = value;
         }
 
         [Tooltip("Restores the GameObject to its previous active state when the animation is reversed.")]
@@ -65,7 +65,7 @@ namespace BrunoMikoski.AnimationSequencer
                 else if (x == 1f)
                     particleSystem.Play();
             }
-            , play ? 1f : 0f, duration);
+            , toPlay ? 1f : 0f, duration);
 
             sequence.Append(tween);
 

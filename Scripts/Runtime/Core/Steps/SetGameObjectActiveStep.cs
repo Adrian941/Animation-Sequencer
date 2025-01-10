@@ -20,11 +20,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private bool active;
-        public bool Active
+        private bool toActive;
+        public bool ToActive
         {
-            get => active;
-            set => active = value;
+            get => toActive;
+            set => toActive = value;
         }
 
         [Tooltip("Restores the GameObject to its previous active state when the animation is reversed.")]
@@ -59,7 +59,7 @@ namespace BrunoMikoski.AnimationSequencer
                 else if (x == 1f)
                     target.SetActive(true);
             }
-            , active ? 1f : 0f, duration);
+            , toActive ? 1f : 0f, duration);
 
             sequence.Append(tween);
 
@@ -85,7 +85,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (target != null)
                 display = target.name;
             
-            return $"{index}. Set \"{display}\" Active: {active}";
+            return $"{index}. Set \"{display}\" Active: {toActive}";
         }
 
         public override float GetDuration()

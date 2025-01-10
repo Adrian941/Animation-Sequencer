@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Field Of View";
 
         [SerializeField, Range(0, 179)]
-        private float fieldOfView = 120f;
-        public float FieldOfView
+        private float toFieldOfView = 120f;
+        public float ToFieldOfView
         {
-            get => fieldOfView;
-            set => fieldOfView = Mathf.Clamp(value, 0, 179);
+            get => toFieldOfView;
+            set => toFieldOfView = Mathf.Clamp(value, 0, 179);
         }
 
         private Camera targetCamera;
@@ -46,7 +46,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalFieldOfView = targetCamera.fieldOfView;
 
-            TweenerCore<float, float, FloatOptions> tween = targetCamera.DOFieldOfView(fieldOfView, duration);
+            TweenerCore<float, float, FloatOptions> tween = targetCamera.DOFieldOfView(toFieldOfView, duration);
 
             return tween;
         }

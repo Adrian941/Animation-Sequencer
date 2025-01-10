@@ -15,11 +15,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Volume";
 
         [SerializeField, Range(0, 1)]
-        private float volume;
-        public float Volume
+        private float toVolume;
+        public float ToVolume
         {
-            get => volume;
-            set => volume = Mathf.Clamp01(value);
+            get => toVolume;
+            set => toVolume = Mathf.Clamp01(value);
         }
 
         private AudioSource targetAudioSource;
@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalVolume = targetAudioSource.volume;
 
-            TweenerCore<float, float, FloatOptions> tween = targetAudioSource.DOFade(volume, duration);
+            TweenerCore<float, float, FloatOptions> tween = targetAudioSource.DOFade(toVolume, duration);
 
             return tween;
         }

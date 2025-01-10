@@ -17,11 +17,11 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Text (TMP)";
 
         [SerializeField]
-        private string text;
-        public string Text
+        private string toText;
+        public string ToText
         {
-            get => text;
-            set => text = value;
+            get => toText;
+            set => toText = value;
         }
 
         [SerializeField]
@@ -58,7 +58,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalText = targetTmpText.text;
 
-            TweenerCore<string, string, StringOptions> tween = targetTmpText.DOText(text, duration, richText, scrambleMode);
+            TweenerCore<string, string, StringOptions> tween = targetTmpText.DOText(toText, duration, richText, scrambleMode);
 
             return tween;
         }
