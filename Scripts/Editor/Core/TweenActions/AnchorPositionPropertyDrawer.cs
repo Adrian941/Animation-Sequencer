@@ -5,8 +5,8 @@ using UnityEngine;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
-    [CustomPropertyDrawer(typeof(MovementDirection))]
-    public class MovementDirectionPropertyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(AnchorPosition))]
+    public class AnchorPositionPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -31,7 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
             // Draw grid.
             Rect gridRect = new Rect(position.x + EditorGUIUtility.labelWidth + (enumRect.width - gridSize) * 0.5f, position.y, gridSize, gridSize);
 
-            for (int i = 0; i < System.Enum.GetValues(typeof(MovementDirection)).Length; i++)
+            for (int i = 0; i < System.Enum.GetValues(typeof(AnchorPosition)).Length; i++)
             {
                 int row = i / 3;
                 int col = i % 3;

@@ -84,7 +84,7 @@ namespace BrunoMikoski.AnimationSequencer
         Anchor
     }
 
-    public enum MovementDirection
+    public enum AnchorPosition
     {
         TopLeft,
         TopCenter,

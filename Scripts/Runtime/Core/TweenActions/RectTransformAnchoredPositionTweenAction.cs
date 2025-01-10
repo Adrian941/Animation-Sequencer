@@ -17,7 +17,7 @@ namespace BrunoMikoski.AnimationSequencer
         public RectTransformAnchoredPositionTweenAction()
         {
             toInputType = InputTypeWithAnchor.Anchor;
-            toMoveDirection = MovementDirection.MiddleCenter;
+            toAnchorPosition = AnchorPosition.MiddleCenter;
         }
 
         [SerializeField]
@@ -58,11 +58,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private MovementDirection toMoveDirection;
-        public MovementDirection ToMoveDirection
+        private AnchorPosition toAnchorPosition;
+        public AnchorPosition ToAnchorPosition
         {
-            get => toMoveDirection;
-            set => toMoveDirection = value;
+            get => toAnchorPosition;
+            set => toAnchorPosition = value;
         }
 
         [ShowIf("toInputType != InputTypeWithAnchor.Vector")]
@@ -184,40 +184,40 @@ namespace BrunoMikoski.AnimationSequencer
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
             Vector2 rectMiddleSize = new Vector2(sizeDelta.x / 2, sizeDelta.y / 2) * localScale;
 
-            switch (toMoveDirection)
+            switch (toAnchorPosition)
             {
-                case MovementDirection.TopLeft:
+                case AnchorPosition.TopLeft:
                     anchorPosition = parentCorners[1];
                     anchorOffset = new Vector2(-rectMiddleSize.x, rectMiddleSize.y);
                     break;
-                case MovementDirection.TopCenter:
+                case AnchorPosition.TopCenter:
                     anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, parentCorners[1].y);
                     anchorOffset = new Vector2(0, rectMiddleSize.y);
                     break;
-                case MovementDirection.TopRight:
+                case AnchorPosition.TopRight:
                     anchorPosition = parentCorners[2];
                     anchorOffset = new Vector2(rectMiddleSize.x, rectMiddleSize.y);
                     break;
-                case MovementDirection.MiddleLeft:
+                case AnchorPosition.MiddleLeft:
                     anchorPosition = new Vector2(parentCorners[0].x, (parentCorners[1].y + parentCorners[0].y) / 2);
                     anchorOffset = new Vector2(-rectMiddleSize.x, 0);
                     break;
-                case MovementDirection.MiddleCenter:
+                case AnchorPosition.MiddleCenter:
                     anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, (parentCorners[1].y + parentCorners[0].y) / 2);
                     break;
-                case MovementDirection.MiddleRight:
+                case AnchorPosition.MiddleRight:
                     anchorPosition = new Vector2(parentCorners[3].x, (parentCorners[1].y + parentCorners[0].y) / 2);
                     anchorOffset = new Vector2(rectMiddleSize.x, 0);
                     break;
-                case MovementDirection.BottomLeft:
+                case AnchorPosition.BottomLeft:
                     anchorPosition = parentCorners[0];
                     anchorOffset = new Vector2(-rectMiddleSize.x, -rectMiddleSize.y);
                     break;
-                case MovementDirection.BottomCenter:
+                case AnchorPosition.BottomCenter:
                     anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, parentCorners[3].y);
                     anchorOffset = new Vector2(0, -rectMiddleSize.y);
                     break;
-                case MovementDirection.BottomRight:
+                case AnchorPosition.BottomRight:
                     anchorPosition = parentCorners[3];
                     anchorOffset = new Vector2(rectMiddleSize.x, -rectMiddleSize.y);
                     break;
