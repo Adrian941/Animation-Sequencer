@@ -583,9 +583,12 @@ namespace BrunoMikoski.AnimationSequencer
             arrayElementAtIndex.isExpanded = true;
 
             //TODO copy from last step would be better here.
-            SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
-            if (targetSerializedProperty != null)
-                targetSerializedProperty.objectReferenceValue = (serializedObject.targetObject as AnimationSequencerController)?.gameObject;
+            if (targetAnimationType == typeof(TweenAnimationStep))
+            {
+                SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
+                if (targetSerializedProperty != null)
+                    targetSerializedProperty.objectReferenceValue = (serializedObject.targetObject as AnimationSequencerController)?.gameObject;
+            }
 
             serializedObject.ApplyModifiedProperties();
         }
