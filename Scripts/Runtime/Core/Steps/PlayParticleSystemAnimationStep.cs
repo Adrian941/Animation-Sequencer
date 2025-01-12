@@ -27,15 +27,6 @@ namespace BrunoMikoski.AnimationSequencer
             set => toPlay = value;
         }
 
-        [Tooltip("Restores the GameObject to its previous active state when the animation is reversed.")]
-        [SerializeField]
-        private bool restoreStateOnBack = true;
-        public bool RestoreStateOnBack
-        {
-            get => restoreStateOnBack;
-            set => restoreStateOnBack = value;
-        }
-
         private Sequence mainSequence;
         private bool originalIsEmitting;
 
@@ -74,7 +65,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private float GetExtraInterval()
         {
-            return restoreStateOnBack ? extraInterval : 0f;
+            return extraInterval;
         }
 
         protected override void ResetToInitialState_Internal() 
