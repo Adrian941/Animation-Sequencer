@@ -319,7 +319,8 @@ namespace BrunoMikoski.AnimationSequencer
         private void DrawExtraSettingsHeader(Rect rect)
         {
             //Draw auto kill value.
-            rect = DrawTopRightText(rect, $"Auto kill: {autoKillSerializedProperty.boolValue}", new Color(1f, 0.2f, 0f, 0.5f));
+            rect = DrawTopRightText(rect, $"Auto kill: {autoKillSerializedProperty.boolValue}",
+                EditorGUIUtility.isProSkin ? new Color(1f, 0.2f, 0f, 0.5f) : new Color(1f, 0.2f, 0f, 0.7f));
 
             //Draw auto play mode.
             var autoplayMode = (AnimationSequencerController.AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
@@ -337,7 +338,7 @@ namespace BrunoMikoski.AnimationSequencer
                     break;
             }
 
-            DrawTopRightText(rect, $"Autoplay {label}", new Color(1f, 0.7f, 0f, 0.5f));
+            DrawTopRightText(rect, $"Autoplay {label}", EditorGUIUtility.isProSkin ? new Color(1f, 0.7f, 0f, 0.5f) : new Color(1f, 0.7f, 0f, 0.7f));
         }
 
         private void DrawSettings()
@@ -468,13 +469,13 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 rect.y += 1;
                 StepAnimationData animationData = stepsAnimationData[index];
-                Color barColor = new Color(0.4f, 0.38f, 0.1f, 1f);
-                Color progressColor = new Color(0.1f, 0.4f, 0.1f, 1f);
+                Color barColor = EditorGUIUtility.isProSkin ? new Color(0.4f, 0.38f, 0.1f, 1f) : new Color(0.7f, 0.58f, 0.3f, 1f);
+                Color progressColor = EditorGUIUtility.isProSkin ? new Color(0.1f, 0.4f, 0.1f, 1f) : new Color(0.4f, 0.6f, 0.3f, 1f);
                 Rect barRect = new Rect(rect) { height = EditorGUIUtility.singleLineHeight };
 
                 if (animationData == null)
                 {
-                    barColor = new Color(0.4f, 0.1f, 0.1f, 1f);
+                    barColor = EditorGUIUtility.isProSkin ? new Color(0.4f, 0.1f, 0.1f, 1f) : new Color(0.7f, 0.3f, 0.3f, 1f);
                     EditorGUI.DrawRect(barRect, barColor);
                 }
                 else
