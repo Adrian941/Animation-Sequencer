@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
-    public sealed class AnimationSequencerSettings : ScriptableObjectForPreferences<AnimationSequencerSettings>
+    public sealed class AnimationSequencerPreferences : ScriptableObjectForPreferences<AnimationSequencerPreferences>
     {
         // Serialized fields
         [Header("While Editing")]

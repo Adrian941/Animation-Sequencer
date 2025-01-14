@@ -113,7 +113,7 @@ namespace BrunoMikoski.AnimationSequencer
                             EditorGUI.PropertyField(position, actionSerializedProperty);
 
                             // Verify only one action is expanded.
-                            if (AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+                            if (AnimationSequencerPreferences.GetInstance().OnlyOneActionExpandedWhileEditing)
                             {
                                 if (actionSerializedProperty.isExpanded && !wasExpanded)
                                 {
@@ -172,9 +172,9 @@ namespace BrunoMikoski.AnimationSequencer
                 SerializedProperty direction = element.FindPropertyRelative("direction");
                 if (direction == null) return null;
 
-                direction.enumValueIndex = previousElement != null && AnimationControllerDefaults.Instance.UsePreviousDirection
+                direction.enumValueIndex = previousElement != null && AnimationSequencerDefaults.Instance.UsePreviousDirection
                     ? previousElement.FindPropertyRelative("direction").enumValueIndex
-                    : (int)AnimationControllerDefaults.Instance.Direction;
+                    : (int)AnimationSequencerDefaults.Instance.Direction;
 
                 return direction;
             }
@@ -184,7 +184,7 @@ namespace BrunoMikoski.AnimationSequencer
                 SerializedProperty ease = element.FindPropertyRelative("ease").FindPropertyRelative("ease");
                 if (ease == null) return null;
 
-                if (previousElement != null && AnimationControllerDefaults.Instance.UsePreviousEase)
+                if (previousElement != null && AnimationSequencerDefaults.Instance.UsePreviousEase)
                 {
                     SerializedProperty previousEase = previousElement.FindPropertyRelative("ease").FindPropertyRelative("ease");
                     ease.enumValueIndex = previousEase.enumValueIndex;
@@ -197,22 +197,10 @@ namespace BrunoMikoski.AnimationSequencer
                 }
                 else
                 {
-                    ease.enumValueIndex = (int)AnimationControllerDefaults.Instance.Ease.Ease;
+                    ease.enumValueIndex = (int)AnimationSequencerDefaults.Instance.Ease.Ease;
                 }
 
                 return ease;
-            }
-
-            SerializedProperty SetRelative(SerializedProperty element, SerializedProperty previousElement = null)
-            {
-                SerializedProperty relative = element.FindPropertyRelative("relative");
-                if (relative == null) return null;
-
-                relative.boolValue = previousElement != null && AnimationControllerDefaults.Instance.UsePreviousRelative
-                    ? previousElement.FindPropertyRelative("relative").boolValue
-                    : AnimationControllerDefaults.Instance.Relative;
-
-                return relative;
             }
 
             if (actionsSerializedProperty.arraySize > 1)
@@ -220,17 +208,15 @@ namespace BrunoMikoski.AnimationSequencer
                 SerializedProperty previousElement = actionsSerializedProperty.GetArrayElementAtIndex(actionsSerializedProperty.arraySize - 2);
                 SetDirection(newElement, previousElement);
                 SetEase(newElement, previousElement);
-                SetRelative(newElement, previousElement);
             }
             else
             {
                 SetDirection(newElement);
                 SetEase(newElement);
-                SetRelative(newElement);
             }
 
             actionsSerializedProperty.isExpanded = true;
-            if (AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+            if (AnimationSequencerPreferences.GetInstance().OnlyOneActionExpandedWhileEditing)
             {
                 int actionsCount = actionsSerializedProperty.arraySize;
                 for (int i = 0; i < actionsCount - 1; i++)
