@@ -167,7 +167,7 @@ namespace BrunoMikoski.AnimationSequencer
                 animationStepsProperty.isExpanded = showStepsPanel;
 
             // Verify only one step is expanded.
-            if (AnimationSequencerSettings.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
+            if (AnimationSequencerPreferences.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
                 CheckOnlyOneStepExpanded();
 
             // Verify only one action is expanded when "OnlyOneActionExpandedWhileEditing" is enabled.
@@ -194,13 +194,13 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (sequencerController != null)
             {
-                sequencerController.SetAutoplayMode(AnimationControllerDefaults.Instance.AutoplayMode);
-                sequencerController.SetPauseOnStart(AnimationControllerDefaults.Instance.StartPaused);
-                sequencerController.SetTimeScaleIndependent(AnimationControllerDefaults.Instance.TimeScaleIndependent);
-                sequencerController.SetPlayType(AnimationControllerDefaults.Instance.PlayType);
-                sequencerController.SetUpdateType(AnimationControllerDefaults.Instance.UpdateType);
-                sequencerController.SetAutoKill(AnimationControllerDefaults.Instance.AutoKill);
-                sequencerController.SetLoops(AnimationControllerDefaults.Instance.Loops);
+                sequencerController.SetAutoplayMode(AnimationSequencerDefaults.Instance.AutoplayMode);
+                sequencerController.SetPauseOnStart(AnimationSequencerDefaults.Instance.StartPaused);
+                sequencerController.SetTimeScaleIndependent(AnimationSequencerDefaults.Instance.TimeScaleIndependent);
+                sequencerController.SetPlayType(AnimationSequencerDefaults.Instance.PlayType);
+                sequencerController.SetUpdateType(AnimationSequencerDefaults.Instance.UpdateType);
+                sequencerController.SetAutoKill(AnimationSequencerDefaults.Instance.AutoKill);
+                sequencerController.SetLoops(AnimationSequencerDefaults.Instance.Loops);
                 sequencerController.ResetComplete();
             }
         }
@@ -464,7 +464,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             //Step progress preview.
-            if (AnimationSequencerSettings.GetInstance().VisualizeStepsProgressWhenPreviewing && DOTweenEditorPreview.isPreviewing)
+            if (AnimationSequencerPreferences.GetInstance().VisualizeStepsProgressWhenPreviewing && DOTweenEditorPreview.isPreviewing)
             {
                 rect.y += 1;
                 StepAnimationData animationData = stepsAnimationData[index];
@@ -523,7 +523,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (animationStepBase != null)
             {
                 string animationInfo = "";
-                if (AnimationSequencerSettings.GetInstance().VisualizeStepsProgressWhenPreviewing && DOTweenEditorPreview.isPreviewing)
+                if (AnimationSequencerPreferences.GetInstance().VisualizeStepsProgressWhenPreviewing && DOTweenEditorPreview.isPreviewing)
                 {
                     StepAnimationData stepAnimation = stepsAnimationData[index];
                     animationInfo = stepAnimation == null ? "Unused Step" : stepAnimation.info;
@@ -546,7 +546,7 @@ namespace BrunoMikoski.AnimationSequencer
             // DrawContextInputOnItem(element, index, rect);
 
             // Verify if the last expanded step changed.
-            if (AnimationSequencerSettings.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
+            if (AnimationSequencerPreferences.GetInstance().OnlyOneStepExpandedWhileEditing && showStepsPanel && !DOTweenEditorPreview.isPreviewing)
             {
                 if (element.isExpanded && index != lastExpandedStepIndex)
                     lastExpandedStepChanged = true;
@@ -891,7 +891,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (justStartPreviewing)
                 wasShowingStepsPanel = showStepsPanel;
 
-            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
+            if (AnimationSequencerPreferences.GetInstance().HideStepsWhenPreviewing)
                 showStepsPanel = false;
         }
 
@@ -905,7 +905,7 @@ namespace BrunoMikoski.AnimationSequencer
             DOTweenEditorPreview.Start();
             PlaySequenceWithDirectionSettings();
 
-            AnimationSequencerSettings settings = AnimationSequencerSettings.GetInstance();
+            AnimationSequencerPreferences settings = AnimationSequencerPreferences.GetInstance();
 
             if (settings.VisualizeStepsProgressWhenPreviewing)
                 CalculateStepsAnimationData();
@@ -950,10 +950,10 @@ namespace BrunoMikoski.AnimationSequencer
             DOTweenEditorPreview.Stop();
 
             // Reset steps state.
-            if (AnimationSequencerSettings.GetInstance().HideStepsWhenPreviewing)
+            if (AnimationSequencerPreferences.GetInstance().HideStepsWhenPreviewing)
                 showStepsPanel = wasShowingStepsPanel;
 
-            if (AnimationSequencerSettings.GetInstance().CollapseStepsWhenPreviewing)
+            if (AnimationSequencerPreferences.GetInstance().CollapseStepsWhenPreviewing)
                 ExpandCollapsedSteps();
         }
         #endregion
@@ -1103,10 +1103,10 @@ namespace BrunoMikoski.AnimationSequencer
         #region Only one action expanded
         private void CollapseAllActions()
         {
-            if (onlyOneActionExpandedEnable == AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing)
+            if (onlyOneActionExpandedEnable == AnimationSequencerPreferences.GetInstance().OnlyOneActionExpandedWhileEditing)
                 return;
 
-            onlyOneActionExpandedEnable = AnimationSequencerSettings.GetInstance().OnlyOneActionExpandedWhileEditing;
+            onlyOneActionExpandedEnable = AnimationSequencerPreferences.GetInstance().OnlyOneActionExpandedWhileEditing;
 
             if (!onlyOneActionExpandedEnable)
                 return;
