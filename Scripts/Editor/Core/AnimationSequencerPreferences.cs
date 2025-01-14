@@ -6,6 +6,9 @@ namespace BrunoMikoski.AnimationSequencer
     // Modified by Pablo Huaxteco
     public sealed class AnimationSequencerPreferences : ScriptableObjectForPreferences<AnimationSequencerPreferences>
     {
+        // Public static variables
+        public static readonly string Version = "1.5.0";
+
         // Serialized fields
         [Header("While Editing")]
         [SerializeField]
@@ -43,6 +46,9 @@ namespace BrunoMikoski.AnimationSequencer
             // Modify label width.
             float originalLabelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 190;
+
+            // Version label.
+            EditorGUILayout.LabelField($"Version {Version}", EditorStyles.boldLabel);
 
             // Draw properties.
             SerializedProperty onlyOneStepExpandeProperty = serializedObject.FindProperty("onlyOneStepExpanded");
