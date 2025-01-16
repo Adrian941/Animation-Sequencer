@@ -180,7 +180,7 @@ namespace BrunoMikoski.AnimationSequencer
             Vector2 anchorPosition = Vector2.zero;
             Vector2 anchorOffset = Vector2.zero;
             CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta);
-            Vector2 sizeDelta = endSizeDelta.HasValue? endSizeDelta.Value : targetRectTransform.rect.size;
+            Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.rect.size;
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
             Vector2 rectMiddleSize = new Vector2(sizeDelta.x / 2, sizeDelta.y / 2) * localScale;
 
@@ -191,7 +191,7 @@ namespace BrunoMikoski.AnimationSequencer
                     anchorOffset = new Vector2(-rectMiddleSize.x, rectMiddleSize.y);
                     break;
                 case AnchorPosition.TopCenter:
-                    anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, parentCorners[1].y);
+                    anchorPosition = (parentCorners[1] + parentCorners[2]) / 2;
                     anchorOffset = new Vector2(0, rectMiddleSize.y);
                     break;
                 case AnchorPosition.TopRight:
@@ -199,14 +199,14 @@ namespace BrunoMikoski.AnimationSequencer
                     anchorOffset = new Vector2(rectMiddleSize.x, rectMiddleSize.y);
                     break;
                 case AnchorPosition.MiddleLeft:
-                    anchorPosition = new Vector2(parentCorners[0].x, (parentCorners[1].y + parentCorners[0].y) / 2);
+                    anchorPosition = (parentCorners[0] + parentCorners[1]) / 2;
                     anchorOffset = new Vector2(-rectMiddleSize.x, 0);
                     break;
                 case AnchorPosition.MiddleCenter:
-                    anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, (parentCorners[1].y + parentCorners[0].y) / 2);
+                    anchorPosition = (parentCorners[0] + parentCorners[2]) / 2;
                     break;
                 case AnchorPosition.MiddleRight:
-                    anchorPosition = new Vector2(parentCorners[3].x, (parentCorners[1].y + parentCorners[0].y) / 2);
+                    anchorPosition = (parentCorners[2] + parentCorners[3]) / 2;
                     anchorOffset = new Vector2(rectMiddleSize.x, 0);
                     break;
                 case AnchorPosition.BottomLeft:
@@ -214,7 +214,7 @@ namespace BrunoMikoski.AnimationSequencer
                     anchorOffset = new Vector2(-rectMiddleSize.x, -rectMiddleSize.y);
                     break;
                 case AnchorPosition.BottomCenter:
-                    anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, parentCorners[3].y);
+                    anchorPosition = (parentCorners[0] + parentCorners[3]) / 2;
                     anchorOffset = new Vector2(0, -rectMiddleSize.y);
                     break;
                 case AnchorPosition.BottomRight:
