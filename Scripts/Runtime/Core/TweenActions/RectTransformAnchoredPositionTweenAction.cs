@@ -254,8 +254,13 @@ namespace BrunoMikoski.AnimationSequencer
                     rectTransformSizeDeltaTweenAction = item as RectTransformSizeDeltaTweenAction;
             }
 
-            if (transformScaleTweenAction != null && transformScaleTweenAction.Direction == AnimationDirection.To)
-                endLocalScale = transformScaleTweenAction.GetEndValue(targetRectTransform.gameObject);
+            if (transformScaleTweenAction != null)
+            {
+                if (direction == AnimationDirection.To)
+                    endLocalScale = transformScaleTweenAction.GetEndValue(targetRectTransform.gameObject);
+                else
+                    endLocalScale = transformScaleTweenAction.GetStartValue(targetRectTransform.gameObject);
+            }
 
             if (rectTransformSizeDeltaTweenAction != null && rectTransformSizeDeltaTweenAction.Direction == AnimationDirection.To)
                 endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform.gameObject);
