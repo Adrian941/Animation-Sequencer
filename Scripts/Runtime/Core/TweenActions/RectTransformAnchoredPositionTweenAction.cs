@@ -182,7 +182,10 @@ namespace BrunoMikoski.AnimationSequencer
             CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta);
             Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.rect.size;
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
-            Vector2 rectMiddleSize = new Vector2(sizeDelta.x / 2, sizeDelta.y / 2) * localScale;
+            Quaternion rotation = targetRectTransform.localRotation;
+            if (rotation != Quaternion.identity)
+                sizeDelta = GetRotatedSize(sizeDelta, rotation);
+            Vector2 rectMiddleSize = sizeDelta / 2 * localScale;
 
             switch (toAnchorPosition)
             {
@@ -256,6 +259,41 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (rectTransformSizeDeltaTweenAction != null && rectTransformSizeDeltaTweenAction.Direction == AnimationDirection.To)
                 endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform.gameObject);
+        }
+
+        private Vector2 GetRotatedSize(Vector2 size, Quaternion rotation)
+        {
+            Vector3[] rotatedCorners = CalculateRotatedCorners(size, rotation);
+            return GetBoundingBoxSize(rotatedCorners);
+        }
+
+        private Vector3[] CalculateRotatedCorners(Vector2 size, Quaternion rotation)
+        {
+            Vector3[] corners = new Vector3[4];
+
+            // Original corners in local coordinates (before rotation)
+            Vector3 topLeft = new Vector2(-size.x / 2, size.y / 2);
+            Vector3 topRight = new Vector2(size.x / 2, size.y / 2);
+            Vector3 bottomLeft = new Vector2(-size.x / 2, -size.y / 2);
+            Vector3 bottomRight = new Vector2(size.x / 2, -size.y / 2);
+
+            // Apply rotation
+            corners[0] = rotation * topLeft;
+            corners[1] = rotation * topRight;
+            corners[2] = rotation * bottomRight;
+            corners[3] = rotation * bottomLeft;
+
+            return corners;
+        }
+
+        private Vector2 GetBoundingBoxSize(Vector3[] corners)
+        {
+            float minX = Mathf.Min(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+            float maxX = Mathf.Max(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+            float minY = Mathf.Min(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+            float maxY = Mathf.Max(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+
+            return new Vector2(maxX - minX, maxY - minY);
         }
 
         private Vector2 ConvertPositionFromWorldToCanvasSpace(Vector3 position)
