@@ -61,8 +61,6 @@ namespace BrunoMikoski.AnimationSequencer
 
             Vector3 endValue = toUseAsPercentage ? Vector3.Scale(originalScale, toScale / 100) : toScale;
             TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration, axisConstraint, snapping);
-            //TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration);
-            //tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }

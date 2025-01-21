@@ -99,15 +99,12 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalMove(GetPosition(), duration, axisConstraint, snapping);
-                //tween = targetTransform.DOLocalMove(GetPosition(), duration);
             }
             else
             {
                 originalPosition = targetTransform.position;
                 tween = targetTransform.DOMove(GetPosition(), duration, axisConstraint, snapping);
-                //tween = targetTransform.DOMove(GetPosition(), duration);
             }
-            //tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }
