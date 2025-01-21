@@ -62,6 +62,21 @@ namespace BrunoMikoski.AnimationSequencer
             return tween;
         }
 
+        public Vector3 GetStartValue(GameObject target)
+        {
+            return GetValue(target, direction == AnimationDirection.To ? AnimationDirection.From : AnimationDirection.To);
+        }
+
+        public Vector3 GetEndValue(GameObject target)
+        {
+            return GetValue(target, direction);
+        }
+
+        private Vector3 GetValue(GameObject target, AnimationDirection direction)
+        {
+            return direction == AnimationDirection.To ? toEulerAngles : target.transform.localEulerAngles;
+        }
+
         protected override void ResetToInitialState_Internal()
         {
             if (targetTransform == null)

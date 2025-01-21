@@ -179,10 +179,10 @@ namespace BrunoMikoski.AnimationSequencer
             targetRectTransform.parent.GetComponent<RectTransform>().GetWorldCorners(parentCorners);
             Vector2 anchorPosition = Vector2.zero;
             Vector2 anchorOffset = Vector2.zero;
-            CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta);
+            CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation);
             Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.rect.size;
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
-            Quaternion rotation = targetRectTransform.localRotation;
+            Quaternion rotation = endRotation.HasValue ? Quaternion.Euler(endRotation.Value) : targetRectTransform.localRotation;
             if (rotation != Quaternion.identity)
                 sizeDelta = GetRotatedSize(sizeDelta, rotation);
             Vector2 rectMiddleSize = sizeDelta / 2 * localScale;
@@ -231,27 +231,35 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         /// <summary>
-        /// Calculate the end scale and size delta values from all the tween animation step.
+        /// Calculate the end scale, size delta and rotation values from all the tween animation step.
         /// </summary>
         /// <param name="endLocalScale">Returns the end scale value. Null if no "Scale" action is found.</param>
         /// <param name="endSizeDelta">Returns the end size delta value. Null if no "Size Delta" action is found.</param>
-        private void CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta)
+        /// <param name="endRotation">Returns the end rotation value. Null if no "Rotation" action is found.</param>
+        private void CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation)
         {
             endLocalScale = null;
             endSizeDelta = null;
+            endRotation = null;
 
             if (tweenAnimationStep == null)
                 return;
 
             TransformScaleTweenAction transformScaleTweenAction = null;
             RectTransformSizeDeltaTweenAction rectTransformSizeDeltaTweenAction = null;
+            TransformRotationTweenAction transformRotationTweenAction = null;
 
             foreach (var item in tweenAnimationStep.Actions)
             {
-                if (item.GetType() == typeof(TransformScaleTweenAction))
+                if (transformScaleTweenAction != null && rectTransformSizeDeltaTweenAction != null && transformRotationTweenAction != null)
+                    break;
+
+                if (transformScaleTweenAction == null && item.GetType() == typeof(TransformScaleTweenAction))
                     transformScaleTweenAction = item as TransformScaleTweenAction;
-                else if (item.GetType() == typeof(RectTransformSizeDeltaTweenAction))
+                else if (rectTransformSizeDeltaTweenAction == null && item.GetType() == typeof(RectTransformSizeDeltaTweenAction))
                     rectTransformSizeDeltaTweenAction = item as RectTransformSizeDeltaTweenAction;
+                else if (transformRotationTweenAction == null && item.GetType() == typeof(TransformRotationTweenAction))
+                    transformRotationTweenAction = item as TransformRotationTweenAction;
             }
 
             if (transformScaleTweenAction != null)
@@ -268,6 +276,14 @@ namespace BrunoMikoski.AnimationSequencer
                     endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform);
                 else
                     endSizeDelta = rectTransformSizeDeltaTweenAction.GetStartValue(targetRectTransform);
+            }
+
+            if (transformRotationTweenAction != null)
+            {
+                if (direction == AnimationDirection.To)
+                    endRotation = transformRotationTweenAction.GetEndValue(targetRectTransform.gameObject);
+                else
+                    endRotation = transformRotationTweenAction.GetStartValue(targetRectTransform.gameObject);
             }
         }
 
