@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when calculated the end euler angle (global value) of "TransformRotationTweenAction".
 - Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when working with "TransformRotationTweenAction".
 - Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when calculated the end size delta of "RectTransformSizeDeltaTweenAction".
 - Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when calculated the end scale of "TransformScaleTweenAction".
