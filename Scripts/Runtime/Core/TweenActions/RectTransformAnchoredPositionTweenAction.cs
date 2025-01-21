@@ -262,8 +262,13 @@ namespace BrunoMikoski.AnimationSequencer
                     endLocalScale = transformScaleTweenAction.GetStartValue(targetRectTransform.gameObject);
             }
 
-            if (rectTransformSizeDeltaTweenAction != null && rectTransformSizeDeltaTweenAction.Direction == AnimationDirection.To)
-                endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform.gameObject);
+            if (rectTransformSizeDeltaTweenAction != null)
+            {
+                if (direction == AnimationDirection.To)
+                    endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform);
+                else
+                    endSizeDelta = rectTransformSizeDeltaTweenAction.GetStartValue(targetRectTransform);
+            }
         }
 
         private Vector2 GetRotatedSize(Vector2 size, Quaternion rotation)
