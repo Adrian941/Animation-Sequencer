@@ -35,7 +35,7 @@ namespace BrunoMikoski.AnimationSequencer
             "If false, the tween will operate in world space coordinates.")]
         [ShowIf("toInputType == DataInputType.Vector")]
         [SerializeField]
-        private bool toLocal;
+        private bool toLocal = true;
         public bool ToLocal
         {
             get => toLocal;
