@@ -34,7 +34,7 @@ namespace BrunoMikoski.AnimationSequencer
             sequencer.PlayForward(true);
             sequencer.PlayingSequence.Pause();
             Sequence sequence = sequencer.PlayingSequence;
-            sequence.SetDelay(Delay);
+            sequence.SetDelay(delay);
 
             return sequence;
         }

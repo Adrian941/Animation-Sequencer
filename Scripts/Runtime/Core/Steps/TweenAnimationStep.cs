@@ -62,7 +62,7 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (!isDelayAssigned)
                 {
-                    tween.SetDelay(Delay);
+                    tween.SetDelay(delay);
                     isDelayAssigned = true;
                 }
                 sequence.Join(tween);

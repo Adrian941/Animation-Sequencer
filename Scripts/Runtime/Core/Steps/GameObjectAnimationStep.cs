@@ -23,11 +23,6 @@ namespace BrunoMikoski.AnimationSequencer
             get => duration;
             set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
         }
-
-        public void SetTarget(GameObject newTarget)
-        {
-            target = newTarget;
-        }
     }
 }
 #endif

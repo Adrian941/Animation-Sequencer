@@ -10,12 +10,12 @@ namespace BrunoMikoski.AnimationSequencer
     public abstract class AnimationStepBase
     {
         [SerializeField, Min(0)]
-        private float delay;
-        public float Delay => delay;
+        protected float delay;
+        public float Delay { get { return delay; } set { delay = value; } }
         [Tooltip("Defines how the animation flows within a sequence. 'Append' plays the animation after the previous step's animation. " +
             "'Join' plays the animation at the same time as the previous step's animation.")]
         [SerializeField]
-        private FlowType flowType;
+        protected FlowType flowType;
         public FlowType FlowType => flowType;
         protected Sequence sequence;
         protected readonly float extraInterval = 0.0001f; //Interval added on "Callbacks" for a bug when this tween runs in "Backwards" direction.
@@ -38,7 +38,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (sequence == null)
                 return;
 
-            if (FlowType == FlowType.Join)
+            if (flowType == FlowType.Join)
                 animationSequence.Join(sequence);
             else
                 animationSequence.Append(sequence);

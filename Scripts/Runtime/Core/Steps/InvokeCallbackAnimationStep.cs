@@ -23,7 +23,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override Sequence GenerateTweenSequence()
         {
             Sequence sequence = DOTween.Sequence();
-            sequence.SetDelay(Delay);
+            sequence.SetDelay(delay);
             sequence.AppendInterval(extraInterval);    //Interval added for a bug when this tween runs in "Backwards" direction.
             sequence.AppendCallback(callback.Invoke);
             

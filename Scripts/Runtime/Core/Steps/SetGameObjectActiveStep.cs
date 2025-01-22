@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
             originalActiveSelf = target.activeSelf;
 
             Sequence sequence = DOTween.Sequence();
-            sequence.SetDelay(Delay);
+            sequence.SetDelay(delay);
 
             float duration = GetExtraInterval();
             var tween = DOTween.To(() => target.activeSelf ? 1f : 0f, x =>

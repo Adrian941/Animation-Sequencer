@@ -46,7 +46,7 @@ namespace BrunoMikoski.AnimationSequencer
             originalIsEmitting = particleSystem.isEmitting;
 
             Sequence sequence = DOTween.Sequence();
-            sequence.SetDelay(Delay);
+            sequence.SetDelay(delay);
 
             float duration = GetExtraInterval();
             var tween = DOTween.To(() => particleSystem.isEmitting ? 1f : 0f, x =>
