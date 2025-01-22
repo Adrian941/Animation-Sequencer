@@ -194,13 +194,13 @@ namespace BrunoMikoski.AnimationSequencer
 
             if (sequencerController != null)
             {
-                sequencerController.SetAutoplayMode(AnimationSequencerDefaults.Instance.AutoplayMode);
-                sequencerController.SetPauseOnStart(AnimationSequencerDefaults.Instance.StartPaused);
-                sequencerController.SetTimeScaleIndependent(AnimationSequencerDefaults.Instance.TimeScaleIndependent);
-                sequencerController.SetPlayType(AnimationSequencerDefaults.Instance.PlayType);
-                sequencerController.SetUpdateType(AnimationSequencerDefaults.Instance.UpdateType);
-                sequencerController.SetAutoKill(AnimationSequencerDefaults.Instance.AutoKill);
-                sequencerController.SetLoops(AnimationSequencerDefaults.Instance.Loops);
+                sequencerController.AutoplayMode = AnimationSequencerDefaults.Instance.AutoplayMode;
+                sequencerController.StartPaused = AnimationSequencerDefaults.Instance.StartPaused;
+                sequencerController.TimeScaleIndependent = AnimationSequencerDefaults.Instance.TimeScaleIndependent;
+                sequencerController.PlayTypeDirection = AnimationSequencerDefaults.Instance.PlayType;
+                sequencerController.UpdateType = AnimationSequencerDefaults.Instance.UpdateType;
+                sequencerController.Autokill = AnimationSequencerDefaults.Instance.AutoKill;
+                sequencerController.Loops = AnimationSequencerDefaults.Instance.Loops;
                 sequencerController.ResetComplete();
             }
         }
