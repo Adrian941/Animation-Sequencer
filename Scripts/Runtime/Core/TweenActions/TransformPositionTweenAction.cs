@@ -15,14 +15,14 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Position";
 
         [SerializeField]
-        private InputType toInputType;
-        public InputType ToInputType
+        private DataInputType toInputType;
+        public DataInputType ToInputType
         {
             get => toInputType;
             set => toInputType = value;
         }
 
-        [ShowIf("toInputType", InputType.Vector)]
+        [ShowIf("toInputType", DataInputType.Vector)]
         [SerializeField]
         private Vector3 toPosition;
         public Vector3 ToPosition
@@ -33,7 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("toInputType == InputType.Vector")]
+        [ShowIf("toInputType == DataInputType.Vector")]
         [SerializeField]
         private bool toLocal;
         public bool ToLocal
@@ -42,7 +42,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => toLocal = value;
         }
 
-        [ShowIf("toInputType", InputType.Object)]
+        [ShowIf("toInputType", DataInputType.Object)]
         [SerializeField]
         private Transform toTarget;
         public Transform ToTarget
@@ -51,7 +51,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => toTarget = value;
         }
 
-        [ShowIf("toInputType", InputType.Object)]
+        [ShowIf("toInputType", DataInputType.Object)]
         [SerializeField]
         private Vector3 toOffset;
         public Vector3 ToOffset
@@ -87,7 +87,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             targetTransform = target.transform;
 
-            if (toInputType == InputType.Object && this.toTarget == null)
+            if (toInputType == DataInputType.Object && this.toTarget == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
                     $"selecting another <b>\"Input Type\"</b> or removing the action.");
@@ -95,7 +95,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             TweenerCore<Vector3, Vector3, VectorOptions> tween;
-            if (toInputType == InputType.Vector && toLocal)
+            if (toInputType == DataInputType.Vector && toLocal)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalMove(GetPosition(), duration, axisConstraint, snapping);
@@ -113,9 +113,9 @@ namespace BrunoMikoski.AnimationSequencer
         {
             switch (toInputType)
             {
-                case InputType.Vector:
+                case DataInputType.Vector:
                     return toPosition;
-                case InputType.Object:
+                case DataInputType.Object:
                     return toTarget.position + toOffset;
             }
 
@@ -127,7 +127,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (toInputType == InputType.Vector && toLocal)
+            if (toInputType == DataInputType.Vector && toLocal)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;

@@ -197,7 +197,7 @@ namespace BrunoMikoski.AnimationSequencer
                 sequencerController.AutoplayMode = AnimationSequencerDefaults.Instance.AutoplayMode;
                 sequencerController.StartPaused = AnimationSequencerDefaults.Instance.StartPaused;
                 sequencerController.TimeScaleIndependent = AnimationSequencerDefaults.Instance.TimeScaleIndependent;
-                sequencerController.PlayTypeDirection = AnimationSequencerDefaults.Instance.PlayType;
+                sequencerController.PlayType = AnimationSequencerDefaults.Instance.PlayType;
                 sequencerController.UpdateType = AnimationSequencerDefaults.Instance.UpdateType;
                 sequencerController.Autokill = AnimationSequencerDefaults.Instance.AutoKill;
                 sequencerController.Loops = AnimationSequencerDefaults.Instance.Loops;
@@ -323,17 +323,17 @@ namespace BrunoMikoski.AnimationSequencer
                 EditorGUIUtility.isProSkin ? new Color(1f, 0.2f, 0f, 0.5f) : new Color(1f, 0.2f, 0f, 0.7f));
 
             //Draw auto play mode.
-            var autoplayMode = (AnimationSequencerController.AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
+            var autoplayMode = (AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
             string label = "";
             switch (autoplayMode)
             {
-                case AnimationSequencerController.AutoplayType.Nothing:
+                case AutoplayType.Nothing:
                     label = "Off";
                     break;
-                case AnimationSequencerController.AutoplayType.Start:
+                case AutoplayType.Start:
                     label = "on Start";
                     break;
-                case AnimationSequencerController.AutoplayType.OnEnable:
+                case AutoplayType.OnEnable:
                     label = "on Enable";
                     break;
             }
@@ -357,9 +357,9 @@ namespace BrunoMikoski.AnimationSequencer
 
             using (EditorGUI.ChangeCheckScope changedCheck = new EditorGUI.ChangeCheckScope())
             {
-                AnimationSequencerController.AutoplayType autoplayMode = (AnimationSequencerController.AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
+                AutoplayType autoplayMode = (AutoplayType)autoPlayModeSerializedProperty.enumValueIndex;
                 EditorGUILayout.PropertyField(autoPlayModeSerializedProperty);
-                if (autoplayMode != AnimationSequencerController.AutoplayType.Nothing)
+                if (autoplayMode != AutoplayType.Nothing)
                     EditorGUILayout.PropertyField(pauseOnStartSerializedProperty);
                 EditorGUILayout.PropertyField(sequenceDirectionSerializedProperty);
                 EditorGUILayout.PropertyField(updateTypeSerializedProperty);

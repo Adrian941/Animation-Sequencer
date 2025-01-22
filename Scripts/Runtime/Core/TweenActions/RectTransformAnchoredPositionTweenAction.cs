@@ -16,19 +16,19 @@ namespace BrunoMikoski.AnimationSequencer
 
         public RectTransformAnchoredPositionTweenAction()
         {
-            toInputType = InputTypeWithAnchor.Anchor;
+            toInputType = DataInputTypeWithAnchor.Anchor;
             toAnchorPosition = AnchorPosition.MiddleCenter;
         }
 
         [SerializeField]
-        private InputTypeWithAnchor toInputType;
-        public InputTypeWithAnchor ToInputType
+        private DataInputTypeWithAnchor toInputType;
+        public DataInputTypeWithAnchor ToInputType
         {
             get => toInputType;
             set => toInputType = value;
         }
 
-        [ShowIf("toInputType", InputTypeWithAnchor.Vector)]
+        [ShowIf("toInputType", DataInputTypeWithAnchor.Vector)]
         [SerializeField]
         private Vector2 toPosition;
         public Vector2 ToPosition
@@ -39,7 +39,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("toInputType == InputTypeWithAnchor.Vector")]
+        [ShowIf("toInputType == DataInputTypeWithAnchor.Vector")]
         [SerializeField]
         private bool toLocal = true;
         public bool ToLocal
@@ -48,7 +48,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => toLocal = value;
         }
 
-        [ShowIf("toInputType", InputTypeWithAnchor.Object)]
+        [ShowIf("toInputType", DataInputTypeWithAnchor.Object)]
         [SerializeField]
         private RectTransform toTarget;
         public RectTransform ToTarget
@@ -65,7 +65,7 @@ namespace BrunoMikoski.AnimationSequencer
             set => toAnchorPosition = value;
         }
 
-        [ShowIf("toInputType != InputTypeWithAnchor.Vector")]
+        [ShowIf("toInputType != DataInputTypeWithAnchor.Vector")]
         [SerializeField]
         private Vector2 toOffset;
         public Vector2 ToOffset
@@ -128,7 +128,7 @@ namespace BrunoMikoski.AnimationSequencer
                 }
             }
 
-            if (toInputType == InputTypeWithAnchor.Object && this.toTarget == null)
+            if (toInputType == DataInputTypeWithAnchor.Object && this.toTarget == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
                     $"selecting another <b>\"Input Type\"</b> or removing the action.");
@@ -147,11 +147,11 @@ namespace BrunoMikoski.AnimationSequencer
         {
             switch (toInputType)
             {
-                case InputTypeWithAnchor.Vector:
+                case DataInputTypeWithAnchor.Vector:
                     return GetPositionFromVectorInput();
-                case InputTypeWithAnchor.Object:
+                case DataInputTypeWithAnchor.Object:
                     return GetPositionFromObjectInput();
-                case InputTypeWithAnchor.Anchor:
+                case DataInputTypeWithAnchor.Anchor:
                     return GetPositionFromAnchorInput();
             }
 

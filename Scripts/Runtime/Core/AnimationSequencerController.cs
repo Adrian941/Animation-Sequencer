@@ -10,28 +10,6 @@ namespace BrunoMikoski.AnimationSequencer
     [DisallowMultipleComponent]
     public class AnimationSequencerController : MonoBehaviour
     {
-        #region Enumerations
-        public enum PlayType
-        {
-            Forward,
-            Backward
-        }
-        
-        public enum AutoplayType
-        {
-            Nothing,
-            Start,
-            OnEnable
-        }
-
-        public enum KillType
-        {
-            None,
-            Reset,
-            Complete
-        }
-        #endregion
-
         #region Variables
         // Public properties
         public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
@@ -40,7 +18,7 @@ namespace BrunoMikoski.AnimationSequencer
         public AutoplayType AutoplayMode { get { return autoplayMode; } set { autoplayMode = value; } }
         public bool StartPaused { get { return startPaused; } set { startPaused = value; } }
         public float PlaybackSpeed { get { return playbackSpeed; } set { playbackSpeed = value; } }
-        public PlayType PlayTypeDirection { get { return playType; } set { playType = value; } }
+        public PlayType PlayType { get { return playType; } set { playType = value; } }
         public bool DynamicStartValues { get { return dynamicStartValues; } set { dynamicStartValues = value; } }
         public int Loops { get { return loops; } set { loops = value; } }
         public LoopType LoopType { get { return loopType; } set { loopType = value; } }

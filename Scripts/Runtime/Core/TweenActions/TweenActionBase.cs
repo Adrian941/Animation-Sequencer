@@ -9,12 +9,6 @@ namespace BrunoMikoski.AnimationSequencer
     [Serializable]
     public abstract class TweenActionBase
     {
-        public enum AnimationDirection
-        {
-            To,
-            From
-        }
-
         [Tooltip("Specifies the direction of the animation: 'To' animates towards the end value, 'From' animates from the end value back to the start value.")]
         [SerializeField]
         protected AnimationDirection direction;
@@ -69,32 +63,6 @@ namespace BrunoMikoski.AnimationSequencer
 
             ResetToInitialState_Internal();
         }
-    }
-
-    public enum InputType
-    {
-        Vector,
-        Object
-    }
-
-    public enum InputTypeWithAnchor
-    {
-        Vector,
-        Object,
-        Anchor
-    }
-
-    public enum AnchorPosition
-    {
-        TopLeft,
-        TopCenter,
-        TopRight,
-        MiddleLeft,
-        MiddleCenter,
-        MiddleRight,
-        BottomLeft,
-        BottomCenter,
-        BottomRight
     }
 }
 #endif
