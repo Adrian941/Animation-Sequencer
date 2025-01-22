@@ -20,10 +20,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (property.isExpanded)
             {
                 EditorGUI.BeginChangeCheck();
-
-                //EditorGUI.indentLevel++;
                 position = EditorGUI.IndentedRect(position);
-                //EditorGUI.indentLevel--;
 
                 position.height = EditorGUIUtility.singleLineHeight;
                 position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
