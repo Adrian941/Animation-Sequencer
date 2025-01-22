@@ -82,12 +82,21 @@ namespace BrunoMikoski.AnimationSequencer
             return tween;
         }
 
-        public Vector2 GetEndValue(GameObject target)
+        public Vector2 GetStartValue(RectTransform target)
         {
-            RectTransform rectTransform = target.transform as RectTransform;
-            Vector2 endValue = toUseAsPercentage ? Vector2.Scale(rectTransform.rect.size, toSizeDelta / 100) : toSizeDelta;
+            return GetValue(target, direction == AnimationDirection.To ? AnimationDirection.From : AnimationDirection.To);
+        }
 
-            return endValue;
+        public Vector2 GetEndValue(RectTransform target)
+        {
+            return GetValue(target, direction);
+        }
+
+        private Vector2 GetValue(RectTransform target, AnimationDirection direction)
+        {
+            return direction == AnimationDirection.To ?
+                (toUseAsPercentage ? Vector2.Scale(target.sizeDelta, toSizeDelta / 100) : toSizeDelta) :
+                target.sizeDelta;
         }
 
         private bool IsRectTransformStretched(RectTransform rectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched)

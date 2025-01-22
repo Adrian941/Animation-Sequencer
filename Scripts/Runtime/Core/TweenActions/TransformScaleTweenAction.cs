@@ -61,17 +61,25 @@ namespace BrunoMikoski.AnimationSequencer
 
             Vector3 endValue = toUseAsPercentage ? Vector3.Scale(originalScale, toScale / 100) : toScale;
             TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration, axisConstraint, snapping);
-            //TweenerCore<Vector3, Vector3, VectorOptions> tween = targetTransform.DOScale(endValue, duration);
-            //tween.SetOptions(axisConstraint, snapping);
 
             return tween;
         }
 
+        public Vector3 GetStartValue(GameObject target)
+        {
+            return GetValue(target, direction == AnimationDirection.To ? AnimationDirection.From : AnimationDirection.To);
+        }
+
         public Vector3 GetEndValue(GameObject target)
         {
-            Vector3 endValue = toUseAsPercentage ? Vector3.Scale(target.transform.localScale, toScale / 100) : toScale;
+            return GetValue(target, direction);
+        }
 
-            return endValue;
+        private Vector3 GetValue(GameObject target, AnimationDirection direction)
+        {
+            return direction == AnimationDirection.To ?
+                (toUseAsPercentage ? Vector3.Scale(target.transform.localScale, toScale / 100) : toScale) :
+                target.transform.localScale;
         }
 
         protected override void ResetToInitialState_Internal()

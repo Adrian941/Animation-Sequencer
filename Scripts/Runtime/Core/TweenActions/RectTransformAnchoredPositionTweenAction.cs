@@ -179,10 +179,13 @@ namespace BrunoMikoski.AnimationSequencer
             targetRectTransform.parent.GetComponent<RectTransform>().GetWorldCorners(parentCorners);
             Vector2 anchorPosition = Vector2.zero;
             Vector2 anchorOffset = Vector2.zero;
-            CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta);
-            Vector2 sizeDelta = endSizeDelta.HasValue? endSizeDelta.Value : targetRectTransform.rect.size;
+            CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation);
+            Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.sizeDelta;
             Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
-            Vector2 rectMiddleSize = new Vector2(sizeDelta.x / 2, sizeDelta.y / 2) * localScale;
+            Quaternion rotation = endRotation.HasValue ? Quaternion.Euler(endRotation.Value) : targetRectTransform.localRotation;
+            if (rotation != Quaternion.identity)
+                sizeDelta = GetRotatedSize(sizeDelta, rotation);
+            Vector2 rectMiddleSize = sizeDelta / 2 * localScale;
 
             switch (toAnchorPosition)
             {
@@ -191,7 +194,7 @@ namespace BrunoMikoski.AnimationSequencer
                     anchorOffset = new Vector2(-rectMiddleSize.x, rectMiddleSize.y);
                     break;
                 case AnchorPosition.TopCenter:
-                    anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, parentCorners[1].y);
+                    anchorPosition = (parentCorners[1] + parentCorners[2]) / 2;
                     anchorOffset = new Vector2(0, rectMiddleSize.y);
                     break;
                 case AnchorPosition.TopRight:
@@ -199,14 +202,14 @@ namespace BrunoMikoski.AnimationSequencer
                     anchorOffset = new Vector2(rectMiddleSize.x, rectMiddleSize.y);
                     break;
                 case AnchorPosition.MiddleLeft:
-                    anchorPosition = new Vector2(parentCorners[0].x, (parentCorners[1].y + parentCorners[0].y) / 2);
+                    anchorPosition = (parentCorners[0] + parentCorners[1]) / 2;
                     anchorOffset = new Vector2(-rectMiddleSize.x, 0);
                     break;
                 case AnchorPosition.MiddleCenter:
-                    anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, (parentCorners[1].y + parentCorners[0].y) / 2);
+                    anchorPosition = (parentCorners[0] + parentCorners[2]) / 2;
                     break;
                 case AnchorPosition.MiddleRight:
-                    anchorPosition = new Vector2(parentCorners[3].x, (parentCorners[1].y + parentCorners[0].y) / 2);
+                    anchorPosition = (parentCorners[2] + parentCorners[3]) / 2;
                     anchorOffset = new Vector2(rectMiddleSize.x, 0);
                     break;
                 case AnchorPosition.BottomLeft:
@@ -214,7 +217,7 @@ namespace BrunoMikoski.AnimationSequencer
                     anchorOffset = new Vector2(-rectMiddleSize.x, -rectMiddleSize.y);
                     break;
                 case AnchorPosition.BottomCenter:
-                    anchorPosition = new Vector2((parentCorners[3].x + parentCorners[0].x) / 2, parentCorners[3].y);
+                    anchorPosition = (parentCorners[0] + parentCorners[3]) / 2;
                     anchorOffset = new Vector2(0, -rectMiddleSize.y);
                     break;
                 case AnchorPosition.BottomRight:
@@ -228,34 +231,95 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         /// <summary>
-        /// Calculate the end scale and size delta values from all the tween animation step.
+        /// Calculate the end scale, size delta and rotation values from all the tween animation step.
         /// </summary>
         /// <param name="endLocalScale">Returns the end scale value. Null if no "Scale" action is found.</param>
         /// <param name="endSizeDelta">Returns the end size delta value. Null if no "Size Delta" action is found.</param>
-        private void CalculateEndScaleAndSizeDeltaValues(out Vector3? endLocalScale, out Vector2? endSizeDelta)
+        /// <param name="endRotation">Returns the end rotation value. Null if no "Rotation" action is found.</param>
+        private void CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation)
         {
             endLocalScale = null;
             endSizeDelta = null;
+            endRotation = null;
 
             if (tweenAnimationStep == null)
                 return;
 
             TransformScaleTweenAction transformScaleTweenAction = null;
             RectTransformSizeDeltaTweenAction rectTransformSizeDeltaTweenAction = null;
+            TransformRotationTweenAction transformRotationTweenAction = null;
 
             foreach (var item in tweenAnimationStep.Actions)
             {
-                if (item.GetType() == typeof(TransformScaleTweenAction))
+                if (transformScaleTweenAction != null && rectTransformSizeDeltaTweenAction != null && transformRotationTweenAction != null)
+                    break;
+
+                if (transformScaleTweenAction == null && item.GetType() == typeof(TransformScaleTweenAction))
                     transformScaleTweenAction = item as TransformScaleTweenAction;
-                else if (item.GetType() == typeof(RectTransformSizeDeltaTweenAction))
+                else if (rectTransformSizeDeltaTweenAction == null && item.GetType() == typeof(RectTransformSizeDeltaTweenAction))
                     rectTransformSizeDeltaTweenAction = item as RectTransformSizeDeltaTweenAction;
+                else if (transformRotationTweenAction == null && item.GetType() == typeof(TransformRotationTweenAction))
+                    transformRotationTweenAction = item as TransformRotationTweenAction;
             }
 
-            if (transformScaleTweenAction != null && transformScaleTweenAction.Direction == AnimationDirection.To)
-                endLocalScale = transformScaleTweenAction.GetEndValue(targetRectTransform.gameObject);
+            if (transformScaleTweenAction != null)
+            {
+                if (direction == AnimationDirection.To)
+                    endLocalScale = transformScaleTweenAction.GetEndValue(targetRectTransform.gameObject);
+                else
+                    endLocalScale = transformScaleTweenAction.GetStartValue(targetRectTransform.gameObject);
+            }
 
-            if (rectTransformSizeDeltaTweenAction != null && rectTransformSizeDeltaTweenAction.Direction == AnimationDirection.To)
-                endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform.gameObject);
+            if (rectTransformSizeDeltaTweenAction != null)
+            {
+                if (direction == AnimationDirection.To)
+                    endSizeDelta = rectTransformSizeDeltaTweenAction.GetEndValue(targetRectTransform);
+                else
+                    endSizeDelta = rectTransformSizeDeltaTweenAction.GetStartValue(targetRectTransform);
+            }
+
+            if (transformRotationTweenAction != null)
+            {
+                if (direction == AnimationDirection.To)
+                    endRotation = transformRotationTweenAction.GetEndValue(targetRectTransform.gameObject);
+                else
+                    endRotation = transformRotationTweenAction.GetStartValue(targetRectTransform.gameObject);
+            }
+        }
+
+        private Vector2 GetRotatedSize(Vector2 size, Quaternion rotation)
+        {
+            Vector3[] rotatedCorners = CalculateRotatedCorners(size, rotation);
+            return GetBoundingBoxSize(rotatedCorners);
+        }
+
+        private Vector3[] CalculateRotatedCorners(Vector2 size, Quaternion rotation)
+        {
+            Vector3[] corners = new Vector3[4];
+
+            // Original corners in local coordinates (before rotation)
+            Vector3 topLeft = new Vector2(-size.x / 2, size.y / 2);
+            Vector3 topRight = new Vector2(size.x / 2, size.y / 2);
+            Vector3 bottomLeft = new Vector2(-size.x / 2, -size.y / 2);
+            Vector3 bottomRight = new Vector2(size.x / 2, -size.y / 2);
+
+            // Apply rotation
+            corners[0] = rotation * topLeft;
+            corners[1] = rotation * topRight;
+            corners[2] = rotation * bottomRight;
+            corners[3] = rotation * bottomLeft;
+
+            return corners;
+        }
+
+        private Vector2 GetBoundingBoxSize(Vector3[] corners)
+        {
+            float minX = Mathf.Min(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+            float maxX = Mathf.Max(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+            float minY = Mathf.Min(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+            float maxY = Mathf.Max(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+
+            return new Vector2(maxX - minX, maxY - minY);
         }
 
         private Vector2 ConvertPositionFromWorldToCanvasSpace(Vector3 position)
