@@ -48,7 +48,7 @@ namespace BrunoMikoski.AnimationSequencer
         public override float GetDuration()
         {
             //Manual calculation is performed here due to a "sequence.Duration()" error when called in the "Backwards" direction, as it always returns zero.
-            return sequence == null ? -1 : duration;
+            return createdSequence == null ? -1 : duration;
         }
     }
 }

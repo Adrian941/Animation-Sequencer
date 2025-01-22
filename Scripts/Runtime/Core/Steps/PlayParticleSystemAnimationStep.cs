@@ -95,12 +95,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override float GetDuration()
         {
-            return sequence == null ? -1 : sequence.Duration() - GetExtraInterval();
+            return createdSequence == null ? -1 : createdSequence.Duration() - GetExtraInterval();
         }
 
         public override float GetExtraIntervalAdded()
         {
-            return sequence == null ? 0 : GetExtraInterval();
+            return createdSequence == null ? 0 : GetExtraInterval();
         }
     }
 }
