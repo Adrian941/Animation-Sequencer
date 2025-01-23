@@ -10,18 +10,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class GraphicFadeTweenAction : TweenActionBase
+    public sealed class GraphicFadeTweenAction : FadeTweenAction
     {
         public override Type TargetComponentType => typeof(Graphic);
-        public override string DisplayName => "Fade";
-
-        [SerializeField, Range(0, 1)]
-        private float toAlpha;
-        public float ToAlpha
-        {
-            get => toAlpha;
-            set => toAlpha = Mathf.Clamp01(value);
-        }
 
         private Graphic targetGraphic;
         private float originalAlpha;

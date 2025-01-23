@@ -9,18 +9,10 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class CanvasGroupFadeTweenAction : TweenActionBase
+    public sealed class CanvasGroupFadeTweenAction : FadeTweenAction
     {
         public override Type TargetComponentType => typeof(CanvasGroup);
         public override string DisplayName => "Fade (Canvas Group)";
-
-        [SerializeField, Range(0, 1)]
-        private float toAlpha;
-        public float ToAlpha
-        {
-            get => toAlpha;
-            set => toAlpha = Mathf.Clamp01(value);
-        }
 
         private CanvasGroup targetCanvasGroup;
         private float originalAlpha;
