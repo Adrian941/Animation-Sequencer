@@ -9,28 +9,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class RendererTextureOffsetTweenAction : TweenActionBase
+    public sealed class RendererTextureOffsetTweenAction : TextureOffsetTweenAction
     {
         public override Type TargetComponentType => typeof(Renderer);
-        public override string DisplayName => "Texture Offset";
-
-        [SerializeField]
-        private Vector2 toOffset = Vector2.one;
-        public Vector2 ToOffset
-        {
-            get => toOffset;
-            set => toOffset = value;
-        }
-
-        [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
-            "Use this to constrain movement to a single axis (X, Y, or Z) or a combination of them.")]
-        [SerializeField]
-        private AxisConstraint axisConstraint;
-        public AxisConstraint AxisConstraint
-        {
-            get => axisConstraint;
-            set => axisConstraint = value;
-        }
 
         private Renderer targetRenderer;
         private Vector2 originalTextureOffset;
