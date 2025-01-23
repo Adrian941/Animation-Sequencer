@@ -16,18 +16,18 @@ namespace BrunoMikoski.AnimationSequencer
         protected override bool ShouldShowProperty(SerializedProperty currentProperty, SerializedProperty property)
         {
             if (currentProperty.name == "positions")
-                return IsInputTypeSelected(property, InputType.Vector);
+                return IsInputTypeSelected(property, DataInputType.Vector);
 
             if (currentProperty.name == "targets")
-                return IsInputTypeSelected(property, InputType.Object);
+                return IsInputTypeSelected(property, DataInputType.Object);
 
             return base.ShouldShowProperty(currentProperty, property);
         }
 
-        private bool IsInputTypeSelected(SerializedProperty property, InputType inputType)
+        private bool IsInputTypeSelected(SerializedProperty property, DataInputType inputType)
         {
             SerializedProperty inputTypeSerializedProperty = property.FindPropertyRelative("inputType");
-            InputType selectedInputType = (InputType)inputTypeSerializedProperty.enumValueIndex;
+            DataInputType selectedInputType = (DataInputType)inputTypeSerializedProperty.enumValueIndex;
 
             return selectedInputType == inputType;
         }

@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
             originalActiveSelf = target.activeSelf;
 
             Sequence sequence = DOTween.Sequence();
-            sequence.SetDelay(Delay);
+            sequence.SetDelay(delay);
 
             float duration = GetExtraInterval();
             var tween = DOTween.To(() => target.activeSelf ? 1f : 0f, x =>
@@ -81,12 +81,12 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override float GetDuration()
         {
-            return sequence == null ? -1 : sequence.Duration() - GetExtraInterval();
+            return createdSequence == null ? -1 : createdSequence.Duration() - GetExtraInterval();
         }
 
         public override float GetExtraIntervalAdded()
         {
-            return sequence == null ? 0 : GetExtraInterval();
+            return createdSequence == null ? 0 : GetExtraInterval();
         }
     }
 }

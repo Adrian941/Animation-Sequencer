@@ -10,18 +10,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class GraphicColorTweenAction : TweenActionBase
+    public sealed class GraphicColorTweenAction : ColorTweenAction
     {
         public override Type TargetComponentType => typeof(Graphic);
-        public override string DisplayName => "Color";
-
-        [SerializeField]
-        private Color toColor = Color.white;
-        public Color ToColor
-        {
-            get => toColor;
-            set => toColor = value;
-        }
 
         private Graphic targetGraphic;
         private Color originalColor;

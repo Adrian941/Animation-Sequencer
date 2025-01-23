@@ -16,8 +16,8 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Path";
 
         [SerializeField]
-        private InputType inputType = InputType.Object;
-        public InputType InputType
+        private DataInputType inputType = DataInputType.Object;
+        public DataInputType InputType
         {
             get => inputType;
             set => inputType = value;
@@ -33,9 +33,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("inputType == InputType.Vector")]
+        [ShowIf("inputType == DataInputType.Vector")]
         [SerializeField]
-        private bool local;
+        private bool local = true;
         public bool Local
         {
             get => local;
@@ -98,14 +98,14 @@ namespace BrunoMikoski.AnimationSequencer
         {
             targetTransform = target.transform;
 
-            if ((inputType == InputType.Vector && positions.Length == 0) || (inputType == InputType.Object && targets.Length == 0))
+            if ((inputType == DataInputType.Vector && positions.Length == 0) || (inputType == DataInputType.Object && targets.Length == 0))
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have <b>\"Targets\"</b>. Please consider assigning <b>\"Targets\"</b> or removing the action.");
                 return null;
             }
 
             TweenerCore<Vector3, Path, PathOptions> tween;
-            if (inputType == InputType.Vector && local)
+            if (inputType == DataInputType.Vector && local)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalPath(GetPositions(), duration, pathType, pathMode, resolution, gizmoColor);
@@ -124,9 +124,9 @@ namespace BrunoMikoski.AnimationSequencer
         {
             switch (inputType)
             {
-                case InputType.Vector:
+                case DataInputType.Vector:
                     return GetPositionsFromVectorInput();
-                case InputType.Object:
+                case DataInputType.Object:
                     return GetPositionsFromObjectInput();
             }
 

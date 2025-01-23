@@ -23,7 +23,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override Sequence GenerateTweenSequence()
         {
-            duration = Delay + interval;
+            duration = delay + interval;
             if (duration == 0)
             {
                 Debug.LogWarning($"The duration of the <b>\"{DisplayName}\"</b> Step is <b>\"Zero\"</b>. Please consider assigning a <b>\"Greater\"</b> value or removing the step.");
@@ -31,7 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             Sequence sequence = DOTween.Sequence();
-            sequence.SetDelay(Delay);
+            sequence.SetDelay(delay);
             sequence.AppendInterval(interval);
 
             return sequence;
@@ -41,14 +41,14 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override string GetDisplayNameForEditor(int index)
         {
-            float seconds = Delay + interval;
+            float seconds = delay + interval;
             return $"{index}. Wait {seconds} second{(seconds != 1 ? "s" : "")}";
         }
 
         public override float GetDuration()
         {
             //Manual calculation is performed here due to a "sequence.Duration()" error when called in the "Backwards" direction, as it always returns zero.
-            return sequence == null ? -1 : duration;
+            return createdSequence == null ? -1 : duration;
         }
     }
 }

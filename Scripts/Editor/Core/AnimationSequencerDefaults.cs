@@ -11,16 +11,16 @@ namespace BrunoMikoski.AnimationSequencer
         [Header("Animation Sequencer defaults")]
         //[Header("Defaults when a new instance class is created")]
         [SerializeField]
-        private AnimationSequencerController.AutoplayType autoplayMode = AnimationSequencerController.AutoplayType.Start;
-        public AnimationSequencerController.AutoplayType AutoplayMode => autoplayMode;
+        private AutoplayType autoplayMode = AutoplayType.Start;
+        public AutoplayType AutoplayMode => autoplayMode;
         
         [SerializeField]
         private bool startPaused;
         public bool StartPaused => startPaused;
 
         [SerializeField]
-        private AnimationSequencerController.PlayType playType = AnimationSequencerController.PlayType.Forward;
-        public AnimationSequencerController.PlayType PlayType => playType;
+        private PlayType playType = PlayType.Forward;
+        public PlayType PlayType => playType;
 
         [SerializeField]
         private UpdateType updateType = UpdateType.Normal;
@@ -40,8 +40,8 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Header("Actions defaults")]
         [SerializeField]
-        private TweenActionBase.AnimationDirection direction = TweenActionBase.AnimationDirection.To;
-        public TweenActionBase.AnimationDirection Direction => direction;
+        private AnimationDirection direction = AnimationDirection.To;
+        public AnimationDirection Direction => direction;
 
         [SerializeField]
         private CustomEase ease = CustomEase.InOutQuad;

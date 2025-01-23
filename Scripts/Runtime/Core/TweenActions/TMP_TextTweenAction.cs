@@ -11,34 +11,10 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Renamed by Pablo Huaxteco
     [Serializable]
-    public sealed class TMP_TextTweenAction : TweenActionBase
+    public sealed class TMP_TextTweenAction : TextTweenAction
     {
         public override Type TargetComponentType => typeof(TMP_Text);
         public override string DisplayName => "Text (TMP)";
-
-        [SerializeField]
-        private string toText;
-        public string ToText
-        {
-            get => toText;
-            set => toText = value;
-        }
-
-        [SerializeField]
-        private bool richText;
-        public bool RichText
-        {
-            get => richText;
-            set => richText = value;
-        }
-
-        [SerializeField]
-        private ScrambleMode scrambleMode = ScrambleMode.None;
-        public ScrambleMode ScrambleMode
-        {
-            get => scrambleMode;
-            set => scrambleMode = value;
-        }
 
         private TMP_Text targetTmpText;
         private string originalText;

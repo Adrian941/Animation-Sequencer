@@ -8,9 +8,25 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class TweenAnimationStep : GameObjectAnimationStep
+    public sealed class TweenAnimationStep : AnimationStepBase
     {
         public override string DisplayName => "Tween Target";
+
+        [SerializeField]
+        private GameObject target;
+        public GameObject Target
+        {
+            get => target;
+            set => target = value;
+        }
+
+        [SerializeField, Min(0)]
+        private float duration = 1;
+        public float Duration
+        {
+            get => duration;
+            set => duration = Mathf.Clamp(value, 0, Mathf.Infinity);
+        }
 
         [Tooltip("Number of loops for the animation (0 for no loops).")]
         [SerializeField]
@@ -62,7 +78,7 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (!isDelayAssigned)
                 {
-                    tween.SetDelay(Delay);
+                    tween.SetDelay(delay);
                     isDelayAssigned = true;
                 }
                 sequence.Join(tween);

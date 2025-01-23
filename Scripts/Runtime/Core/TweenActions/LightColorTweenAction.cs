@@ -9,18 +9,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class LightColorTweenAction : TweenActionBase
+    public sealed class LightColorTweenAction : ColorTweenAction
     {
         public override Type TargetComponentType => typeof(Light);
-        public override string DisplayName => "Color";
-
-        [SerializeField]
-        private Color toColor = Color.white;
-        public Color ToColor
-        {
-            get => toColor;
-            set => toColor = value;
-        }
 
         private Light targetLight;
         private Color originalColor;

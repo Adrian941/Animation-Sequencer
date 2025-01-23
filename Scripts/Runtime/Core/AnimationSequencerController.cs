@@ -10,38 +10,22 @@ namespace BrunoMikoski.AnimationSequencer
     [DisallowMultipleComponent]
     public class AnimationSequencerController : MonoBehaviour
     {
-        #region Enumerations
-        public enum PlayType
-        {
-            Forward,
-            Backward
-        }
-        
-        public enum AutoplayType
-        {
-            Nothing,
-            Start,
-            OnEnable
-        }
-
-        public enum KillType
-        {
-            None,
-            Reset,
-            Complete
-        }
-        #endregion
-
         #region Variables
         // Public properties
         public AnimationStepBase[] AnimationSteps { get { return animationSteps; } }
-        public float PlaybackSpeed => playbackSpeed;
-        public PlayType PlayTypeDirection => playType;
-        public int Loops => loops;
+        public UpdateType UpdateType { get { return updateType; } set { updateType = value; } }
+        public bool TimeScaleIndependent { get { return timeScaleIndependent; } set { timeScaleIndependent = value; } }
+        public AutoplayType AutoplayMode { get { return autoplayMode; } set { autoplayMode = value; } }
+        public bool StartPaused { get { return startPaused; } set { startPaused = value; } }
+        public float PlaybackSpeed { get { return playbackSpeed; } set { playbackSpeed = value; } }
+        public PlayType PlayType { get { return playType; } set { playType = value; } }
         public bool DynamicStartValues { get { return dynamicStartValues; } set { dynamicStartValues = value; } }
-        public UnityEvent OnAnimationStart { get { return onAnimationStart; } protected set { onAnimationStart = value; } }
-        public UnityEvent OnAnimationProgress { get { return onAnimationProgress; } protected set { onAnimationProgress = value; } }
-        public UnityEvent OnAnimationFinish { get { return onAnimationFinish; } protected set { onAnimationFinish = value; } }
+        public int Loops { get { return loops; } set { loops = value; } }
+        public LoopType LoopType { get { return loopType; } set { loopType = value; } }
+        public bool Autokill { get { return autoKill; } set { autoKill = value; } }
+        public UnityEvent OnAnimationStart { get { return onAnimationStart; } }
+        public UnityEvent OnAnimationProgress { get { return onAnimationProgress; } }
+        public UnityEvent OnAnimationFinish { get { return onAnimationFinish; } }
         public Sequence PlayingSequence => playingSequence;
         public bool IsPlaying => playingSequence != null && playingSequence.IsPlaying();
         /// <summary>
@@ -64,14 +48,14 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private AutoplayType autoplayMode = AutoplayType.Start;
         [SerializeField]
-        protected bool startPaused;
+        private bool startPaused;
         [SerializeField]
         private float playbackSpeed = 1f;
         [Tooltip("Direction of the animation (Forward or Backward).")]
         [SerializeField]
-        protected PlayType playType;
+        private PlayType playType;
         [Tooltip("If true, when replaying the animation, the current object values are used as the new start values. " +
-         "If false, the original start values are reused. This only takes effect after the animation has been killed.")]
+            "If false, the original start values are reused. This only takes effect after the animation has been killed.")]
         [SerializeField]
         private bool dynamicStartValues;
         [Tooltip("Number of loops for the animation (0 for no loops).")]
@@ -106,7 +90,7 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Unity lifecycle methods
-        protected virtual void Start()
+        private void Start()
         {
             if (autoplayMode != AutoplayType.Start)
                 return;
@@ -114,7 +98,7 @@ namespace BrunoMikoski.AnimationSequencer
             Autoplay();
         }
         
-        protected virtual void OnEnable()
+        private void OnEnable()
         {
             if (autoplayMode != AutoplayType.OnEnable)
                 return;
@@ -122,7 +106,7 @@ namespace BrunoMikoski.AnimationSequencer
             Autoplay();
         }
         
-        protected virtual void OnDisable()
+        private void OnDisable()
         {
             if (playingSequence == null)
                 return;
@@ -130,7 +114,7 @@ namespace BrunoMikoski.AnimationSequencer
             ClearPlayingSequence();
         }
 
-        protected virtual void OnDestroy()
+        private void OnDestroy()
         {
             ClearPlayingSequence();
         }
@@ -146,17 +130,17 @@ namespace BrunoMikoski.AnimationSequencer
                 playingSequence.Pause();
         }
 
-        public virtual void Play()
+        public void Play()
         {
             Play(false, null);
         }
 
-        public virtual void Play(bool resetFirst = false, UnityAction onCompleteCallback = null)
+        public void Play(bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
             Play_Internal(playType, resetFirst, onCompleteCallback);
         }
 
-        protected virtual void Play_Internal(PlayType playDirection, bool resetFirst = false, UnityAction onCompleteCallback = null)
+        private void Play_Internal(PlayType playDirection, bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
             if (!IsActiveAndEnabled)
                 return;
@@ -195,29 +179,29 @@ namespace BrunoMikoski.AnimationSequencer
             isSequenceJustGenerated = false;
         }
 
-        public virtual void PlayForward()
+        public void PlayForward()
         {
             PlayForward(false, null);
         }
 
-        public virtual void PlayForward(bool resetFirst = false, UnityAction onCompleteCallback = null)
+        public void PlayForward(bool resetFirst = false, UnityAction onCompleteCallback = null)
         {
             Play_Internal(PlayType.Forward, resetFirst, onCompleteCallback);
         }
 
-        public virtual void PlayBackwards()
+        public void PlayBackwards()
         {
             PlayBackwards(false, null);
         }
 
-        public virtual void PlayBackwards(bool completeFirst = false, UnityAction onCompleteCallback = null)
+        public void PlayBackwards(bool completeFirst = false, UnityAction onCompleteCallback = null)
         {
             Play_Internal(PlayType.Backward, completeFirst, onCompleteCallback);
         }
         #endregion
 
         #region Time and Progress Management
-        public virtual void Goto(float timePosition, bool WithCallbacks = true, bool andPlay = false)
+        public void Goto(float timePosition, bool WithCallbacks = true, bool andPlay = false)
         {
             if (playingSequence == null)
                 Play();
@@ -228,7 +212,7 @@ namespace BrunoMikoski.AnimationSequencer
                 playingSequence.Goto(timePosition, andPlay);
         }
         
-        public virtual void SetProgress(float progress, bool WithCallbacks = true, bool andPlay = false)
+        public void SetProgress(float progress, bool WithCallbacks = true, bool andPlay = false)
         {
             if (playingSequence == null)
                 Play();
@@ -245,7 +229,7 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Pause, Resume, and Complete
-        public virtual void TogglePause()
+        public void TogglePause()
         {
             if (playingSequence == null)
                 return;
@@ -253,7 +237,7 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.TogglePause();
         }
 
-        public virtual void Pause()
+        public void Pause()
         {
             if (!IsPlaying)
                 return;
@@ -261,7 +245,7 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence.Pause();
         }
 
-        public virtual void Resume()
+        public void Resume()
         {
             if (playingSequence == null)
                 return;
@@ -273,7 +257,7 @@ namespace BrunoMikoski.AnimationSequencer
         /// Rewinds the sequence to its starting position.
         /// </summary>
         /// <param name="includeDelay"></param>
-        public virtual void Rewind(bool includeDelay = true)
+        public void Rewind(bool includeDelay = true)
         {
             if (playingSequence == null)
                 return;
@@ -287,7 +271,7 @@ namespace BrunoMikoski.AnimationSequencer
         /// For backward playback, it rewinds to the end of the sequence.
         /// </summary>
         /// <param name="includeDelay"></param>
-        public virtual void RewindCurrentPlayDirection(bool includeDelay = true)
+        public void RewindCurrentPlayDirection(bool includeDelay = true)
         {
             if (playingSequence == null)
                 return;
@@ -302,7 +286,7 @@ namespace BrunoMikoski.AnimationSequencer
         /// Completes the sequence immediately, moving it to its final position.
         /// </summary>
         /// <param name="withCallbacks"></param>
-        public virtual void Complete(bool withCallbacks = false)
+        public void Complete(bool withCallbacks = false)
         {
             if (playingSequence == null)
                 return;
@@ -316,7 +300,7 @@ namespace BrunoMikoski.AnimationSequencer
         /// For backward playback, moves to the start of the sequence.
         /// </summary>
         /// <param name="withCallbacks"></param>
-        public virtual void CompleteCurrentPlayDirection(bool withCallbacks = false)
+        public void CompleteCurrentPlayDirection(bool withCallbacks = false)
         {
             if (playingSequence == null)
                 return;
@@ -334,7 +318,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
         }
 
-        public virtual void Kill(KillType killType = KillType.Reset)
+        public void Kill(KillType killType = KillType.Reset)
         {
             if (playingSequence == null)
                 return;
@@ -354,7 +338,7 @@ namespace BrunoMikoski.AnimationSequencer
         #endregion
 
         #region Sequence Generation and Reset
-        public virtual Sequence GenerateSequence()
+        public Sequence GenerateSequence()
         {
             Sequence sequence = DOTween.Sequence();
             
@@ -432,7 +416,7 @@ namespace BrunoMikoski.AnimationSequencer
                 ClearPlayingSequence();
         }
 
-        public virtual void ResetToInitialState()
+        public void ResetToInitialState()
         {
             for (int i = animationSteps.Length - 1; i >= 0; i--)
             {
@@ -447,43 +431,6 @@ namespace BrunoMikoski.AnimationSequencer
             playingSequence = null;
         }
         #endregion
-        #endregion
-
-        #region Set values
-        public void SetAutoplayMode(AutoplayType autoplayType)
-        {
-            autoplayMode = autoplayType;
-        }
-        
-        public void SetPauseOnStart(bool targetPauseOnAwake)
-        {
-            startPaused = targetPauseOnAwake;
-        }
-        
-        public void SetTimeScaleIndependent(bool targetTimeScaleIndependent)
-        {
-            timeScaleIndependent = targetTimeScaleIndependent;
-        }
-        
-        public void SetPlayType(PlayType targetPlayType)
-        {
-            playType = targetPlayType;
-        }
-        
-        public void SetUpdateType(UpdateType targetUpdateType)
-        {
-            updateType = targetUpdateType;
-        }
-        
-        public void SetAutoKill(bool targetAutoKill)
-        {
-            autoKill = targetAutoKill;
-        }
-        
-        public void SetLoops(int targetLoops)
-        {
-            loops = targetLoops;
-        }
         #endregion
 
         #region Editor-Only methods

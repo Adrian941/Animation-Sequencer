@@ -13,15 +13,15 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "LookAt";
 
         [SerializeField]
-        private InputType toInputType = InputType.Object;
-        public InputType ToInputType
+        private DataInputType toInputType = DataInputType.Object;
+        public DataInputType ToInputType
         {
             get => toInputType;
             set => toInputType = value;
         }
 
         [Tooltip("Position to point towards.")]
-        [ShowIf("toInputType", InputType.Vector)]
+        [ShowIf("toInputType", DataInputType.Vector)]
         [SerializeField]
         private Vector3 toPosition;
         public Vector3 ToPosition
@@ -31,7 +31,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [Tooltip("Object to point towards.")]
-        [ShowIf("toInputType", InputType.Object)]
+        [ShowIf("toInputType", DataInputType.Object)]
         [SerializeField]
         private Transform toTarget;
         public Transform ToTarget
@@ -66,7 +66,7 @@ namespace BrunoMikoski.AnimationSequencer
         {
             targetTransform = target.transform;
 
-            if (toInputType == InputType.Object && this.toTarget == null)
+            if (toInputType == DataInputType.Object && this.toTarget == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Action does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b>, " +
                     $"selecting another <b>\"Input Type\"</b> or removing the action.");
@@ -83,9 +83,9 @@ namespace BrunoMikoski.AnimationSequencer
         {
             switch (toInputType)
             {
-                case InputType.Vector:
+                case DataInputType.Vector:
                     return toPosition;
-                case InputType.Object:
+                case DataInputType.Object:
                     return toTarget.position;
             }
 
