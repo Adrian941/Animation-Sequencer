@@ -31,17 +31,17 @@ namespace BrunoMikoski.AnimationSequencer
 
         public abstract Sequence GenerateTweenSequence();
 
-        public void AddTweenToSequence(Sequence animationSequence)
+        public void AddTweenToSequence(Sequence mainSequence)
         {
-            SetMainSequence(animationSequence);
+            SetMainSequence(mainSequence);
             createdSequence = GenerateTweenSequence();
             if (createdSequence == null)
                 return;
 
             if (flowType == FlowType.Join)
-                animationSequence.Join(createdSequence);
+                mainSequence.Join(createdSequence);
             else
-                animationSequence.Append(createdSequence);
+                mainSequence.Append(createdSequence);
         }
 
         protected abstract void ResetToInitialState_Internal();

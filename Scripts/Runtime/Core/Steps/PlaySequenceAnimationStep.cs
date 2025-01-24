@@ -12,8 +12,8 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Play Sequence";
 
         [SerializeField]
-        private AnimationSequencerController sequencer;
-        public AnimationSequencerController Sequencer
+        private AnimationSequencer sequencer;
+        public AnimationSequencer Sequencer
         {
             get => sequencer;
             set => sequencer = value;
@@ -56,7 +56,7 @@ namespace BrunoMikoski.AnimationSequencer
             return $"{index}. Play \"{display}\" Sequence";
         }
 
-        public void SetTarget(AnimationSequencerController newTarget)
+        public void SetTarget(AnimationSequencer newTarget)
         {
             sequencer = newTarget;
         }
