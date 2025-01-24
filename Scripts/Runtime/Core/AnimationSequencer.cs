@@ -8,7 +8,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [DisallowMultipleComponent]
-    public class AnimationSequencerController : MonoBehaviour
+    public class AnimationSequencer : MonoBehaviour
     {
         #region Variables
         // Public properties

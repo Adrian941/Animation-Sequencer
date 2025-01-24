@@ -12,8 +12,8 @@ using UnityEngine;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
-    [CustomEditor(typeof(AnimationSequencerController), true)]
-    public class AnimationSequencerControllerCustomEditor : Editor
+    [CustomEditor(typeof(AnimationSequencer), true)]
+    public class AnimationSequencerCustomEditor : Editor
     {
         #region Variables
         // Static variables and properties 
@@ -30,7 +30,7 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         // Private variables
-        private AnimationSequencerController sequencerController;
+        private AnimationSequencer sequencerController;
         private ReorderableList reorderableList;
         private GUIStyle topRightTextStyle;
         private StepAnimationData[] stepsAnimationData;
@@ -74,7 +74,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private void InitializeReferences()
         {
-            sequencerController = target as AnimationSequencerController;
+            sequencerController = target as AnimationSequencer;
             playbackSpeedProperty = serializedObject.FindProperty("playbackSpeed");
             autoPlayModeSerializedProperty = serializedObject.FindProperty("autoplayMode");
             autoKillSerializedProperty = serializedObject.FindProperty("autoKill");
@@ -190,7 +190,7 @@ namespace BrunoMikoski.AnimationSequencer
         #region Sequencer defaults
         private void SetDefaults()
         {
-            sequencerController = target as AnimationSequencerController;
+            sequencerController = target as AnimationSequencer;
 
             if (sequencerController != null)
             {
@@ -588,7 +588,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
                 if (targetSerializedProperty != null)
-                    targetSerializedProperty.objectReferenceValue = (serializedObject.targetObject as AnimationSequencerController)?.gameObject;
+                    targetSerializedProperty.objectReferenceValue = (serializedObject.targetObject as AnimationSequencer)?.gameObject;
             }
 
             serializedObject.ApplyModifiedProperties();
