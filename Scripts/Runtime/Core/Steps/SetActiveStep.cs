@@ -7,9 +7,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class SetGameObjectActiveStep : AnimationStepBase
+    public sealed class SetActiveStep : AnimationStepBase
     {
-        public override string DisplayName => "Set Game Object Active";
+        public override string DisplayName => "Set Active";
 
         [SerializeField]
         private GameObject target;

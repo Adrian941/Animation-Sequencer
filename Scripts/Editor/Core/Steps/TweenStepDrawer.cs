@@ -7,8 +7,8 @@ using UnityEngine;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
-    [CustomPropertyDrawer(typeof(TweenAnimationStep))]
-    public class TweenAnimationStepPropertyDrawer : AnimationStepBasePropertyDrawer
+    [CustomPropertyDrawer(typeof(TweenStep))]
+    public class TweenStepDrawer : AnimationStepBaseDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

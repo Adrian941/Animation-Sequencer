@@ -8,7 +8,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class InvokeCallbackAnimationStep : AnimationStepBase
+    public sealed class InvokeCallbackStep : AnimationStepBase
     {
         public override string DisplayName => "Invoke Callback";
 

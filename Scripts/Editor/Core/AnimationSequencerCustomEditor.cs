@@ -584,7 +584,7 @@ namespace BrunoMikoski.AnimationSequencer
             arrayElementAtIndex.isExpanded = true;
 
             //TODO copy from last step would be better here.
-            if (targetAnimationType == typeof(TweenAnimationStep))
+            if (targetAnimationType == typeof(TweenStep))
             {
                 SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
                 if (targetSerializedProperty != null)
@@ -694,7 +694,7 @@ namespace BrunoMikoski.AnimationSequencer
             int reorderableListCount = reorderableList.serializedProperty.arraySize;
             for (int i = 0; i < reorderableListCount; i++)
             {
-                bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenAnimationStep);
+                bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenStep);
                 if (isTweenStep)
                 {
                     List<bool> actionsExpandedStates = new List<bool>();
@@ -1115,7 +1115,7 @@ namespace BrunoMikoski.AnimationSequencer
             int reorderableListCount = reorderableList.serializedProperty.arraySize;
             for (int i = 0; i < reorderableListCount; i++)
             {
-                bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenAnimationStep);
+                bool isTweenStep = sequencerController.AnimationSteps[i].GetType() == typeof(TweenStep);
                 if (isTweenStep)
                 {
                     SerializedProperty actionsSerializedProperty = reorderableList.serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("actions");

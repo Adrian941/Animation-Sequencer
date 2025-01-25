@@ -7,9 +7,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class PlayParticleSystemAnimationStep : AnimationStepBase
+    public sealed class PlayParticleSystemStep : AnimationStepBase
     {
-        public override string DisplayName => "Play Particle System";
+        public override string DisplayName => "Play Particles";
 
         [SerializeField]
         private ParticleSystem particleSystem;
@@ -90,7 +90,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (particleSystem != null)
                 display = particleSystem.name;
 
-            return $"{index}. Play \"{display}\" particle system";
+            return $"{index}. Play \"{display}\" particles";
         }
 
         public override float GetDuration()

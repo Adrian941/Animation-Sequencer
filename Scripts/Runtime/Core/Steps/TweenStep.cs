@@ -8,9 +8,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class TweenAnimationStep : AnimationStepBase
+    public sealed class TweenStep : AnimationStepBase
     {
-        public override string DisplayName => "Tween Target";
+        public override string DisplayName => "Tween";
 
         [SerializeField]
         private GameObject target;

@@ -107,9 +107,9 @@ namespace BrunoMikoski.AnimationSequencer
                 return rootCanvasRectTransform;
             }
         }
-        private TweenAnimationStep tweenAnimationStep;
+        private TweenStep tweenAnimationStep;
 
-        protected override void SetTweenAnimationStep(TweenAnimationStep tweenAnimationStep)
+        protected override void SetTweenAnimationStep(TweenStep tweenAnimationStep)
         {
             this.tweenAnimationStep = tweenAnimationStep;
         }

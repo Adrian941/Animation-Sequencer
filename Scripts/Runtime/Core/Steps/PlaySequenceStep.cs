@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [Serializable]
-    public sealed class PlaySequenceAnimationStep : AnimationStepBase
+    public sealed class PlaySequenceStep : AnimationStepBase
     {
         public override string DisplayName => "Play Sequence";
 
