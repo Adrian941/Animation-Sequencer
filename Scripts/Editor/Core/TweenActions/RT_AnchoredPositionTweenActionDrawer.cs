@@ -4,8 +4,8 @@ using UnityEditor;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
-    [CustomPropertyDrawer(typeof(RectTransformAnchoredPositionTweenAction), true)]
-    public class RectTransformAnchoredPositionTweenActionPropertyDrawer : TweenActionBasePropertyDrawer
+    [CustomPropertyDrawer(typeof(RT_AnchoredPositionTweenAction), true)]
+    public class RT_AnchoredPositionTweenActionDrawer : TweenActionBaseDrawer
     {
         protected override bool ShouldShowProperty(SerializedProperty currentProperty, SerializedProperty property)
         {

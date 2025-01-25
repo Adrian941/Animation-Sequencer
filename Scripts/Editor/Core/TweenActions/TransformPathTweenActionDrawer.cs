@@ -6,7 +6,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(TransformPathTweenAction), true)]
-    public class TransformPathTweenActionPropertyDrawer : TweenActionBasePropertyDrawer
+    public class TransformPathTweenActionDrawer : TweenActionBaseDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

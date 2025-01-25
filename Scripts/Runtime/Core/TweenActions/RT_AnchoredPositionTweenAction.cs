@@ -9,12 +9,12 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class RectTransformAnchoredPositionTweenAction : TweenActionBase
+    public sealed class RT_AnchoredPositionTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(RectTransform);
         public override string DisplayName => "Anchored Position";
 
-        public RectTransformAnchoredPositionTweenAction()
+        public RT_AnchoredPositionTweenAction()
         {
             toInputType = DataInputTypeWithAnchor.Anchor;
             toAnchorPosition = AnchorPosition.MiddleCenter;
@@ -246,7 +246,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return;
 
             TransformScaleTweenAction transformScaleTweenAction = null;
-            RectTransformSizeDeltaTweenAction rectTransformSizeDeltaTweenAction = null;
+            RT_SizeDeltaTweenAction rectTransformSizeDeltaTweenAction = null;
             TransformRotationTweenAction transformRotationTweenAction = null;
 
             foreach (var item in tweenAnimationStep.Actions)
@@ -256,8 +256,8 @@ namespace BrunoMikoski.AnimationSequencer
 
                 if (transformScaleTweenAction == null && item.GetType() == typeof(TransformScaleTweenAction))
                     transformScaleTweenAction = item as TransformScaleTweenAction;
-                else if (rectTransformSizeDeltaTweenAction == null && item.GetType() == typeof(RectTransformSizeDeltaTweenAction))
-                    rectTransformSizeDeltaTweenAction = item as RectTransformSizeDeltaTweenAction;
+                else if (rectTransformSizeDeltaTweenAction == null && item.GetType() == typeof(RT_SizeDeltaTweenAction))
+                    rectTransformSizeDeltaTweenAction = item as RT_SizeDeltaTweenAction;
                 else if (transformRotationTweenAction == null && item.GetType() == typeof(TransformRotationTweenAction))
                     transformRotationTweenAction = item as TransformRotationTweenAction;
             }

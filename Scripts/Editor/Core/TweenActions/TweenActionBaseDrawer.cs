@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(TweenActionBase), true)]
-    public class TweenActionBasePropertyDrawer : PropertyDrawer
+    public class TweenActionBaseDrawer : PropertyDrawer
     {
         protected void DrawBaseGUI(Rect position, SerializedProperty property, GUIContent label, params string[] excludedPropertiesNames)
         {

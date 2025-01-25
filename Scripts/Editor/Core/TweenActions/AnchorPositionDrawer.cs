@@ -6,7 +6,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [CustomPropertyDrawer(typeof(AnchorPosition))]
-    public class AnchorPositionPropertyDrawer : PropertyDrawer
+    public class AnchorPositionDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

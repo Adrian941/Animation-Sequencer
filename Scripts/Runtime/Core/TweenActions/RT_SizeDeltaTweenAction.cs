@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class RectTransformSizeDeltaTweenAction : TweenActionBase
+    public sealed class RT_SizeDeltaTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(RectTransform);
         public override string DisplayName => "Size Delta";
