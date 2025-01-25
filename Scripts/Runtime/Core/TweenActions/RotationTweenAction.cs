@@ -9,7 +9,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformRotationTweenAction : TweenActionBase
+    public sealed class RotationTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Rotation";

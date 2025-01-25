@@ -5,8 +5,8 @@ using UnityEngine;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
-    [CustomPropertyDrawer(typeof(TransformPathTweenAction), true)]
-    public class TransformPathTweenActionDrawer : TweenActionBaseDrawer
+    [CustomPropertyDrawer(typeof(PathTweenAction), true)]
+    public class PathTweenActionDrawer : TweenActionBaseDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

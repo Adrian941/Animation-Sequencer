@@ -9,7 +9,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformScaleTweenAction : TweenActionBase
+    public sealed class ScaleTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Scale";

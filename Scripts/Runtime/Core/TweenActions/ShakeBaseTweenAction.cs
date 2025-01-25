@@ -6,7 +6,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public abstract class TransformShakeBaseTweenAction : TweenActionBase
+    public abstract class ShakeBaseTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string[] ExcludedFields => new string[] { "direction", "ease", "relative" };

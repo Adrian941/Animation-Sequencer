@@ -245,21 +245,21 @@ namespace BrunoMikoski.AnimationSequencer
             if (tweenAnimationStep == null)
                 return;
 
-            TransformScaleTweenAction transformScaleTweenAction = null;
+            ScaleTweenAction transformScaleTweenAction = null;
             RT_SizeDeltaTweenAction rectTransformSizeDeltaTweenAction = null;
-            TransformRotationTweenAction transformRotationTweenAction = null;
+            RotationTweenAction transformRotationTweenAction = null;
 
             foreach (var item in tweenAnimationStep.Actions)
             {
                 if (transformScaleTweenAction != null && rectTransformSizeDeltaTweenAction != null && transformRotationTweenAction != null)
                     break;
 
-                if (transformScaleTweenAction == null && item.GetType() == typeof(TransformScaleTweenAction))
-                    transformScaleTweenAction = item as TransformScaleTweenAction;
+                if (transformScaleTweenAction == null && item.GetType() == typeof(ScaleTweenAction))
+                    transformScaleTweenAction = item as ScaleTweenAction;
                 else if (rectTransformSizeDeltaTweenAction == null && item.GetType() == typeof(RT_SizeDeltaTweenAction))
                     rectTransformSizeDeltaTweenAction = item as RT_SizeDeltaTweenAction;
-                else if (transformRotationTweenAction == null && item.GetType() == typeof(TransformRotationTweenAction))
-                    transformRotationTweenAction = item as TransformRotationTweenAction;
+                else if (transformRotationTweenAction == null && item.GetType() == typeof(RotationTweenAction))
+                    transformRotationTweenAction = item as RotationTweenAction;
             }
 
             if (transformScaleTweenAction != null)

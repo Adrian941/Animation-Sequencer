@@ -9,7 +9,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformLookAt2DTweenAction : TweenActionBase
+    public sealed class LookAt2DTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string[] ExcludedFields => new string[] { "relative" };

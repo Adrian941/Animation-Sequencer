@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformLookAtTweenAction : TweenActionBase
+    public sealed class LookAtTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "LookAt";

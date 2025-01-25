@@ -10,7 +10,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public class TransformPathTweenAction : TweenActionBase
+    public class PathTweenAction : TweenActionBase
     {
         public override Type TargetComponentType => typeof(Transform);
         public override string DisplayName => "Path";

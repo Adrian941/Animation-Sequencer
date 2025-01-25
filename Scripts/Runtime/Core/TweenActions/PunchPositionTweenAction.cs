@@ -7,9 +7,9 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformShakePositionTweenAction : TransformShakeBaseTweenAction
+    public sealed class PunchPositionTweenAction : PunchBaseTweenAction
     {
-        public override string DisplayName => "Shake Position";
+        public override string DisplayName => "Punch Position";
 
         [Tooltip("If true, the animated position values will snap to integer values, creating a more grid-like movement. " +
             "Useful for animations that require precise, whole number positioning.")]
@@ -29,7 +29,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
             originalPosition = targetTransform.position;
 
-            Tweener tween = targetTransform.DOShakePosition(duration, strength, vibrato, randomness, snapping, fadeout);
+            Tweener tween = targetTransform.DOPunchPosition(punch, duration, vibrato, elasticity, snapping);
 
             return tween;
         }

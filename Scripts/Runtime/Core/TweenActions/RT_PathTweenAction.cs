@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class RT_PathTweenAction : TransformPathTweenAction
+    public sealed class RT_PathTweenAction : PathTweenAction
     {
         public override Type TargetComponentType => typeof(RectTransform);
 

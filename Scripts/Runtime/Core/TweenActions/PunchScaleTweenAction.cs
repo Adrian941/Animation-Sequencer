@@ -7,24 +7,19 @@ namespace BrunoMikoski.AnimationSequencer
 {
     // Created by Pablo Huaxteco
     [Serializable]
-    public sealed class TransformPunchRotationTweenAction : TransformPunchBaseTweenAction
+    public sealed class PunchScaleTweenAction : PunchBaseTweenAction
     {
-        public override string DisplayName => "Punch Rotation";
-
-        public TransformPunchRotationTweenAction()
-        {
-            punch = new Vector3(45, 45, 45);
-        }
+        public override string DisplayName => "Punch Scale";
 
         private Transform targetTransform;
-        private Quaternion originalRotation;
+        private Vector3 originalScale;
 
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
-            originalRotation = targetTransform.rotation;
+            originalScale = targetTransform.localScale;
 
-            Tweener tween = targetTransform.DOPunchRotation(punch, duration, vibrato, elasticity);
+            Tweener tween = targetTransform.DOPunchScale(punch, duration, vibrato, elasticity);
 
             return tween;
         }
@@ -34,7 +29,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            targetTransform.rotation = originalRotation;
+            targetTransform.localScale = originalScale;
         }
     }
 }
