@@ -35,11 +35,11 @@ namespace BrunoMikoski.AnimationSequencer
         /// </summary>
         public virtual string[] ExcludedFields => null;
 
-        protected virtual void SetTweenAnimationStep(TweenAnimationStep tweenAnimationStep) { }
+        protected virtual void SetTweenAnimationStep(TweenStep tweenAnimationStep) { }
 
         protected abstract Tweener GenerateTween_Internal(GameObject target, float duration);
 
-        public Tween GenerateTween(GameObject target, float duration, TweenAnimationStep tweenAnimationStep = null)
+        public Tween GenerateTween(GameObject target, float duration, TweenStep tweenAnimationStep = null)
         {
             SetTweenAnimationStep(tweenAnimationStep);
             Tweener tween = GenerateTween_Internal(target, duration);
