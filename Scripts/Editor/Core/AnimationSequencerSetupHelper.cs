@@ -33,7 +33,7 @@ namespace BrunoMikoski.AnimationSequencer
             else
             {
                 RemoveScriptingDefineSymbol();
-                Debug.LogWarning("No DOTween found, animation sequencer will be disabled until DOTween setup is complete and asmdef files are created");
+                Debug.LogWarning("No DOTween found, Animation Sequencer will be disabled until DOTween setup is complete and asmdef files are created.");
             }
         }
 
