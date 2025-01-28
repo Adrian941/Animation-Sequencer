@@ -36,13 +36,13 @@ namespace BrunoMikoski.AnimationSequencer
         {
             AdvancedDropdownItem root = new AdvancedDropdownItem("Tween Actions");
 
-            foreach (var typeToDisplayGUI in AnimationSequenceEditorGUIUtility.TypeToDisplayName)
+            foreach (var typeToDisplayGUI in AnimationSequencerEditorGUIUtility.TypeToDisplayName)
             {
                 Type baseTweenActionType = typeToDisplayGUI.Key;
 
                 AdvancedDropdownItem targetFolder = root;
 
-                if (AnimationSequenceEditorGUIUtility.TypeToParentDisplay.TryGetValue(baseTweenActionType, out GUIContent parent))
+                if (AnimationSequencerEditorGUIUtility.TypeToParentDisplay.TryGetValue(baseTweenActionType, out GUIContent parent))
                 {
                     AdvancedDropdownItem item = targetFolder.children.FirstOrDefault(dropdownItem =>
                         dropdownItem.name.Equals(parent.text, StringComparison.Ordinal));
@@ -62,7 +62,7 @@ namespace BrunoMikoski.AnimationSequencer
                 TweenActionAdvancedDropdownItem tweenActionAdvancedDropdownItem =
                     new TweenActionAdvancedDropdownItem(baseTweenActionType, typeToDisplayGUI.Value.text)
                     {
-                        enabled = !IsTypeAlreadyInUse(actionsList, baseTweenActionType) && AnimationSequenceEditorGUIUtility.CanActionBeAppliedToTarget(baseTweenActionType, targetGameObject)
+                        enabled = !IsTypeAlreadyInUse(actionsList, baseTweenActionType) && AnimationSequencerEditorGUIUtility.CanActionBeAppliedToTarget(baseTweenActionType, targetGameObject)
                     };
 
                 if (typeToDisplayGUI.Value.image != null)

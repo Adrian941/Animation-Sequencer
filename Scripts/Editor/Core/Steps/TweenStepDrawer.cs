@@ -67,10 +67,10 @@ namespace BrunoMikoski.AnimationSequencer
                 {
                     try
                     {
-                        AnimationSequenceEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
+                        AnimationSequencerEditorGUIUtility.TweenActionsDropdown.Show(position, actionsSerializedProperty, targetSerializedProperty.objectReferenceValue,
                         item =>
                         {
-                            if (AnimationSequenceEditorGUIUtility.TweenActionsDropdown.IsTypeAlreadyInUse(actionsSerializedProperty, item.BaseTweenActionType))
+                            if (AnimationSequencerEditorGUIUtility.TweenActionsDropdown.IsTypeAlreadyInUse(actionsSerializedProperty, item.BaseTweenActionType))
                                 Debug.Log($"The '{item.name}' action already exists in this step.");
                             else
                                 AddNewActionOfType(actionsSerializedProperty, item.BaseTweenActionType);
@@ -226,7 +226,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return false;
 
             Type type = actionSerializedProperty.GetTypeFromManagedFullTypeName();
-            return AnimationSequenceEditorGUIUtility.CanActionBeAppliedToTarget(type, targetSerializedProperty.objectReferenceValue as GameObject);
+            return AnimationSequencerEditorGUIUtility.CanActionBeAppliedToTarget(type, targetSerializedProperty.objectReferenceValue as GameObject);
         }
 
         private bool DrawDeleteActionButton(Rect position, SerializedProperty property, int targetIndex)
