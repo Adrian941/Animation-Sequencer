@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace BrunoMikoski.AnimationSequencer
 {
-    public static class AnimationSequenceEditorGUIUtility
+    public static class AnimationSequencerEditorGUIUtility
     {
         private static Dictionary<Type, GUIContent> cachedTypeToDisplayName;
         public static Dictionary<Type, GUIContent> TypeToDisplayName

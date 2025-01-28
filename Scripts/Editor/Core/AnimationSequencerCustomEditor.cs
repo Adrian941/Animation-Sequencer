@@ -233,46 +233,46 @@ namespace BrunoMikoski.AnimationSequencer
             GUIStyle previewButtonStyle = new GUIStyle(GUI.skin.button);
             previewButtonStyle.fixedWidth = previewButtonStyle.fixedHeight = 32;
 
-            if (GUILayout.Button(AnimationSequenceEditorGUIUtility.RewindButtonGUIContent, previewButtonStyle))
+            if (GUILayout.Button(AnimationSequencerEditorGUIUtility.RewindButtonGUIContent, previewButtonStyle))
                 Rewind();
 
-            if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StepBackGUIContent, previewButtonStyle))
+            if (GUILayout.Button(AnimationSequencerEditorGUIUtility.StepBackGUIContent, previewButtonStyle))
                 StepBack();
 
             // Play forward button
             if (sequencerController.IsPlaying && !sequencerController.PlayingSequence.IsBackwards())
             {
-                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
+                if (GUILayout.Button(AnimationSequencerEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
                     sequencerController.PlayingSequence.Pause();
             }
             else
             {
-                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PlayForwardButtonGUIContent, previewButtonStyle))
+                if (GUILayout.Button(AnimationSequencerEditorGUIUtility.PlayForwardButtonGUIContent, previewButtonStyle))
                     PlaySequenceForward();
             }
 
             // Play backward button
             if (sequencerController.IsPlaying && sequencerController.PlayingSequence.IsBackwards())
             {
-                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
+                if (GUILayout.Button(AnimationSequencerEditorGUIUtility.PauseButtonGUIContent, previewButtonStyle))
                     sequencerController.PlayingSequence.Pause();
             }
             else
             {
-                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.PlayBackwardsButtonGUIContent, previewButtonStyle))
+                if (GUILayout.Button(AnimationSequencerEditorGUIUtility.PlayBackwardsButtonGUIContent, previewButtonStyle))
                     PlaySequenceBackwards();
             }
 
-            if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StepNextGUIContent, previewButtonStyle))
+            if (GUILayout.Button(AnimationSequencerEditorGUIUtility.StepNextGUIContent, previewButtonStyle))
                 StepNext();
 
-            if (GUILayout.Button(AnimationSequenceEditorGUIUtility.ForwardButtonGUIContent, previewButtonStyle))
+            if (GUILayout.Button(AnimationSequencerEditorGUIUtility.ForwardButtonGUIContent, previewButtonStyle))
                 CompleteForward();
 
             if (!Application.isPlaying)
             {
                 GUI.enabled = DOTweenEditorPreview.isPreviewing;
-                if (GUILayout.Button(AnimationSequenceEditorGUIUtility.StopButtonGUIContent, previewButtonStyle))
+                if (GUILayout.Button(AnimationSequencerEditorGUIUtility.StopButtonGUIContent, previewButtonStyle))
                     StopSequence();
             }
 

@@ -24,7 +24,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             //Action name.
             Type type = property.GetTypeFromManagedFullTypeName();
-            GUIContent displayName = AnimationSequenceEditorGUIUtility.GetTypeDisplayName(type);
+            GUIContent displayName = AnimationSequencerEditorGUIUtility.GetTypeDisplayName(type);
             //-36 = ("X" button width size + foldout´s arrow width size).
             EditorGUI.LabelField(new Rect(position.x + 10, position.y, position.width - 36, position.height), displayName, EditorStyles.boldLabel);
             position.y += EditorGUIUtility.singleLineHeight;
