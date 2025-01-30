@@ -27,7 +27,7 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
-            originalPosition = targetTransform.position;
+            originalPosition = targetTransform.localPosition;
 
             Tweener tween = targetTransform.DOPunchPosition(punch, duration, vibrato, elasticity, snapping);
 
@@ -39,7 +39,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            targetTransform.position = originalPosition;
+            targetTransform.localPosition = originalPosition;
         }
     }
 }
