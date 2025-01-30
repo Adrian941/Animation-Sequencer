@@ -46,7 +46,7 @@ namespace BrunoMikoski.AnimationSequencer
         [SerializeField]
         private bool timeScaleIndependent;
         [SerializeField]
-        private AutoplayType autoplayMode = AutoplayType.Start;
+        private AutoplayType autoplayMode;
         [SerializeField]
         private bool startPaused;
         [SerializeField]

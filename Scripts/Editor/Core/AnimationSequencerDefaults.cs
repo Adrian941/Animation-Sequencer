@@ -11,7 +11,7 @@ namespace BrunoMikoski.AnimationSequencer
         [Header("Animation Sequencer defaults")]
         //[Header("Defaults when a new instance class is created")]
         [SerializeField]
-        private AutoplayType autoplayMode = AutoplayType.Start;
+        private AutoplayType autoplayMode;
         public AutoplayType AutoplayMode => autoplayMode;
         
         [SerializeField]
