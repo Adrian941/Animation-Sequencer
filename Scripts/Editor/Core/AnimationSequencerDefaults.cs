@@ -19,11 +19,11 @@ namespace BrunoMikoski.AnimationSequencer
         public bool StartPaused => startPaused;
 
         [SerializeField]
-        private PlayType playType = PlayType.Forward;
+        private PlayType playType;
         public PlayType PlayType => playType;
 
         [SerializeField]
-        private UpdateType updateType = UpdateType.Normal;
+        private UpdateType updateType;
         public UpdateType UpdateType => updateType;
 
         [SerializeField]
@@ -40,7 +40,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [Header("Actions defaults")]
         [SerializeField]
-        private AnimationDirection direction = AnimationDirection.To;
+        private AnimationDirection direction;
         public AnimationDirection Direction => direction;
 
         [SerializeField]

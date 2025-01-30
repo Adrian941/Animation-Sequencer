@@ -2,8 +2,8 @@ namespace BrunoMikoski.AnimationSequencer
 {
     public enum AnimationDirection
     {
-        To,
-        From
+        From,
+        To
     }
 
     public enum DataInputType
