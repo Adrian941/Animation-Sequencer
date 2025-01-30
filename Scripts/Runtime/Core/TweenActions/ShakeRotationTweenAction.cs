@@ -22,7 +22,7 @@ namespace BrunoMikoski.AnimationSequencer
         protected override Tweener GenerateTween_Internal(GameObject target, float duration)
         {
             targetTransform = target.transform;
-            originalRotation = targetTransform.rotation;
+            originalRotation = targetTransform.localRotation;
 
             Tweener tween = targetTransform.DOShakeRotation(duration, strength, vibrato, randomness, fadeout);
 
@@ -34,7 +34,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            targetTransform.rotation = originalRotation;
+            targetTransform.localRotation = originalRotation;
         }
     }
 }
