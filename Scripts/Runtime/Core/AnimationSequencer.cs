@@ -7,7 +7,7 @@ using UnityEngine.Events;
 namespace BrunoMikoski.AnimationSequencer
 {
     // Modified by Pablo Huaxteco
-    [DisallowMultipleComponent]
+    [DisallowMultipleComponent, AddComponentMenu("Animation Sequencer/Animation Sequencer")]
     public class AnimationSequencer : MonoBehaviour
     {
         #region Variables
