@@ -95,8 +95,8 @@ namespace BrunoMikoski.AnimationSequencer
         private Vector2 GetValue(RectTransform target, AnimationDirection direction)
         {
             return direction == AnimationDirection.To ?
-                (toUseAsPercentage ? Vector2.Scale(target.sizeDelta, toSizeDelta / 100) : toSizeDelta) :
-                target.sizeDelta;
+                (toUseAsPercentage ? Vector2.Scale(target.rect.size, toSizeDelta / 100) : toSizeDelta) :
+                target.rect.size;
         }
 
         private bool IsRectTransformStretched(RectTransform rectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched)
