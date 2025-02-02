@@ -179,10 +179,13 @@ namespace BrunoMikoski.AnimationSequencer
             targetRectTransform.parent.GetComponent<RectTransform>().GetWorldCorners(parentCorners);
             Vector2 anchorPosition = Vector2.zero;
             Vector2 anchorOffset = Vector2.zero;
-            CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation);
-            Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.rect.size;
-            Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
-            Quaternion rotation = endRotation.HasValue ? Quaternion.Euler(endRotation.Value) : targetRectTransform.localRotation;
+            //CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation);
+            //Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.rect.size;
+            //Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
+            //Quaternion rotation = endRotation.HasValue ? Quaternion.Euler(endRotation.Value) : targetRectTransform.localRotation;
+            Vector2 sizeDelta = targetRectTransform.rect.size;
+            Vector3 localScale = targetRectTransform.localScale;
+            Quaternion rotation = targetRectTransform.localRotation;
             if (rotation != Quaternion.identity)
                 sizeDelta = GetRotatedSize(sizeDelta, rotation);
             Vector2 rectMiddleSize = sizeDelta / 2 * localScale;
