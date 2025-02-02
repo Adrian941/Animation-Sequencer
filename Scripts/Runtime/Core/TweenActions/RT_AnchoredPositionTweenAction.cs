@@ -65,6 +65,17 @@ namespace BrunoMikoski.AnimationSequencer
             set => toAnchorPosition = value;
         }
 
+        [Tooltip("If enabled, the object will be positioned outside parent rect based on its rotation, scale, and size delta " +
+            "instead of being placed directly at the assigned anchor position.")]
+        [ShowIf("toInputType", DataInputTypeWithAnchor.Anchor)]
+        [SerializeField]
+        private bool toIncludeBounds = true;
+        public bool ToIncludeBounds
+        {
+            get => toIncludeBounds;
+            set => toIncludeBounds = value;
+        }
+
         [ShowIf("toInputType != DataInputTypeWithAnchor.Vector")]
         [SerializeField]
         private Vector2 toOffset;
@@ -175,10 +186,59 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPositionFromAnchorInput()
         {
+            Vector2 anchorPosition = GetAnchorPosition();
+            Vector2 anchorOffset = GetAnchorOffset();
+            Vector2 cornerPosition = ConvertPositionFromWorldToCanvasSpace(anchorPosition) + anchorOffset;
+
+            return targetRectTransform.anchoredPosition + cornerPosition + toOffset;
+        }
+
+        private Vector2 GetAnchorPosition()
+        {
             Vector3[] parentCorners = new Vector3[4];
             targetRectTransform.parent.GetComponent<RectTransform>().GetWorldCorners(parentCorners);
             Vector2 anchorPosition = Vector2.zero;
+
+            switch (toAnchorPosition)
+            {
+                case AnchorPosition.TopLeft:
+                    anchorPosition = parentCorners[1];
+                    break;
+                case AnchorPosition.TopCenter:
+                    anchorPosition = (parentCorners[1] + parentCorners[2]) / 2;
+                    break;
+                case AnchorPosition.TopRight:
+                    anchorPosition = parentCorners[2];
+                    break;
+                case AnchorPosition.MiddleLeft:
+                    anchorPosition = (parentCorners[0] + parentCorners[1]) / 2;
+                    break;
+                case AnchorPosition.MiddleCenter:
+                    anchorPosition = (parentCorners[0] + parentCorners[2]) / 2;
+                    break;
+                case AnchorPosition.MiddleRight:
+                    anchorPosition = (parentCorners[2] + parentCorners[3]) / 2;
+                    break;
+                case AnchorPosition.BottomLeft:
+                    anchorPosition = parentCorners[0];
+                    break;
+                case AnchorPosition.BottomCenter:
+                    anchorPosition = (parentCorners[0] + parentCorners[3]) / 2;
+                    break;
+                case AnchorPosition.BottomRight:
+                    anchorPosition = parentCorners[3];
+                    break;
+            }
+
+            return anchorPosition;
+        }
+
+        private Vector2 GetAnchorOffset()
+        {
             Vector2 anchorOffset = Vector2.zero;
+            if(!toIncludeBounds)
+                return anchorOffset;
+
             //CalculateEndValuesFromOtherActions(out Vector3? endLocalScale, out Vector2? endSizeDelta, out Vector3? endRotation);
             //Vector2 sizeDelta = endSizeDelta.HasValue ? endSizeDelta.Value : targetRectTransform.rect.size;
             //Vector3 localScale = endLocalScale.HasValue ? endLocalScale.Value : targetRectTransform.localScale;
@@ -193,44 +253,34 @@ namespace BrunoMikoski.AnimationSequencer
             switch (toAnchorPosition)
             {
                 case AnchorPosition.TopLeft:
-                    anchorPosition = parentCorners[1];
                     anchorOffset = new Vector2(-rectMiddleSize.x, rectMiddleSize.y);
                     break;
                 case AnchorPosition.TopCenter:
-                    anchorPosition = (parentCorners[1] + parentCorners[2]) / 2;
                     anchorOffset = new Vector2(0, rectMiddleSize.y);
                     break;
                 case AnchorPosition.TopRight:
-                    anchorPosition = parentCorners[2];
                     anchorOffset = new Vector2(rectMiddleSize.x, rectMiddleSize.y);
                     break;
                 case AnchorPosition.MiddleLeft:
-                    anchorPosition = (parentCorners[0] + parentCorners[1]) / 2;
                     anchorOffset = new Vector2(-rectMiddleSize.x, 0);
                     break;
                 case AnchorPosition.MiddleCenter:
-                    anchorPosition = (parentCorners[0] + parentCorners[2]) / 2;
                     break;
                 case AnchorPosition.MiddleRight:
-                    anchorPosition = (parentCorners[2] + parentCorners[3]) / 2;
                     anchorOffset = new Vector2(rectMiddleSize.x, 0);
                     break;
                 case AnchorPosition.BottomLeft:
-                    anchorPosition = parentCorners[0];
                     anchorOffset = new Vector2(-rectMiddleSize.x, -rectMiddleSize.y);
                     break;
                 case AnchorPosition.BottomCenter:
-                    anchorPosition = (parentCorners[0] + parentCorners[3]) / 2;
                     anchorOffset = new Vector2(0, -rectMiddleSize.y);
                     break;
                 case AnchorPosition.BottomRight:
-                    anchorPosition = parentCorners[3];
                     anchorOffset = new Vector2(rectMiddleSize.x, -rectMiddleSize.y);
                     break;
             }
-            Vector2 cornerPosition = ConvertPositionFromWorldToCanvasSpace(anchorPosition) + anchorOffset;
 
-            return targetRectTransform.anchoredPosition + cornerPosition + toOffset;
+            return anchorOffset;
         }
 
         /// <summary>
