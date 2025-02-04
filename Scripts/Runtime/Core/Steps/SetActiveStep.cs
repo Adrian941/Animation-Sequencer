@@ -20,11 +20,11 @@ namespace BrunoMikoski.AnimationSequencer
         }
 
         [SerializeField]
-        private bool toActive;
-        public bool ToActive
+        private bool toSetActive;
+        public bool ToSetActive
         {
-            get => toActive;
-            set => toActive = value;
+            get => toSetActive;
+            set => toSetActive = value;
         }
 
         private bool originalActiveSelf;
@@ -50,7 +50,7 @@ namespace BrunoMikoski.AnimationSequencer
                 else if (x == 1f)
                     target.SetActive(true);
             }
-            , toActive ? 1f : 0f, duration);
+            , toSetActive ? 1f : 0f, duration);
 
             sequence.Append(tween);
 
@@ -76,7 +76,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (target != null)
                 display = target.name;
             
-            return $"{index}. Set \"{display}\" Active: {toActive}";
+            return $"{index}. Set \"{display}\" Active: {toSetActive}";
         }
 
         public override float GetDuration()

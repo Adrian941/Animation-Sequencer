@@ -12,28 +12,28 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Play Sequence";
 
         [SerializeField]
-        private AnimationSequencer sequencer;
-        public AnimationSequencer Sequencer
+        private AnimationSequencer target;
+        public AnimationSequencer TargetAnimSequencer
         {
-            get => sequencer;
-            set => sequencer = value;
+            get => target;
+            set => target = value;
         }
 
         public override Sequence GenerateTweenSequence()
         {
-            if (sequencer == null)
+            if (TargetAnimSequencer == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
                 return null;
             }
 
-            if (!sequencer.IsActiveAndEnabled)
+            if (!TargetAnimSequencer.IsActiveAndEnabled)
                 return null;
 
-            //Sequence sequence = sequencer.GenerateSequence();
-            sequencer.PlayForward(true);
-            sequencer.PlayingSequence.Pause();
-            Sequence sequence = sequencer.PlayingSequence;
+            //Sequence sequence = TargetAnimSequencer.GenerateSequence();
+            TargetAnimSequencer.PlayForward(true);
+            TargetAnimSequencer.PlayingSequence.Pause();
+            Sequence sequence = TargetAnimSequencer.PlayingSequence;
             sequence.SetDelay(delay);
 
             return sequence;
@@ -41,34 +41,29 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override void ResetToInitialState_Internal()
         {
-            if (sequencer == null)
+            if (TargetAnimSequencer == null)
                 return;
 
-            sequencer.ResetToInitialState();
+            TargetAnimSequencer.ResetToInitialState();
         }
 
         public override string GetDisplayNameForEditor(int index)
         {
             string display = "NULL";
-            if (sequencer != null)
-                display = sequencer.name;
+            if (TargetAnimSequencer != null)
+                display = TargetAnimSequencer.name;
 
             return $"{index}. Play \"{display}\" Sequence";
         }
 
-        public void SetTarget(AnimationSequencer newTarget)
-        {
-            sequencer = newTarget;
-        }
-
         public override float GetDuration()
         {
-            return createdSequence == null ? -1 : createdSequence.Duration() - sequencer.ExtraIntervalAdded;
+            return createdSequence == null ? -1 : createdSequence.Duration() - TargetAnimSequencer.ExtraIntervalAdded;
         }
 
         public override float GetExtraIntervalAdded()
         {
-            return createdSequence == null ? 0 : sequencer.ExtraIntervalAdded;
+            return createdSequence == null ? 0 : TargetAnimSequencer.ExtraIntervalAdded;
         }
     }
 }

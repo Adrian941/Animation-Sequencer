@@ -13,7 +13,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         private CanvasGroup target;
-        public CanvasGroup Target
+        public CanvasGroup TargetCanvasGroup
         {
             get => target;
             set => target = value;
@@ -31,24 +31,24 @@ namespace BrunoMikoski.AnimationSequencer
 
         public override Sequence GenerateTweenSequence()
         {
-            if (target == null)
+            if (TargetCanvasGroup == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
                 return null;
             }
 
-            originalBlocksRaycasts = target.blocksRaycasts;
+            originalBlocksRaycasts = TargetCanvasGroup.blocksRaycasts;
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(delay);
 
             float duration = GetExtraInterval();
-            var tween = DOTween.To(() => target.blocksRaycasts ? 1f : 0f, x =>
+            var tween = DOTween.To(() => TargetCanvasGroup.blocksRaycasts ? 1f : 0f, x =>
             {
                 if (x == 0f)
-                    target.blocksRaycasts = false;
+                    TargetCanvasGroup.blocksRaycasts = false;
                 else if (x == 1f)
-                    target.blocksRaycasts = true;
+                    TargetCanvasGroup.blocksRaycasts = true;
             }
             , toBlockRaycasts ? 1f : 0f, duration);
 
@@ -64,17 +64,17 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override void ResetToInitialState_Internal()
         {
-            if (target == null)
+            if (TargetCanvasGroup == null)
                 return;
 
-            target.blocksRaycasts = originalBlocksRaycasts;
+            TargetCanvasGroup.blocksRaycasts = originalBlocksRaycasts;
         }
 
         public override string GetDisplayNameForEditor(int index)
         {
             string display = "NULL";
-            if (target != null)
-                display = target.name;
+            if (TargetCanvasGroup != null)
+                display = TargetCanvasGroup.name;
 
             return $"{index}. Block \"{display}\" Raycasts: {toBlockRaycasts}";
         }

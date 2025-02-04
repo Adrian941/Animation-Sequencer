@@ -12,51 +12,45 @@ namespace BrunoMikoski.AnimationSequencer
         public override string DisplayName => "Play Particles";
 
         [SerializeField]
-        private ParticleSystem particleSystem;
-        public ParticleSystem ParticleSystem
+        private ParticleSystem target;
+        public ParticleSystem TargetParticleSystem
         {
-            get => particleSystem;
-            set => particleSystem = value;
+            get => target;
+            set => target = value;
         }
 
         [SerializeField]
-        private bool toPlay = true;
-        public bool ToPlay
+        private bool toPlayParticles = true;
+        public bool ToPlayParticles
         {
-            get => toPlay;
-            set => toPlay = value;
+            get => toPlayParticles;
+            set => toPlayParticles = value;
         }
 
-        private Sequence mainSequence;
         private bool originalIsEmitting;
-
-        protected override void SetMainSequence(Sequence mainSequence)
-        {
-            this.mainSequence = mainSequence;
-        }
 
         public override Sequence GenerateTweenSequence()
         {
-            if (particleSystem == null)
+            if (TargetParticleSystem == null)
             {
                 Debug.LogWarning($"The <b>\"{DisplayName}\"</b> Step does not have a <b>\"Target\"</b>. Please consider assigning a <b>\"Target\"</b> or removing the step.");
                 return null;
             }
 
-            originalIsEmitting = particleSystem.isEmitting;
+            originalIsEmitting = TargetParticleSystem.isEmitting;
 
             Sequence sequence = DOTween.Sequence();
             sequence.SetDelay(delay);
 
             float duration = GetExtraInterval();
-            var tween = DOTween.To(() => particleSystem.isEmitting ? 1f : 0f, x =>
+            var tween = DOTween.To(() => TargetParticleSystem.isEmitting ? 1f : 0f, x =>
             {
                 if (x == 0f)
-                    particleSystem.Stop();
+                    TargetParticleSystem.Stop();
                 else if (x == 1f)
-                    particleSystem.Play();
+                    TargetParticleSystem.Play();
             }
-            , toPlay ? 1f : 0f, duration);
+            , toPlayParticles ? 1f : 0f, duration);
 
             sequence.Append(tween);
 
@@ -70,27 +64,22 @@ namespace BrunoMikoski.AnimationSequencer
 
         protected override void ResetToInitialState_Internal() 
         {
-            if (particleSystem == null)
+            if (TargetParticleSystem == null)
                 return;
 
             if (originalIsEmitting)
-                particleSystem.Play();
+                TargetParticleSystem.Play();
             else
-                particleSystem.Stop();
-        }
-
-        public void SetTarget(ParticleSystem newTarget)
-        {
-            particleSystem = newTarget;
+                TargetParticleSystem.Stop();
         }
 
         public override string GetDisplayNameForEditor(int index)
         {
             string display = "NULL";
-            if (particleSystem != null)
-                display = particleSystem.name;
+            if (TargetParticleSystem != null)
+                display = TargetParticleSystem.name;
 
-            return $"{index}. Play \"{display}\" particles";
+            return $"{index}. Play \"{display}\" Particles";
         }
 
         public override float GetDuration()

@@ -584,7 +584,7 @@ namespace BrunoMikoski.AnimationSequencer
             arrayElementAtIndex.isExpanded = true;
 
             //TODO copy from last step would be better here.
-            if (targetAnimationType == typeof(TweenStep))
+            if (targetAnimationType != typeof(SetActiveStep) && targetAnimationType != typeof(PlaySequenceStep))
             {
                 SerializedProperty targetSerializedProperty = arrayElementAtIndex.FindPropertyRelative("target");
                 if (targetSerializedProperty != null)
