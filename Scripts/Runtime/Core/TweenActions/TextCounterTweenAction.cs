@@ -23,12 +23,13 @@ namespace BrunoMikoski.AnimationSequencer
             set => toCounter = value;
         }
 
+        [Tooltip("Enable this to add a thousands separator to the counter display (e.g., 1,000 instead of 1000).")]
         [SerializeField]
-        private bool addThousandsSeparator = true;
+        private bool thousandsSeparator = true;
         public bool AddThousandsSeparator
         {
-            get => addThousandsSeparator;
-            set => addThousandsSeparator = value;
+            get => thousandsSeparator;
+            set => thousandsSeparator = value;
         }
 
         private Text targetText;
@@ -53,7 +54,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (int.TryParse(targetText.text, out int result))
                 startCounter = result;
 
-            TweenerCore<int, int, NoOptions> tween = targetText.DOCounter(startCounter, toCounter, duration, addThousandsSeparator);
+            TweenerCore<int, int, NoOptions> tween = targetText.DOCounter(startCounter, toCounter, duration, thousandsSeparator);
 
             return tween;
         }
