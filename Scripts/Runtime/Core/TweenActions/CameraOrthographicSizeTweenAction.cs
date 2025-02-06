@@ -24,11 +24,11 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         [Tooltip("Enable this to interpret the input value as a percentage. Examples: 50% scales the size to half, 100% keeps it unchanged, and 200% doubles it.")]
-        private bool toUseAsPercentage;
-        public bool ToUseAsPercentage
+        private bool toPercentageMode;
+        public bool ToPercentageMode
         {
-            get => toUseAsPercentage;
-            set => toUseAsPercentage = value;
+            get => toPercentageMode;
+            set => toPercentageMode = value;
         }
 
         private Camera targetCamera;
@@ -55,7 +55,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalOrthographicSize = targetCamera.orthographicSize;
 
-            float endValue = toUseAsPercentage ? originalOrthographicSize * (toOrthographicSize / 100) : toOrthographicSize;
+            float endValue = toPercentageMode ? originalOrthographicSize * (toOrthographicSize / 100) : toOrthographicSize;
             TweenerCore<float, float, FloatOptions> tween = targetCamera.DOOrthoSize(endValue, duration);
 
             return tween;

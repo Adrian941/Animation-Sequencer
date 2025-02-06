@@ -22,11 +22,11 @@ namespace BrunoMikoski.AnimationSequencer
 
         [SerializeField]
         [Tooltip("Enable this to interpret the input value as a percentage. Examples: 50% scales the size to half, 100% keeps it unchanged, and 200% doubles it.")]
-        private bool toUseAsPercentage;
-        public bool ToUseAsPercentage
+        private bool toPercentageMode;
+        public bool ToPercentageMode
         {
-            get => toUseAsPercentage;
-            set => toUseAsPercentage = value;
+            get => toPercentageMode;
+            set => toPercentageMode = value;
         }
 
         [Tooltip("Specifies the axis or combination of axes along which the animation will apply. " +
@@ -68,7 +68,7 @@ namespace BrunoMikoski.AnimationSequencer
 
             originalSize = targetRectTransform.sizeDelta;
 
-            Vector2 endValue = toUseAsPercentage ? Vector2.Scale(targetRectTransform.rect.size, toSizeDelta / 100) : toSizeDelta;
+            Vector2 endValue = toPercentageMode ? Vector2.Scale(targetRectTransform.rect.size, toSizeDelta / 100) : toSizeDelta;
             if (IsRectTransformStretched(targetRectTransform, out bool isHorizontallyStretched, out bool isVerticallyStretched))
             {
                 Vector2 strechValue = -(targetRectTransform.rect.size - (endValue + targetRectTransform.sizeDelta));
@@ -95,7 +95,7 @@ namespace BrunoMikoski.AnimationSequencer
         private Vector2 GetValue(RectTransform target, AnimationDirection direction)
         {
             return direction == AnimationDirection.To ?
-                (toUseAsPercentage ? Vector2.Scale(target.rect.size, toSizeDelta / 100) : toSizeDelta) :
+                (toPercentageMode ? Vector2.Scale(target.rect.size, toSizeDelta / 100) : toSizeDelta) :
                 target.rect.size;
         }
 

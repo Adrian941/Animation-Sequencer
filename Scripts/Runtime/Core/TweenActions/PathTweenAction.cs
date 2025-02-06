@@ -35,11 +35,11 @@ namespace BrunoMikoski.AnimationSequencer
             "If false, the tween will operate in world space coordinates.")]
         [ShowIf("inputType == DataInputType.Vector")]
         [SerializeField]
-        private bool local = true;
-        public bool Local
+        private bool localSpace = true;
+        public bool LocalSpace
         {
-            get => local;
-            set => local = value;
+            get => localSpace;
+            set => localSpace = value;
         }
 
         [SerializeField]
@@ -105,7 +105,7 @@ namespace BrunoMikoski.AnimationSequencer
             }
 
             TweenerCore<Vector3, Path, PathOptions> tween;
-            if (inputType == DataInputType.Vector && local)
+            if (inputType == DataInputType.Vector && localSpace)
             {
                 originalPosition = targetTransform.localPosition;
                 tween = targetTransform.DOLocalPath(GetPositions(), duration, pathType, pathMode, resolution, gizmoColor);
@@ -156,7 +156,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (local)
+            if (localSpace)
                 targetTransform.localPosition = originalPosition;
             else
                 targetTransform.position = originalPosition;

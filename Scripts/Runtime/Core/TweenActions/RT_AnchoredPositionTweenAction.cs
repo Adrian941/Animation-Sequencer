@@ -41,11 +41,11 @@ namespace BrunoMikoski.AnimationSequencer
             "If false, the tween will operate in world space coordinates.")]
         [ShowIf("toInputType == DataInputTypeWithAnchor.Vector")]
         [SerializeField]
-        private bool toLocal = true;
-        public bool ToLocal
+        private bool toLocalSpace = true;
+        public bool ToLocalSpace
         {
-            get => toLocal;
-            set => toLocal = value;
+            get => toLocalSpace;
+            set => toLocalSpace = value;
         }
 
         [ShowIf("toInputType", DataInputTypeWithAnchor.Object)]
@@ -171,7 +171,7 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPositionFromVectorInput()
         {
-            if (toLocal)
+            if (toLocalSpace)
                 return toPosition;
             
             Vector3 targetWorldPosition = RootCanvasRectTransform.TransformPoint(toPosition);
