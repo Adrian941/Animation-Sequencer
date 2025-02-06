@@ -25,11 +25,11 @@ namespace BrunoMikoski.AnimationSequencer
         [Tooltip("If true, the tween will use local coordinates of the object, rotating it relative to its parent's rotation. " +
             "If false, the tween will operate in world space coordinates.")]
         [SerializeField]
-        private bool local = true;
-        public bool Local
+        private bool localSpace = true;
+        public bool LocalSpace
         {
-            get => local;
-            set => local = value;
+            get => localSpace;
+            set => localSpace = value;
         }
 
         [SerializeField]
@@ -48,7 +48,7 @@ namespace BrunoMikoski.AnimationSequencer
             targetTransform = target.transform;
 
             TweenerCore<Quaternion, Vector3, QuaternionOptions> tween;
-            if (local)
+            if (localSpace)
             {
                 originalRotation = targetTransform.localRotation;
                 tween = targetTransform.DOLocalRotate(toEulerAngles, duration, rotationMode);
@@ -77,7 +77,7 @@ namespace BrunoMikoski.AnimationSequencer
             //return direction == AnimationDirection.To ? toEulerAngles : target.transform.localEulerAngles;
 
             if (direction == AnimationDirection.To)
-                return local ? toEulerAngles : ConvertToLocalEulerAngles(target, toEulerAngles);
+                return localSpace ? toEulerAngles : ConvertToLocalEulerAngles(target, toEulerAngles);
 
             return target.transform.localEulerAngles;
         }
@@ -99,7 +99,7 @@ namespace BrunoMikoski.AnimationSequencer
             if (targetTransform == null)
                 return;
 
-            if (!local)
+            if (!localSpace)
                 targetTransform.rotation = originalRotation;
             else
                 targetTransform.localRotation = originalRotation;

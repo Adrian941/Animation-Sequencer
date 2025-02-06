@@ -49,7 +49,7 @@ namespace BrunoMikoski.AnimationSequencer
             {
                 Vector2 pos = Positions[i];
 
-                if (Local)
+                if (LocalSpace)
                     targetsWorldPosition[i] = pos;
                 else
                     targetsWorldPosition[i] = RootCanvasRectTransform.TransformPoint(pos);
