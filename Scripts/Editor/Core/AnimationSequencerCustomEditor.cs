@@ -201,6 +201,8 @@ namespace BrunoMikoski.AnimationSequencer
                 sequencerController.UpdateType = AnimationSequencerDefaults.Instance.UpdateType;
                 sequencerController.Autokill = AnimationSequencerDefaults.Instance.AutoKill;
                 sequencerController.Loops = AnimationSequencerDefaults.Instance.Loops;
+                sequencerController.LoopType = AnimationSequencerDefaults.Instance.LoopType;
+                sequencerController.DynamicStartValues = AnimationSequencerDefaults.Instance.DynamicStartValues;
                 sequencerController.ResetComplete();
             }
         }
