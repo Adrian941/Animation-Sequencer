@@ -8,8 +8,7 @@ namespace BrunoMikoski.AnimationSequencer
     [CreateAssetMenu(menuName = "Animation Sequencer/Create Animation Sequencer Defaults", fileName = "AnimationSequencerDefaults")]
     public sealed class AnimationSequencerDefaults : EditorDefaultResourceSingleton<AnimationSequencerDefaults>
     {
-        [Header("Animation Sequencer defaults")]
-        //[Header("Defaults when a new instance class is created")]
+        [Header("Animation Sequencer defaults (New Instance)")]
         [SerializeField]
         private AutoplayType autoplayMode;
         public AutoplayType AutoplayMode => autoplayMode;
@@ -31,14 +30,22 @@ namespace BrunoMikoski.AnimationSequencer
         public bool TimeScaleIndependent => timeScaleIndependent;
 
         [SerializeField]
+        private bool dynamicStartValues;
+        public bool DynamicStartValues => dynamicStartValues;
+
+        [SerializeField]
         private int loops;
         public int Loops => loops;
+
+        [SerializeField]
+        private LoopType loopType;
+        public LoopType LoopType => loopType;
 
         [SerializeField]
         private bool autoKill = true;
         public bool AutoKill => autoKill;
 
-        [Header("Actions defaults")]
+        [Header("Actions defaults (New Actions)")]
         [SerializeField]
         private AnimationDirection direction;
         public AnimationDirection Direction => direction;
@@ -47,7 +54,7 @@ namespace BrunoMikoski.AnimationSequencer
         private CustomEase ease = CustomEase.InOutQuad;
         public CustomEase Ease => ease;
 
-        [Header("Use Previous Actions values")]
+        [Header("Inherit Values from Previous Actions")]
         [SerializeField]
         private bool usePreviousDirection = true;
         public bool UsePreviousDirection => usePreviousDirection;
