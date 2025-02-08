@@ -48,7 +48,7 @@ namespace BrunoMikoski.AnimationSequencer
                 return null;
 
             if (direction == AnimationDirection.From)
-                tween.From(false, false);
+                tween.From();
 
             tween.SetEase(ease);
             return tween;
