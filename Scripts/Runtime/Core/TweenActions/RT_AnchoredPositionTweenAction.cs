@@ -37,9 +37,19 @@ namespace BrunoMikoski.AnimationSequencer
             set => toPosition = value;
         }
 
+        [Tooltip("If TRUE, endValue is added to the object's current local position.")]
+        [ShowIf("toInputType", DataInputType.Vector)]
+        [SerializeField]
+        private bool toRelative;
+        public bool ToRelative
+        {
+            get => toRelative;
+            set => toRelative = value;
+        }
+
         [Tooltip("If true, the tween will use local coordinates of the object, moving it relative to its parent's position and rotation. " +
             "If false, the tween will operate in world space coordinates.")]
-        [ShowIf("toInputType == DataInputTypeWithAnchor.Vector")]
+        [ShowIf("toInputType == DataInputTypeWithAnchor.Vector && toRelative == false")]
         [SerializeField]
         private bool toLocalSpace = true;
         public bool ToLocalSpace
@@ -171,6 +181,9 @@ namespace BrunoMikoski.AnimationSequencer
 
         private Vector2 GetPositionFromVectorInput()
         {
+            if(toRelative)
+                return targetRectTransform.anchoredPosition + toPosition;
+
             if (toLocalSpace)
                 return toPosition;
             
