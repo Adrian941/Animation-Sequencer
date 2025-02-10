@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4570502167199296368}
-  - component: {fileID: 7915445010660547551}
+  - component: {fileID: -4468180449324484505}
   m_Layer: 0
   m_Name: Bridge
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7915445010660547551
+--- !u!114 &-4468180449324484505
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6610079749482363680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c10d422b52559da41aa9676770a8fc65, type: 3}
+  m_Script: {fileID: 11500000, guid: 93080415e4fdb3048a205b33af1e5a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
@@ -68,7 +68,7 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: TweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      type: {class: TweenStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
         delay: 0
         flowType: 0
@@ -79,23 +79,40 @@ MonoBehaviour:
         actions:
         - id: 1
     00000001:
-      type: {class: TransformPositionTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      type: {class: PositionTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
-        direction: 1
+        direction: 0
         ease:
           ease: 27
           curve:
             serializedVersion: 2
-            m_Curve: []
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-        relative: 0
-        inputType: 0
-        position: {x: 0, y: 8, z: 0}
-        local: 0
-        target: {fileID: 0}
-        offset: {x: 0, y: 0, z: 0}
+        toInputType: 0
+        toPosition: {x: 0, y: 8, z: 0}
+        toLocalSpace: 1
+        toTarget: {fileID: 0}
+        toOffset: {x: 0, y: 0, z: 0}
         axisConstraint: 4
         snapping: 0
 --- !u!1 &8027931837559666830

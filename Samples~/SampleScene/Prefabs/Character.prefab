@@ -173,7 +173,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1198360643285603999}
-  - component: {fileID: 1113157648197893061}
+  - component: {fileID: 7903332605377456008}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -197,7 +197,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1113157648197893061
+--- !u!114 &7903332605377456008
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7955530997918729624}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c10d422b52559da41aa9676770a8fc65, type: 3}
+  m_Script: {fileID: 11500000, guid: 93080415e4fdb3048a205b33af1e5a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
@@ -234,7 +234,7 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: TweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      type: {class: TweenStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
         delay: 0
         flowType: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
         actions:
         - id: 2
     00000001:
-      type: {class: TweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      type: {class: TweenStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
         delay: 0
         flowType: 1
@@ -256,39 +256,74 @@ MonoBehaviour:
         actions:
         - id: 3
     00000002:
-      type: {class: TransformPositionTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      type: {class: PositionTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
-        direction: 0
+        direction: 1
         ease:
           ease: 7
           curve:
             serializedVersion: 2
-            m_Curve: []
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-        relative: 1
-        inputType: 0
-        position: {x: 0, y: 0.13, z: 0}
-        local: 1
-        target: {fileID: 0}
-        offset: {x: 0, y: 0, z: 0}
+        toInputType: 0
+        toPosition: {x: 0, y: 0.13, z: 0}
+        toRelative: 1
+        toLocalSpace: 1
+        toTarget: {fileID: 0}
+        toOffset: {x: 0, y: 0, z: 0}
         axisConstraint: 4
         snapping: 0
     00000003:
-      type: {class: TransformScaleTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      type: {class: ScaleTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
       data:
-        direction: 0
+        direction: 1
         ease:
           ease: 7
           curve:
             serializedVersion: 2
-            m_Curve: []
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-        relative: 0
-        percentage: 1
-        scale: {x: 120, y: 120, z: 120}
+        toScale: {x: 120, y: 120, z: 120}
+        toPercentageMode: 1
         axisConstraint: 0
         snapping: 0
