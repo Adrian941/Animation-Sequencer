@@ -7,7 +7,7 @@ namespace BrunoMikoski.AnimationSequencer
     public sealed class AnimationSequencerPreferences : ScriptableObjectForPreferences<AnimationSequencerPreferences>
     {
         // Public static variables
-        public static readonly string Version = "1.5.0";
+        public static readonly string Version = "2.0.0";
 
         // Serialized fields
         [Header("While Editing")]

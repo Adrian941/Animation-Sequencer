@@ -5,17 +5,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.0.0]
 ### Changed
-- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when calculated the end euler angle (global value) of "TransformRotationTweenAction".
-- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when working with "TransformRotationTweenAction".
-- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when calculated the end size delta of "RectTransformSizeDeltaTweenAction".
-- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when calculated the end scale of "TransformScaleTweenAction".
-- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when the object itself is rotated.
-- Fixed an issue calculating the end position for 'RectTransformAnchoredPositionTweenAction' when the parent is rotated.
-- Renamed "MovementDirection" enum to "AnchorPosition" and its corresponding classes.
-- Renamed "toPercentage" variable to "toUseAsPercentage" and added a more descriptive tooltip.
-- Renamed "End values" variables from steps and tween actions.
-- Removed "Relative" property from tween actions.
+- Resolved "GetScriptingDefineSymbols" warning message in Unity 6.
+- Fix: Prevented incorrect value assignment at the end of "Punch" and "Shake" animations.
+- Fixed an issue with "RectTransformAnchoredPositionTweenAction" incorrectly calculating the end position when the object was rotated. Added the "IncludeBounds" option.
+- Fixed an issue with "RectTransformAnchoredPositionTweenAction" calculating the end position incorrectly when used with "TransformScaleTweenAction", "RectTransformSizeDeltaTweenAction", and "TransformRotationTweenAction". As a temporary solution, the "CalculateEndValuesFromOtherActions" code has been commented out.
+- Added "BlockRaycastsStep".
+- Added "LookAt 2D", "LookAt", "Path" and "Path (RectTransform)" actions.
+- Added "AnimationSequencer" to the component menu.
+- Refactored and renamed "AnimationSequencerController" to "AnimationSequencer" for improved readability.
+- Refactored "ColorTweenAction", "FadeTweenAction", "TextTweenAction", and "TextureScaleTweenAction" classes.
+- Refactored Enums.
+- Renamed transform action classes for better code readability.
+- Renamed "Tween actions" classes for improved clarity.
+- Renamed "Steps" classes for better organization.
+- Renamed the "MovementDirection" enum to "AnchorPosition", along with its related classes.
+- Renamed the "toPercentage" variable to "toPercentageMode" and added a more descriptive tooltip.
+- Renamed "End values" variables in steps and tween actions.
+- Removed the "Relative" property from tween actions, except for "PositionTweenAction" and "RT_AnchoredPositionTweenAction".
 
 ## [1.5.0]
 ### Changed
@@ -289,6 +298,7 @@ Thanks for all the [suggestions](https://github.com/brunomikoski/Animation-Seque
 ### Added 
 - First initial working version
 
+[2.0.0]: https://github.com/PabloHuaxteco/AnimationSequencer/releases/tag/v2.0.0
 [1.5.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.5.0
 [1.0.1]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.1
 [1.0.0]: https://github.com/PabloHuaxteco/Animation-Sequencer/releases/tag/v1.0.0
