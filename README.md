@@ -75,6 +75,7 @@ I LOVE Tween, I love DOTween even more! But having to wait for a recompilation e
         - Intensity
     - Rect Transform
         - Anchored Position
+        - Path
         - Size Delta
     - Renderer
         - Texture Offset (Only works in Runtime)
@@ -89,15 +90,19 @@ I LOVE Tween, I love DOTween even more! But having to wait for a recompilation e
     - TMP_Text (TextMeshPro Support)
         - Text
     - Transform
+        - LookAt 2D
+        - LookAt
+        - Path
         - Position
         - Path
         - Punch (Position/Rotation/Scale)
         - Rotation
         - Scale
         - Shake (Position/Rotation/Scale)
+ - Block Raycasts
  - Invoke Callback
- - Play Particle System
- - Play Animation Sequencer
+ - Play Particles
+ - Play Sequence
  - Set Game Object Active
  - Wait for Interval
 
@@ -241,7 +246,7 @@ You can also add it directly from GitHub on Unity 2019.4+. Note that you won't b
 - open Package Manager
 - click <kbd>+</kbd>
 - select <kbd>Add from Git URL</kbd>
-- paste `https://github.com/PabloHuaxteco/Animation-Sequencer.git`
+- paste `https://github.com/PabloHuaxteco/AnimationSequencer.git`
 - click <kbd>Add</kbd>
 </details>
 

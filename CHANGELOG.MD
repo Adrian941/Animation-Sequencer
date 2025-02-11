@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue with "RectTransformAnchoredPositionTweenAction" incorrectly calculating the end position when the object was rotated. Added the "IncludeBounds" option.
 - Fixed an issue with "RectTransformAnchoredPositionTweenAction" calculating the end position incorrectly when used with "TransformScaleTweenAction", "RectTransformSizeDeltaTweenAction", and "TransformRotationTweenAction". As a temporary solution, the "CalculateEndValuesFromOtherActions" code has been commented out.
 - Added "BlockRaycastsStep".
+- Added "LookAt 2D", "LookAt", "Path" and "Path (RectTransform)" actions.
 - Added "AnimationSequencer" to the component menu.
 - Refactored and renamed "AnimationSequencerController" to "AnimationSequencer" for improved readability.
 - Refactored "ColorTweenAction", "FadeTweenAction", "TextTweenAction", and "TextureScaleTweenAction" classes.
