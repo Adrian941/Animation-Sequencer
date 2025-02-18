@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0]
 ### Changed
+⚠ Breaking Changes: In version 2.0.0, several renames have been made to improve clarity and maintainability, which may break existing animations from version 1.5.0. The AnimationDirection enum was renamed, causing serialized animations to swap or break. Additionally, multiple classes were renamed, including AnimationSequencerController → AnimationSequencer, Steps classes, Tween actions classes, and Transform action classes. These changes require updating references to ensure compatibility.
 - Resolved "GetScriptingDefineSymbols" warning message in Unity 6.
 - Fix: Prevented incorrect value assignment at the end of "Punch" and "Shake" animations.
 - Fixed an issue with "RectTransformAnchoredPositionTweenAction" incorrectly calculating the end position when the object was rotated. Added the "IncludeBounds" option.
